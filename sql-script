@@ -1,0 +1,64 @@
+DROP TABLE IF EXISTS Training, Fitness_profile, player;
+
+-- Create the player table
+CREATE TABLE player (
+    player_id SERIAL PRIMARY KEY,
+    username VARCHAR(255),
+    name VARCHAR(255),
+    average_score INT,
+    training_score INT[]
+);
+
+-- Create the Fitness_profile table with a foreign key reference to player
+CREATE TABLE Fitness_profile (
+    fitness_profile_id SERIAL PRIMARY KEY,
+    player_id INT UNIQUE,
+    bmi FLOAT,
+    bmr FLOAT,
+    weight FLOAT,
+    height FLOAT,
+    date_of_birth DATE,
+    max_HF INT,
+    base_HF INT,
+    reserve_HF INT,
+    FOREIGN KEY (player_id) REFERENCES player(player_id)
+);
+
+-- Create the Training table with a foreign key reference to player
+CREATE TABLE Training (
+    training_id SERIAL PRIMARY KEY,
+    training_name VARCHAR(255),
+    distance_in_meters INT,
+    time_in_seconds INT,
+    average_speed FLOAT,  -- Changed data type to FLOAT for average_speed
+    training_type VARCHAR(255),
+    base_score INT,
+    training_date TIMESTAMP,
+    player_id INT,
+    FOREIGN KEY (player_id) REFERENCES player(player_id)
+);
+
+INSERT INTO "User" (username, name, average_score, training_score)
+VALUES
+  ('user1', 'User One', 85, '{80, 90, 75, 85, 95}'),
+  ('user2', 'User Two', 85, '{80, 90, 75, 85, 95}'),
+  ('user3', 'User Three', 85, '{80, 90, 75, 85, 95}'),
+  ('user4', 'User Four', 85, '{80, 90, 75, 85, 95}'),
+  ('user5', 'User Five', 85, '{80, 90, 75, 85, 95}');
+
+INSERT INTO Fitness_profile (user_id, bmi, bmr, weight, height, date_of_birth, max_HF, base_HF, reserve_HF)
+VALUES
+  (1, 25.5, 1800, 70.5, 175, TO_DATE('15-01-1990', 'DD-MM-YYYY'), 180, 60, 120),
+  (2, 22.0, 1600, 65.2, 170, TO_DATE('20-03-1985', 'DD-MM-YYYY'), 175, 58, 115),
+  (3, 26.8, 1900, 75.0, 180, TO_DATE('10-07-1992', 'DD-MM-YYYY'), 185, 62, 125),
+  (4, 23.3, 1700, 68.7, 172, TO_DATE('05-05-1988', 'DD-MM-YYYY'), 178, 59, 118),
+  (5, 28.1, 2000, 80.3, 178, TO_DATE('28-11-1995', 'DD-MM-YYYY'), 190, 64, 130);
+
+INSERT INTO Training (training_name, distance_in_meters, time_in_seconds, average_speed, training_type, base_score, training_date, user_id)
+VALUES
+  ('Morning run', 5000, 1800, 10, 'Sprint', 75, TO_TIMESTAMP('16-01-2024 08:00:00', 'DD-MM-YYYY HH24:MI:SS'), 1),
+  ('round the lake', 10000, 2400, 6.25, 'Endurance', 80, TO_TIMESTAMP('17-01-2024 15:30:00', 'DD-MM-YYYY HH24:MI:SS'), 2),
+  ('romantic run towards SO', 8000, 1500, 15, 'Sprint', 90, TO_TIMESTAMP('18-01-2024 18:45:00', 'DD-MM-YYYY HH24:MI:SS'), 3),
+  ('run after icecream-van', 100, 100, 1, 'Sprint', 85, TO_TIMESTAMP('19-01-2024 12:00:00', 'DD-MM-YYYY HH24:MI:SS'), 4),
+  ('ran from scary clown', 6000, 2700, 4.44, 'Sprint', 95, TO_TIMESTAMP('20-01-2024 10:00:00', 'DD-MM-YYYY HH24:MI:SS'), 5);
+
