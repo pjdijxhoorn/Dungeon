@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dungeon-run
+  labels:
+    app: dungeon-run
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dungeon-run
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: dungeon-run
+    spec:
+      containers:
+      - name: dungeon-run
+        image: <IMAGE>
+        ports:
+        - containerPort: 5432
+        resources:
+          requests:
+            cpu: 100m
+          limits:
+            cpu: 100m
