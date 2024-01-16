@@ -15,8 +15,8 @@ class Player(BaseModel):
     training_score: list[int]
 
 
-@app.get("/user")
-async def getUsers():
+@app.get("/player")
+async def getPlayers():
     cursor = db_connection.cursor()
     cursor.execute("SELECT * FROM player")
     data = cursor.fetchall()
@@ -24,8 +24,9 @@ async def getUsers():
     cursor.close()
     return {"data": data}
 
-@app.post("/user")
-async def create_user(player: Player):
+
+@app.post("/player")
+async def create_Player(player: Player):
     cursor = db_connection.cursor()
     cursor.execute(
         'INSERT INTO player (player_id, username, name, average_score, training_score) VALUES (%s, %s, %s, %s, %s)',
@@ -34,6 +35,13 @@ async def create_user(player: Player):
     db_connection.commit()
     return {"player": player}
 
+@app.delete("/player")
+async def delete_Player(player_id: int):
+    cursor = db_connection.cursor()
+    cursor.execute("DELETE FROM player WHERE player_id = %s", (player_id,))
+    db_connection.commit()
+    cursor.close()
+    return {"message": "Player deleted successfully"}
 
 db_connection = psycopg2.connect(
     database=os.getenv("DB_NAME"),
