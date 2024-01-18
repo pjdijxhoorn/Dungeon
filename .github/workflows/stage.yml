@@ -3,7 +3,7 @@ name: commit deployment
 on:
     push:
         branches:
-            -   main
+            -   Feature_CI/CD
 
 jobs:
     build:
