@@ -1,4 +1,6 @@
 # Default ignored files
+__pycache__/
+*.py[cod]
 /shelf/
 /workspace.xml
 # Editor-based HTTP Client requests
@@ -7,3 +9,4 @@
 /dataSources/
 /dataSources.local.xml
 /myenv
+.env
