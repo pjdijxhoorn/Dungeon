@@ -43,10 +43,20 @@ async def delete_Player(player_id: int):
     cursor.close()
     return {"message": "Player deleted successfully"}
 
-db_connection = psycopg2.connect(
-    database=os.getenv("DB_NAME"),
-    user=os.getenv("DB_USER"),
-    password=os.getenv("DB_PASSWORD"),
-    host=os.getenv("DB_HOST"),  # Of het IP-adres van je databasehost
-    port=os.getenv("DB_PORT")  # De standaard PostgreSQL-poort
+try:
+    db_connection = psycopg2.connect(
+    database=os.environ["DBNAME"],
+    user=os.environ["DBUSER"],
+    password=os.environ["DBPASSWORD"],
+    host=os.environ["DBHOST"],  # Of het IP-adres van je databasehost
+    port=os.environ["DBPORT"]  # De standaard PostgreSQL-poort
 )
+
+except:
+    db_connection = psycopg2.connect(
+        database=os.getenv("DB_NAME"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD"),
+        host=os.getenv("DB_HOST"),  # Of het IP-adres van je databasehost
+        port=os.getenv("DB_PORT")  # De standaard PostgreSQL-poort
+    )

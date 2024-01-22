@@ -24,11 +24,18 @@ spec:
         image: <IMAGE>
         ports:
         - containerPort: 80
-        resources:
-          requests:
-            cpu: 100m
-          limits:
-            cpu: 100m
+        env:
+          - name: DBUSER
+            value: "<DBUSERNAME>"
+          - name: DBPASSWORD
+            value: "<DBPASSWORD>"
+          - name: DBHOST
+            value: "<DBHOST>"
+          - name: DBPORT
+            value: "<DBPORT>"
+          - name: DBNAME
+            value: "<DBDATABASE>"
+
 ---
 apiVersion: v1
 kind: Service
