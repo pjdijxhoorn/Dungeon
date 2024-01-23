@@ -38,7 +38,7 @@ CREATE TABLE Training (
     FOREIGN KEY (player_id) REFERENCES player(player_id)
 );
 
-INSERT INTO "User" (username, name, average_score, training_score)
+INSERT INTO Player (username, name, average_score, training_score)
 VALUES
   ('user1', 'User One', 85, '{80, 90, 75, 85, 95}'),
   ('user2', 'User Two', 85, '{80, 90, 75, 85, 95}'),
@@ -46,19 +46,18 @@ VALUES
   ('user4', 'User Four', 85, '{80, 90, 75, 85, 95}'),
   ('user5', 'User Five', 85, '{80, 90, 75, 85, 95}');
 
-INSERT INTO Fitness_profile (user_id, bmi, bmr, weight, height, date_of_birth, max_HF, base_HF, reserve_HF)
+INSERT INTO Fitness_profile (player_id, bmi, bmr, weight, height, date_of_birth, max_HF, base_HF, reserve_HF)
 VALUES
   (1, 25.5, 1800, 70.5, 175, TO_DATE('15-01-1990', 'DD-MM-YYYY'), 180, 60, 120),
   (2, 22.0, 1600, 65.2, 170, TO_DATE('20-03-1985', 'DD-MM-YYYY'), 175, 58, 115),
   (3, 26.8, 1900, 75.0, 180, TO_DATE('10-07-1992', 'DD-MM-YYYY'), 185, 62, 125),
-  (4, 23.3, 1700, 68.7, 172, TO_DATE('05-05-1988', 'DD-MM-YYYY'), 178, 59, 118),
-  (5, 28.1, 2000, 80.3, 178, TO_DATE('28-11-1995', 'DD-MM-YYYY'), 190, 64, 130);
+  (4, 23.3, 1700, 68.7, 172, TO_DATE('05-05-1988', 'DD-MM-YYYY'), 178, 59, 118);
 
-INSERT INTO Training (training_name, distance_in_meters, time_in_seconds, average_speed, training_type, base_score, training_date, user_id)
+INSERT INTO Training (training_name, distance_in_meters, time_in_seconds, average_speed, training_type, base_score, training_date, player_id)
 VALUES
   ('Morning run', 5000, 1800, 10, 'Sprint', 75, TO_TIMESTAMP('16-01-2024 08:00:00', 'DD-MM-YYYY HH24:MI:SS'), 1),
   ('round the lake', 10000, 2400, 6.25, 'Endurance', 80, TO_TIMESTAMP('17-01-2024 15:30:00', 'DD-MM-YYYY HH24:MI:SS'), 2),
   ('romantic run towards SO', 8000, 1500, 15, 'Sprint', 90, TO_TIMESTAMP('18-01-2024 18:45:00', 'DD-MM-YYYY HH24:MI:SS'), 3),
   ('run after icecream-van', 100, 100, 1, 'Sprint', 85, TO_TIMESTAMP('19-01-2024 12:00:00', 'DD-MM-YYYY HH24:MI:SS'), 4),
-  ('ran from scary clown', 6000, 2700, 4.44, 'Sprint', 95, TO_TIMESTAMP('20-01-2024 10:00:00', 'DD-MM-YYYY HH24:MI:SS'), 5);
+  ('ran from scary clown', 6000, 2700, 4.44, 'Sprint', 95, TO_TIMESTAMP('20-01-2024 10:00:00', 'DD-MM-YYYY HH24:MI:SS'), 4);
 
