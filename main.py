@@ -8,7 +8,7 @@ app = FastAPI()
 
 app.include_router(player.router, prefix="/player")
 
-
+=======
 @app.on_event("startup")
 async def startup_event():
     print("this is the startup event!")
