@@ -64,9 +64,7 @@ jobs:
                 run: sed -i "s|<DBPORT>|$(doctl db conn $(doctl db list --format ID --no-header) --format Port --no-header)|" $GITHUB_WORKSPACE/config/deployment.yml
 
             -   name: Update deployment file Database db
-                run: |
-                    sed -i "s|<DBDATABASE>|$(doctl db conn $(doctl db list --format ID --no-header) --format Database --no-header)|" $GITHUB_WORKSPACE/config/deployment.yml
-                    cat $GITHUB_WORKSPACE/config/deployment.yml
+                run: sed -i "s|<DBDATABASE>|$(doctl db conn $(doctl db list --format ID --no-header) --format Database --no-header)|" $GITHUB_WORKSPACE/config/deployment.yml
 
             -   name: Save DigitalOcean kubeconfig with short-lived credentials
                 run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 dungeon-run-cluster
