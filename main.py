@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.routers import player
+from app.routers import player, profile, training
 from database import get_db
 from fastapi import Depends
 from app.models.player import Player
@@ -7,6 +7,8 @@ from app.models.player import Player
 app = FastAPI()
 
 app.include_router(player.router, prefix="/player")
+app.include_router(profile.router, prefix="/profile")
+app.include_router(training.router, prefix="/training")
 
 
 @app.on_event("startup")
