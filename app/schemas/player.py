@@ -4,7 +4,6 @@ from pydantic import BaseModel, ConfigDict
 
 class BasePlayer(BaseModel):
     username: str
-    name: str
 
 
 class Player(BasePlayer):
@@ -19,10 +18,16 @@ class Player(BasePlayer):
 class CreatePlayer(BasePlayer):
     model_config = ConfigDict(from_attributes=True)
     username: str
+    password: str
     name: str
 
 class UpdatePlayer(BasePlayer):
     model_config = ConfigDict(from_attributes=True)
     username: str
     name: str
+
+class Login(BasePlayer):
+    model_config = ConfigDict(from_attributes=True)
+    username: str
+    password: str
 
