@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 import app.services.player as services
-from app.schemas.player import CreatePlayer, Player, UpdatePlayer
+from app.schemas.player import CreatePlayer, Player, UpdatePlayer, Login
 from database import get_db
 
 router = APIRouter()
@@ -34,6 +34,11 @@ def delete_player(player_id: int, db=Depends(get_db)):
 @router.put("/{player_id}", status_code=200, tags=["Player"])
 def patch_player(player_id: int, player: UpdatePlayer, db=Depends(get_db)):
     return services.patch_player(player_id, player, db)
+
+@router.post("/login", status_code=200, tags=["Login"])
+def login(player_login: Login, db=Depends(get_db)):
+    return services.login(player_login, db)
+
 
 # todo put routes afmaken
 # todo voeg html codes door bv : 201
