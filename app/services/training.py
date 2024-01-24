@@ -40,7 +40,7 @@ def delete_training(training_id: int, db: Session):
         raise HTTPException(status_code=404, detail="Training not found")
     db.delete(training)
     db.commit()
-    return "player deleted"
+    return "Training deleted"
 
 
 def update_training(training_id: int, updateTraining, db: Session):

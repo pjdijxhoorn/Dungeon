@@ -14,7 +14,7 @@ def get_training(db=Depends(get_db)) -> list[Training]:
 
 
 @router.get("/{training_id}", status_code=200, tags=["Training"])
-def get_player(training_id: int, db=Depends(get_db)) -> Training:
+def get_training(training_id: int, db=Depends(get_db)) -> Training:
     return services.get_training(db, training_id)
 
 

@@ -35,7 +35,7 @@ def delete_player(player_id: int, db: Session):
 def patch_player(player_id: int, update_player, db: Session):
     player = db.query(Player).filter(Player.player_id == player_id).first()
     if player is None:
-        raise HTTPException(status_code=404, detail="Player not found")
+        raise HTTPException(status_code=404, detail="Player not found.")
 
     player_data = update_player.model_dump(exclude_unset=True)  # dit haalt alleen de ingevulde waarde op
     for key, value in player_data.items():

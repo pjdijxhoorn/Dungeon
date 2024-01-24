@@ -94,6 +94,7 @@ def calculate_age(date_of_birth):
     
     except ValueError:
         # Handle invalid date format
+        #raise HTTPException(status_code=404, detail="Profile not found")
         return "Invalid date format."
     
 

@@ -14,7 +14,6 @@ CREATE TABLE Fitness_profile (
     profile_id SERIAL PRIMARY KEY,
     player_id INT UNIQUE,
     bmi FLOAT,
-    bmr FLOAT,
     weight_in_kg FLOAT,
     height_in_m FLOAT,
     date_of_birth DATE,
