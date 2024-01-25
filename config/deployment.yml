@@ -23,7 +23,18 @@ spec:
       - name: dungeon-run
         image: <IMAGE>
         ports:
-        - containerPort: 5432
+        - containerPort: 80
+        env:
+          - name: DBUSER
+            value: "<DBUSERNAME>"
+          - name: DBPASSWORD
+            value: "<DBPASSWORD>"
+          - name: DBHOST
+            value: "<DBHOST>"
+          - name: DBPORT
+            value: "<DBPORT>"
+          - name: DBNAME
+            value: "<DBDATABASE>"
         resources:
           requests:
             cpu: 100m
@@ -42,4 +53,4 @@ spec:
       port: 80
       targetPort: 80
   selector:
-    app: python-example
+    app: dungeon-run
