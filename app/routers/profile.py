@@ -19,11 +19,6 @@ def get_profile(profile_id: int, db=Depends(get_db)) -> Profile:
         raise HTTPException(status_code=404, detail="profile not found")
     return profile
 
-#create profile
-@router.post("", status_code=201, tags=["Profile"])
-
-def create_profile(profile: CreateProfile, db=Depends(get_db)) -> Profile:
-    return services.create_profile(profile, db)
 
 @router.delete("/{profile_id}", status_code=200, tags=["Profile"])
 

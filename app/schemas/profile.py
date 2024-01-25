@@ -19,14 +19,6 @@ class Profile(BaseProfile):
     reserve_heart_frequency: int
 
 
-class CreateProfile(BaseProfile):
-    #model_config = ConfigDict #(from_attributes=True)
-    weight_in_kg: float
-    height_in_m: float
-    date_of_birth: date
-    rest_heart_frequency: int
-
-
 class UpdateProfile(BaseProfile):
     #model_config = ConfigDict #(from_attributes=True)
     weight_in_kg: float
