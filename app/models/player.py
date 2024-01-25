@@ -1,5 +1,5 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, ARRAY
+from sqlalchemy import Column, Integer, String, ARRAY, Float
 
 Base = declarative_base()
 
@@ -11,3 +11,4 @@ class Player(Base):
     name = Column(String)
     average_score = Column(Integer)
     training_score = Column(ARRAY(Integer))
+    fitness_multiplier = Column(Float)
