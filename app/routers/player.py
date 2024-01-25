@@ -1,4 +1,8 @@
+from typing import Annotated
+
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.testing.pickleable import User
+
 import app.services.player as services
 from app.schemas.player import CreatePlayer, Player, UpdatePlayer
 from database import get_db
@@ -34,6 +38,9 @@ def delete_player(player_id: int, db=Depends(get_db)):
 @router.put("/{player_id}", status_code=200, tags=["Player"])
 def patch_player(player_id: int, player: UpdatePlayer, db=Depends(get_db)):
     return services.patch_player(player_id, player, db)
+
+
+
 
 # todo put routes afmaken
 # todo voeg html codes door bv : 201
