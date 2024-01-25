@@ -35,16 +35,3 @@ def delete_player(player_id: int, db=Depends(get_db)):
 def patch_player(player_id: int, player: UpdatePlayer, db=Depends(get_db)):
     return services.patch_player(player_id, player, db)
 
-# todo put routes afmaken
-# todo voeg html codes door bv : 201
-# todo voeg beveiligingen toe try: else  voor communciatie met database
-# todo output wat return je qua schema?
-# todo goed kijken wat moet er binnen komen schema's
-# todo logica toevoegen aan services
-# todo relaties koppelen in models, schema's
-# todo nadenken over verschillende routes die nodig zijn
-# todo inloggen / rollen autorisatsie etc
-# todo grafieken maken met mathplotlib?
-# todo testen unit / intergratie
-# todo hoe gaan we de leaderbords maken? welke paden?
-# todo delete kan alleen als er geen andere entiteiten gebonden zijn
