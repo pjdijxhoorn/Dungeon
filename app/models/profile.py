@@ -13,5 +13,6 @@ class Profile(Base):
     max_heart_frequency = Column(Integer)  # hf stands for "Heart frequency"
     rest_heart_frequency = Column(Integer)
     reserve_heart_frequency = Column(Integer)
+    player_id = Column(Integer)
 
     

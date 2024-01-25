@@ -1,3 +1,4 @@
+from datetime import date
 from typing import List
 from pydantic import BaseModel, ConfigDict
 
@@ -20,14 +21,15 @@ class CreatePlayer(BasePlayer):
     username: str
     password: str
     name: str
+    weight_in_kg: float
+    height_in_m: float
+    date_of_birth: date
+    rest_heart_frequency: int
 
 class UpdatePlayer(BasePlayer):
     model_config = ConfigDict(from_attributes=True)
-    username: str
     name: str
 
-class Login(BasePlayer):
-    model_config = ConfigDict(from_attributes=True)
-    username: str
-    password: str
+class UserInDB(BasePlayer):
+    hashed_password: str
 
