@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 import app.services.profile as services
-from app.schemas.profile import CreateProfile, Profile, UpdateProfile
+from app.schemas.profile import Profile, UpdateProfile
 from database import get_db
 
 router = APIRouter()
