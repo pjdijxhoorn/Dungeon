@@ -3,7 +3,7 @@ DROP TABLE IF EXISTS Training, Fitness_profile, player;
 -- Create the player table
 CREATE TABLE player (
     player_id SERIAL PRIMARY KEY,
-    username VARCHAR(255),
+    username VARCHAR(255) UNIQUE,
     password VARCHAR(255),
     name VARCHAR(255),
     average_score INT,
