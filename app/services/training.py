@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.models.player import Player
 from app.models.training import Training
+from app.services.player import update_scores
 
 
 def get_trainings(db: Session):
@@ -29,10 +30,10 @@ def create_training(training, db: Session):
                            base_score=base_score,
                            training_date=datetime.now(),
                            player_id=training.player_id)
+    update_scores(training.player_id, db, base_score)
     db.add(db_Training)
     db.commit()
     db.refresh(db_Training)
-
 
     return db_Training
 

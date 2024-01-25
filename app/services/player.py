@@ -3,6 +3,8 @@ from datetime import date
 
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
+from sqlalchemy.orm.attributes import flag_modified
+
 from app.models.player import Player
 from app.models.profile import Profile
 from app.services.authentication import verify_password, get_password_hash
@@ -136,3 +138,20 @@ def calculate_fitness_multiplier(bmi, hart_reserve_frequency):
     it to prevent it from becoming negative"""
     fitness_multiplier = math.log10(bmi / hart_reserve_frequency) + 1
     return round(fitness_multiplier, 2)
+
+
+def update_scores(player_id, db, basescore):
+    player = db.query(Player).filter(Player.player_id == player_id).first()
+    if player is None:
+        raise HTTPException(status_code=404, detail="Player not found")
+
+    new_score = calculate_training_score(basescore, player.fitness_multiplier)
+
+    player.training_score.append(new_score)
+    flag_modified(player, "training_score")
+    new_average_score = calculate_personal_average(player.training_score)
+
+    player.average_score = new_average_score
+    db.add(player)
+    db.commit()
+    db.refresh(player)
