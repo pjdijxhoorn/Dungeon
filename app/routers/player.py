@@ -32,6 +32,6 @@ def delete_player(player_id: int, db=Depends(get_db)):
 
 
 @router.put("/{player_id}", status_code=200, tags=["Player"])
-def patch_player(player_id: int, player: UpdatePlayer, db=Depends(get_db)):
-    return services.patch_player(player_id, player, db)
+def update_player(player_id: int, player: UpdatePlayer, db=Depends(get_db)):
+    return services.update_player(player_id, player, db)
 

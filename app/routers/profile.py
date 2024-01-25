@@ -23,5 +23,5 @@ def create_profile(profile: CreateProfile, db=Depends(get_db)) -> Profile:
     return services.create_profile(profile, db)
 
 @router.put("/{profile_id}", status_code=200, tags=["Profile"])
-def patch_profile(profile_id: int, profile: UpdateProfile, db=Depends(get_db)):
-    return services.patch_profile(profile_id, profile, db)
+def update_profile(profile_id: int, profile: UpdateProfile, db=Depends(get_db)):
+    return services.update_profile(profile_id, profile, db)
