@@ -34,16 +34,7 @@ def create_profile(profile, db: Session):
     return db_Profile
 
 
-def delete_profile(profile_id: int, db: Session):
-    profile = db.query(Profile).filter(Profile.profile_id == profile_id).first()
-    if profile is None:
-        raise HTTPException(status_code=404, detail="Profile not found")
-    db.delete(profile)
-    db.commit()
-    return "profile deleted"
-
-
-def patch_profile(profile_id: int, update_profile, db: Session):
+def update_profile(profile_id: int, update_profile, db: Session):
     profile = db.query(Profile).filter(Profile.profile_id == profile_id).first()
     if profile is None:
         raise HTTPException(status_code=404, detail="Profile not found")
@@ -93,8 +84,6 @@ def calculate_age(date_of_birth):
         return age
     
     except ValueError:
-        # Handle invalid date format
-        #raise HTTPException(status_code=404, detail="Profile not found")
         return "Invalid date format."
     
 
