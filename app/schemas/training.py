@@ -21,6 +21,7 @@ class CreateTraining(BaseTraining):
     distance_in_meters: conint(ge=1)
     time_in_seconds: conint(ge=1)
     training_type: constr(min_length=1)
+    player_id: int
 
 
 class UpdateTraining(BaseTraining):

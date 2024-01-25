@@ -1,5 +1,5 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, Date, Float
+from sqlalchemy import Column, Integer, String, Date, Float, ForeignKey
 
 Base = declarative_base()
 
@@ -14,6 +14,7 @@ class Training(Base):
     training_type = Column(String)
     base_score = Column(Integer) 
     training_date = Column(Date)
+    player_id = Column(Integer)
 
 
 

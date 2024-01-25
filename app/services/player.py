@@ -1,8 +1,11 @@
+from datetime import date
+
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from app.models.player import Player
 from app.models.profile import Profile
 from app.models.training import Training
+from app.services.authentication import verify_password, get_password_hash
 
 
 def get_players(db: Session):
@@ -14,14 +17,35 @@ def get_player(db: Session, player_id: int):
     return player
 
 
-def create_player(player, db: Session):
+def create_player(player, db):
     db_Player = Player(username=player.username,
+                       password=get_password_hash(player.password),
                        name=player.name,
                        average_score=0,
-                       training_score=[0])
+                       training_score=[])
     db.add(db_Player)
     db.commit()
     db.refresh(db_Player)
+
+    bmi = bmi_calculation(player.height_in_m, player.weight_in_kg)
+    age = calculate_age(player.date_of_birth)
+    max_heart_frequency = max_heart_frequency_calculation(age)
+    reserve_heart_frequency = reserve_heart_frequency_calculation(max_heart_frequency, player.rest_heart_frequency)
+    db_Profile = Profile(
+        bmi=bmi,
+        weight_in_kg=player.weight_in_kg,
+        height_in_m=player.height_in_m,
+        date_of_birth=player.date_of_birth,
+        max_heart_frequency=max_heart_frequency,
+        rest_heart_frequency=player.rest_heart_frequency,
+        reserve_heart_frequency=reserve_heart_frequency,
+        player_id = db_Player.player_id
+    )
+
+    db.add(db_Profile)
+    db.commit()
+    db.refresh(db_Profile)
+
     return db_Player
 
 
@@ -52,3 +76,42 @@ def update_player(player_id: int, update_player, db: Session):
     db.commit()
     db.refresh(player)
     return player
+
+
+def bmi_calculation(height_in_m, weight_in_kg):
+    """calculate the bmi by dividing the weight with the lengt sqaured"""
+    bmi = weight_in_kg / (
+                height_in_m ** 2)  # Momenteel alleen voor mannen, gezien BMI berekening voor vrouwen anders is, dit willen we in de toekomst ook zeker nog implemeteren maar voor nu hebben we gekozen om het simpeler te houden
+    return round(bmi, 2)
+
+
+def max_heart_frequency_calculation(age):
+    """calculate the max heart frequency by substracting the 220 by the age of a person"""
+    max_heart_frequency = 220 - age
+    return max_heart_frequency
+
+
+def reserve_heart_frequency_calculation(max_heart_frequency, rest_heart_frequency):
+    """calculate the reserve heart frequency bu substracting the rest heart freqeuncy of the max heart frequency"""
+    reserve_heart_frequency = max_heart_frequency - rest_heart_frequency
+    return reserve_heart_frequency
+
+
+def calculate_age(date_of_birth):
+    try:
+        # Convert the input string to a datetime object
+        date_of_birth_split = date_of_birth
+        # Get the current date
+        current_date = date.today()
+        # Calculate the age
+        age = current_date.year - date_of_birth_split.year - (
+                    (current_date.month, current_date.day) < (date_of_birth_split.month, date_of_birth_split.day))
+        return age
+
+    except ValueError:
+        # Handle invalid date format
+        return "Invalid date format."
+
+
+
+
