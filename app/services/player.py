@@ -25,6 +25,12 @@ def get_player_training_scores(db: Session, player_id: int):
         raise HTTPException(status_code=404, detail="Player not found")
     return player.training_score
 
+def get_player_average_score(db: Session, player_id: int):
+    player = db.query(Player).filter(Player.player_id == player_id).first()
+    if player is None:
+        raise HTTPException(status_code=404, detail="Player not found")
+    return player.average_score
+
 def create_player(player, db):
     bmi = bmi_calculation(player.height_in_m, player.weight_in_kg)
     age = calculate_age(player.date_of_birth)
@@ -86,7 +92,6 @@ def update_player(player_id: int, update_player, db: Session):
     db.commit()
     db.refresh(player)
     return player
-
 
 def bmi_calculation(height_in_m, weight_in_kg):
     """calculate the bmi by dividing the weight with the lengt sqaured"""
