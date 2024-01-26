@@ -4,6 +4,7 @@ from datetime import date
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.attributes import flag_modified
+from sqlalchemy import desc
 
 from app.models.player import Player
 from app.models.profile import Profile
@@ -14,6 +15,9 @@ from app.services.authentication import verify_password, get_password_hash
 def get_players(db: Session):
     return db.query(Player).all()
 
+def get_leaderboard(db: Session):
+    players = db.query(Player.username, Player.average_score).order_by(desc(Player.average_score)).all()
+    return [{"username": username, "average_score": average_score} for username, average_score in players]
 
 def get_player(db: Session, player_id: int):
     player = db.query(Player).filter(Player.player_id == player_id).first()

@@ -15,6 +15,12 @@ def get_players(db=Depends(get_db)) -> list[Player]:
     players = services.get_players(db)
     return players
 
+@router.get("/leaderboard", status_code=200, tags=["Player"])
+def get_leaderboard(db=Depends(get_db)) -> List[dict]:
+    leaderboard = services.get_leaderboard(db)
+    if not leaderboard:
+        raise HTTPException(status_code=404, detail="No players found")
+    return leaderboard
 
 @router.get("/{player_id}", status_code=200,  tags=["Player"])
 def get_player(player_id: int, db=Depends(get_db)) -> Player:
