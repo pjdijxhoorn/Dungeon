@@ -1,8 +1,11 @@
+import math
+
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from app.models.profile import Profile
-from app.schemas.profile import UpdateProfile
 from datetime import date
+
+from app.services.player import update_fitness_multiplier
 
 
 def get_profiles(db: Session):
@@ -19,14 +22,14 @@ def update_profile(profile_id: int, update_profile, db: Session):
     if profile is None:
         raise HTTPException(status_code=404, detail="Profile not found")
 
-    # Assuming `update_profile` is an instance of UpdateProfile
     bmi = bmi_calculation(update_profile.height_in_m, update_profile.weight_in_kg)
     age = calculate_age(profile.date_of_birth)
     max_heart_frequency = max_heart_frequency_calculation(age)
     reserve_heart_frequency = reserve_heart_frequency_calculation(max_heart_frequency,
                                                                   update_profile.rest_heart_frequency)
+    fitness_multiplier = calculate_fitness_multiplier(bmi, reserve_heart_frequency)
+    update_fitness_multiplier(profile_id, db, fitness_multiplier)
 
-    # Update the existing profile instead of creating a new one
     profile.bmi = bmi
     profile.weight_in_kg = update_profile.weight_in_kg
     profile.height_in_m = update_profile.height_in_m
@@ -36,6 +39,8 @@ def update_profile(profile_id: int, update_profile, db: Session):
 
     db.commit()
     db.refresh(profile)
+
+
     return profile
 
 
@@ -71,3 +76,11 @@ def calculate_age(date_of_birth):
 
     except ValueError:
         return "Invalid date format."
+
+def calculate_fitness_multiplier(bmi, hart_reserve_frequency):
+    """calculate the fitness multiplier by logging the bmi divided by the hart_reserve_frequency  and adding one to
+    it to prevent it from becoming negative"""
+    fitness_multiplier = math.log10(bmi / hart_reserve_frequency) + 1
+    return round(fitness_multiplier, 2)
+
+
