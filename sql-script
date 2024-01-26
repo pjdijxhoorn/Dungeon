@@ -42,9 +42,9 @@ CREATE TABLE Training (
 INSERT INTO Player (username, password, name, average_score, training_score, fitness_multiplier)
 VALUES
   ('user1', '$2a$12$vMbCRTOZcCscO4iA9EbnWeLnYrfEYtM0fr9BopK/QFB/53Ub60/42', 'User One', 425, '{80, 90, 75, 85, 95}', 0.33),
-  ('user2', '$2a$12$cuv50PlaZY8gpwa.NgKQCemAkQCeSbKA7GWrjS2Imp7lE4Hd1AZ7W', 'User Two', 425, '{80, 90, 75, 85, 95}', 0.28),
-  ('user3', '$2a$12$EArutIUyZoG/yFxuM2bh1.BumQP3NLIIvAnKxcKh/Y/OX39MDlQ4S', 'User Three', 425, '{80, 90, 75, 85, 95}', 0.33),
-  ('user4', '$2a$12$1b1hXeBeAL5rNsDeDdFsUu8VLdcA/ZE9IBEUug9b6kmn8t28alPFG', 'User Four', 425, '{80, 90, 75, 85, 95}', 0.30);
+  ('user2', '$2a$12$cuv50PlaZY8gpwa.NgKQCemAkQCeSbKA7GWrjS2Imp7lE4Hd1AZ7W', 'User Two', 429, '{80, 90, 75, 85, 95}', 0.28),
+  ('user3', '$2a$12$EArutIUyZoG/yFxuM2bh1.BumQP3NLIIvAnKxcKh/Y/OX39MDlQ4S', 'User Three', 427, '{80, 90, 75, 85, 95}', 0.33),
+  ('user4', '$2a$12$1b1hXeBeAL5rNsDeDdFsUu8VLdcA/ZE9IBEUug9b6kmn8t28alPFG', 'User Four', 421, '{80, 90, 75, 85, 95}', 0.30);
 
 INSERT INTO Fitness_profile (player_id, bmi, weight_in_kg, height_in_m, date_of_birth, max_heart_frequency, rest_heart_frequency, reserve_heart_frequency)
 VALUES
