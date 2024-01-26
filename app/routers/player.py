@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, List
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.testing.pickleable import User
@@ -20,9 +20,15 @@ def get_players(db=Depends(get_db)) -> list[Player]:
 def get_player(player_id: int, db=Depends(get_db)) -> Player:
     player = services.get_player(db, player_id)
     if player is None:
-        raise HTTPException(status_code=404, detail="player not found")
+        raise HTTPException(status_code=404, detail="Player not found")
     return player
 
+@router.get("/{player_id}/training-scores", status_code=200, tags=["Player"])
+def read_player_training_scores(player_id: int, db=Depends(get_db)) -> List[int]:
+    training_scores = services.get_player_training_scores(db, player_id)
+    if training_scores is None:
+        raise HTTPException(status_code=404, detail="No training scores available")
+    return training_scores
 
 @router.post("", status_code=201, tags=["Player"])
 def create_player(player: CreatePlayer, db=Depends(get_db)) -> Player:

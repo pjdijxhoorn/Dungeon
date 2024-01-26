@@ -19,6 +19,11 @@ def get_player(db: Session, player_id: int):
     player = db.query(Player).filter(Player.player_id == player_id).first()
     return player
 
+def get_player_training_scores(db: Session, player_id: int):
+    player = db.query(Player).filter(Player.player_id == player_id).first()
+    if player is None:
+        raise HTTPException(status_code=404, detail="Player not found")
+    return player.training_score
 
 def create_player(player, db):
     bmi = bmi_calculation(player.height_in_m, player.weight_in_kg)
