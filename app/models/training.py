@@ -6,6 +6,7 @@ Base = declarative_base()
 class Training(Base):
     __tablename__ = "training"
     training_id = Column(Integer, primary_key=True)
+    player_id = Column(Integer)
     training_name = Column(String, default="endurance")
     distance_in_meters = Column(Integer)
     time_in_seconds = Column(Integer)
@@ -14,6 +15,7 @@ class Training(Base):
     base_score = Column(Integer) 
     training_date = Column(Date)
     player_id = Column(Integer)
+
 
 
     

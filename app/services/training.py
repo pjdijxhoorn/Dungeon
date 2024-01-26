@@ -38,15 +38,6 @@ def create_training(training, db: Session):
     return db_Training
 
 
-def delete_training(training_id: int, db: Session):
-    training = db.query(Training).filter(Training.training_id == training_id).first()
-    if training is None:
-        raise HTTPException(status_code=404, detail="Training not found")
-    db.delete(training)
-    db.commit()
-    return "player deleted"
-
-
 def update_training(training_id: int, updateTraining, db: Session):
     training = db.query(Training).filter(Training.training_id == training_id).first()
     if training is None:
