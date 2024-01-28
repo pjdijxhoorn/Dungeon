@@ -1,9 +1,6 @@
 from datetime import datetime
-
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
-
-from app.models.player import Player
 from app.models.training import Training
 from app.services.player import update_scores
 

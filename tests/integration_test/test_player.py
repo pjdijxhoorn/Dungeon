@@ -236,10 +236,11 @@ def test_update_fitness_multiplier():
     player = db.query(Player).filter(Player.player_id == player_id).first()
     assert player.fitness_multiplier == fitness_multiplier
 
+
 def test_update_scores():
     db: Session = next(get_db())
     player_id = 3
     basescore = 1000
-    update_scores(player_id,db,basescore)
+    update_scores(player_id, db, basescore)
     player = player = db.query(Player).filter(Player.player_id == player_id).first()
     assert player.average_score == 378
