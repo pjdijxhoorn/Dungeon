@@ -6,6 +6,8 @@ from app.models.profile import Profile
 from datetime import date
 
 from app.services.player import update_fitness_multiplier
+from app.utilities.common_functions import calculate_fitness_multiplier, bmi_calculation, calculate_age, \
+    max_heart_frequency_calculation, reserve_heart_frequency_calculation
 
 
 def get_profiles(db: Session):
@@ -14,6 +16,8 @@ def get_profiles(db: Session):
 
 def get_profile(db: Session, profile_id: int):
     profile = db.query(Profile).filter(Profile.profile_id == profile_id).first()
+    if profile is None:
+        raise HTTPException(status_code=404, detail="profile not found")
     return profile
 
 
@@ -39,48 +43,14 @@ def update_profile(profile_id: int, update_profile, db: Session):
 
     db.commit()
     db.refresh(profile)
-
-
     return profile
 
 
-def bmi_calculation(height_in_m, weight_in_kg):
-    """calculate the bmi by dividing the weight with the lengt sqaured"""
-    bmi = weight_in_kg / (
-                height_in_m ** 2)  # Momenteel alleen voor mannen, gezien BMI berekening voor vrouwen anders is, dit willen we in de toekomst ook zeker nog implemeteren maar voor nu hebben we gekozen om het simpeler te houden
-    return round(bmi, 2)
 
 
-def max_heart_frequency_calculation(age):
-    """calculate the max heart frequency by substracting the 220 by the age of a person"""
-    max_heart_frequency = 220 - age
-    return max_heart_frequency
 
 
-def reserve_heart_frequency_calculation(max_heart_frequency, rest_heart_frequency):
-    """calculate the reserve heart frequency bu substracting the rest heart freqeuncy of the max heart frequency"""
-    reserve_heart_frequency = max_heart_frequency - rest_heart_frequency
-    return reserve_heart_frequency
 
 
-def calculate_age(date_of_birth):
-    try:
-        # Convert the input string to a datetime object
-        date_of_birth_split = date_of_birth
-        # Get the current date
-        current_date = date.today()
-        # Calculate the age
-        age = current_date.year - date_of_birth_split.year - (
-                    (current_date.month, current_date.day) < (date_of_birth_split.month, date_of_birth_split.day))
-        return age
-
-    except ValueError:
-        return "Invalid date format."
-
-def calculate_fitness_multiplier(bmi, hart_reserve_frequency):
-    """calculate the fitness multiplier by logging the bmi divided by the hart_reserve_frequency  and adding one to
-    it to prevent it from becoming negative"""
-    fitness_multiplier = math.log10(bmi / hart_reserve_frequency) + 1
-    return round(fitness_multiplier, 2)
 
 
