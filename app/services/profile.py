@@ -25,7 +25,6 @@ def update_profile(profile_id: int, update_profile, db: Session):
     profile = db.query(Profile).filter(Profile.profile_id == profile_id).first()
     if profile is None:
         raise HTTPException(status_code=404, detail="Profile not found")
-
     bmi = bmi_calculation(update_profile.height_in_m, update_profile.weight_in_kg)
     age = calculate_age(profile.date_of_birth)
     max_heart_frequency = max_heart_frequency_calculation(age)
@@ -44,13 +43,3 @@ def update_profile(profile_id: int, update_profile, db: Session):
     db.commit()
     db.refresh(profile)
     return profile
-
-
-
-
-
-
-
-
-
-

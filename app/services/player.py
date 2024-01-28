@@ -38,8 +38,6 @@ def get_player_training_scores(db: Session, player_id: int):
     if player is None:
         raise HTTPException(status_code=404, detail="Player not found")
     player_score = player.training_score
-    if player_score is None:
-        raise HTTPException(status_code=404, detail="No training scores available")
     return player_score
 
 
@@ -48,8 +46,6 @@ def get_player_average_score(db: Session, player_id: int):
     if player is None:
         raise HTTPException(status_code=404, detail="Player not found")
     average_score = player.average_score
-    if average_score is None:
-        raise HTTPException(status_code=404, detail="No average score available")
     return average_score
 
 
@@ -137,9 +133,6 @@ def calculate_personal_average(training_score_list):
 
 def update_scores(player_id, db, basescore):
     player = db.query(Player).filter(Player.player_id == player_id).first()
-    if player is None:
-        raise HTTPException(status_code=404, detail="Player not found")
-
     new_score = calculate_training_score(basescore, player.fitness_multiplier)
 
     player.training_score.append(new_score)
