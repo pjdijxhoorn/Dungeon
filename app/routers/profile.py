@@ -6,17 +6,14 @@ from database import get_db
 router = APIRouter()
 
 
-@router.get("",status_code=200, tags=["Profile"])
+@router.get("", status_code=200, tags=["Profile"])
 def get_profiles(db=Depends(get_db)) -> list[Profile]:
-    profiles = services.get_profiles(db)
-    return profiles
+    return services.get_profiles(db)
 
-@router.get("/{profile_id}", status_code=200,  tags=["Profile"])
+
+@router.get("/{profile_id}", status_code=200, tags=["Profile"])
 def get_profile(profile_id: int, db=Depends(get_db)) -> Profile:
-    profile = services.get_profile(db, profile_id)
-    if profile is None:
-        raise HTTPException(status_code=404, detail="profile not found")
-    return profile
+    return services.get_profile(db, profile_id)
 
 
 @router.put("/{profile_id}", status_code=200, tags=["Profile"])
