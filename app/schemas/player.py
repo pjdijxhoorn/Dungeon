@@ -4,7 +4,7 @@ from pydantic import BaseModel, ConfigDict
 
 
 class BasePlayer(BaseModel):
-    username: str
+    name: str
 
 
 class Player(BasePlayer):
