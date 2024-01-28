@@ -64,6 +64,13 @@ def test_get_profile():
       "reserve_heart_frequency": 115
     }
 
+def test_get_profile_not_found():
+  response = client.get("/profile/9999")
+  assert response.status_code == 404
+  assert response.json() == {
+        "detail": "profile not found"
+    }
+
 def test_update_profile():
   profile_data = {
   "weight_in_kg": 80.3,
@@ -83,3 +90,15 @@ def test_update_profile():
   "max_heart_frequency": 189,
   "reserve_heart_frequency": 139
 }
+
+def test_update_profile_not_found():
+  profile_data = {
+  "weight_in_kg": 80.3,
+  "height_in_m": 1.83,
+  "rest_heart_frequency": 50
+}
+  response = client.put("/profile/999", json=profile_data)
+  assert response.status_code == 404
+  assert response.json() == {
+        "detail": "Profile not found"
+    }

@@ -108,6 +108,12 @@ def test_get_player():
         ]
     }
 
+def test_get_player_not_found():
+    response = client.get("/player/999")
+    assert response.status_code == 404
+    assert response.json() == {
+        "detail": "Player not found"
+    }
 
 def test_get_player_training_scores():
     response = client.get("/player/1/training-scores")
@@ -121,7 +127,7 @@ def test_get_player_training_scores():
     ]
 
 
-def test_get_player_training_scores_not_found():
+def test_get_player_training_scores_player_not_found():
     response = client.get("/player/999/training-scores")
     assert response.status_code == 404
     assert response.json() == {
@@ -216,6 +222,13 @@ def test_update_player():
     }
 
 
+def test_update_player_not_found():
+    player_data = {"name": "string"}
+    response = client.put("/player/999", json=player_data)
+    assert response.status_code == 404
+    assert response.json() == {'detail': "Player not found."}
+
+
 def test_delete_player():
     response = client.delete("/player/1")
     assert response.status_code == 200
@@ -223,7 +236,7 @@ def test_delete_player():
 
 
 def test_delete_player_not_found():
-    response = client.get("/player/999")
+    response = client.delete("/player/999")
     assert response.status_code == 404
     assert response.json() == {"detail": "Player not found"}
 
@@ -242,5 +255,13 @@ def test_update_scores():
     player_id = 3
     basescore = 1000
     update_scores(player_id, db, basescore)
-    player = player = db.query(Player).filter(Player.player_id == player_id).first()
+    player = db.query(Player).filter(Player.player_id == player_id).first()
     assert player.average_score == 378
+
+def test_update_scores_not_found():
+        player_id = 999
+        basescore = 1000
+        response = client.post(f"/update_scores/{player_id}", json={"basescore": basescore})
+        print(response.json())
+        assert response.status_code == 404
+        assert response.json() == {'detail': 'Not Found'}
