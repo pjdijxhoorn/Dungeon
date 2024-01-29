@@ -11,7 +11,7 @@ class Profile(Base):
     weight_in_kg = Column(Float)
     height_in_m = Column(Float)
     date_of_birth = Column(DateTime)
-    max_heart_frequency = Column(Integer)  # hf stands for "Heart frequency"
+    max_heart_frequency = Column(Integer) 
     rest_heart_frequency = Column(Integer)
     reserve_heart_frequency = Column(Integer)
     
