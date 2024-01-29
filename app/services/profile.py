@@ -43,3 +43,4 @@ def update_profile(profile_id: int, update_profile, db: Session):
     db.commit()
     db.refresh(profile)
     return profile
+

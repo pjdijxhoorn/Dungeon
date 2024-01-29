@@ -49,14 +49,12 @@ def update_training(training_id: int, updateTraining, db: Session):
 
 
 def calculate_average_speed(distance_in_meters, time_in_seconds):
-    """calculate average speed by dividing distance by the time it took to achieve the given distance"""
     average_speed_in_ms = distance_in_meters / time_in_seconds
     kilometer_per_hour = average_speed_in_ms ** 3.6
     return int(kilometer_per_hour)
 
 
 def calculate_base_score(distance_in_meters, kilometer_per_hour):
-    """calculate the base score based on the average speed and the training type with the distance in mind"""
     training_type = 10  # Is een trainings type nodig? op basis van het doel van de app
     base_score = distance_in_meters * kilometer_per_hour // training_type
     return base_score

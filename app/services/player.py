@@ -108,7 +108,6 @@ def update_player(player_id: int, update_player, db: Session):
     db.refresh(player)
     return player
 
-
 def update_fitness_multiplier(player_id, db, fitness_multiplier):
     player = db.query(Player).filter(Player.player_id == player_id).first()
     if player is None:
@@ -119,14 +118,11 @@ def update_fitness_multiplier(player_id, db, fitness_multiplier):
 
 
 def calculate_training_score(base_score, fitness_multiplier):
-    """calculate the training score by multiplying the base score with the fitness multiplier and dividing it by 10
-    to get it in the desired range"""
     training_score = (base_score * fitness_multiplier) / 10
     return int(training_score)
 
 
 def calculate_personal_average(training_score_list):
-    """ calculates an average score of the last 5 training-sessions"""
     average_score = sum(training_score_list[-5:])
     return average_score
 
