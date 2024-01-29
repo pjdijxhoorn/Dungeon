@@ -10,30 +10,44 @@ from app.models.player import Player
 from app.models.profile import Profile
 from app.models.training import Training
 from app.services.authentication import verify_password, get_password_hash
+from app.utilities.common_functions import bmi_calculation, calculate_fitness_multiplier, calculate_age, \
+    max_heart_frequency_calculation, reserve_heart_frequency_calculation
 
 
 def get_players(db: Session):
     return db.query(Player).all()
 
+
 def get_leaderboard(db: Session):
     players = db.query(Player.username, Player.average_score).order_by(desc(Player.average_score)).all()
-    return [{"username": username, "average_score": average_score} for username, average_score in players]
+    leaderboard = [{"username": username, "average_score": average_score} for username, average_score in players]
+    if not leaderboard:
+        raise HTTPException(status_code=404, detail="No players found")
+    return leaderboard
+
 
 def get_player(db: Session, player_id: int):
     player = db.query(Player).filter(Player.player_id == player_id).first()
+    if player is None:
+        raise HTTPException(status_code=404, detail="Player not found")
     return player
+
 
 def get_player_training_scores(db: Session, player_id: int):
     player = db.query(Player).filter(Player.player_id == player_id).first()
     if player is None:
         raise HTTPException(status_code=404, detail="Player not found")
-    return player.training_score
+    player_score = player.training_score
+    return player_score
+
 
 def get_player_average_score(db: Session, player_id: int):
     player = db.query(Player).filter(Player.player_id == player_id).first()
     if player is None:
         raise HTTPException(status_code=404, detail="Player not found")
-    return player.average_score
+    average_score = player.average_score
+    return average_score
+
 
 def create_player(player, db):
     bmi = bmi_calculation(player.height_in_m, player.weight_in_kg)
@@ -70,7 +84,6 @@ def create_player(player, db):
 
 
 def delete_player(player_id: int, db: Session):
-
     db.query(Profile).filter(Profile.player_id == player_id).delete()
 
     db.query(Training).filter(Training.player_id == player_id).delete()
@@ -78,7 +91,6 @@ def delete_player(player_id: int, db: Session):
     player = db.query(Player).filter(Player.player_id == player_id).first()
     if player is None:
         raise HTTPException(status_code=404, detail="Player not found")
-    
     db.delete(player)
     db.commit()
     return "Player, profile, and training deleted"
@@ -88,42 +100,13 @@ def update_player(player_id: int, update_player, db: Session):
     player = db.query(Player).filter(Player.player_id == player_id).first()
     if player is None:
         raise HTTPException(status_code=404, detail="Player not found.")
-
-    player_data = update_player.model_dump(exclude_unset=True) 
+    player_data = update_player.model_dump(exclude_unset=True)
     for key, value in player_data.items():
         setattr(player, key, value)
     db.add(player)
     db.commit()
     db.refresh(player)
     return player
-
-def bmi_calculation(height_in_m, weight_in_kg):
-    bmi = weight_in_kg / (
-            height_in_m ** 2)  
-    return round(bmi, 2)
-
-
-def max_heart_frequency_calculation(age):
-    max_heart_frequency = 220 - age
-    return max_heart_frequency
-
-
-def reserve_heart_frequency_calculation(max_heart_frequency, rest_heart_frequency):
-    reserve_heart_frequency = max_heart_frequency - rest_heart_frequency
-    return reserve_heart_frequency
-
-
-def calculate_age(date_of_birth):
-    try:
-        date_of_birth_split = date_of_birth
-        current_date = date.today()
-        age = current_date.year - date_of_birth_split.year - (
-                (current_date.month, current_date.day) < (date_of_birth_split.month, date_of_birth_split.day))
-        return age
-
-    except ValueError:
-        return "Invalid date format."
-
 
 def update_fitness_multiplier(player_id, db, fitness_multiplier):
     player = db.query(Player).filter(Player.player_id == player_id).first()
@@ -144,16 +127,8 @@ def calculate_personal_average(training_score_list):
     return average_score
 
 
-def calculate_fitness_multiplier(bmi, hart_reserve_frequency):
-    fitness_multiplier = math.log10(bmi / hart_reserve_frequency) + 1
-    return round(fitness_multiplier, 2)
-
-
 def update_scores(player_id, db, basescore):
     player = db.query(Player).filter(Player.player_id == player_id).first()
-    if player is None:
-        raise HTTPException(status_code=404, detail="Player not found")
-
     new_score = calculate_training_score(basescore, player.fitness_multiplier)
 
     player.training_score.append(new_score)

@@ -1,9 +1,6 @@
 from datetime import datetime
-
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
-
-from app.models.player import Player
 from app.models.training import Training
 from app.services.player import update_scores
 
@@ -42,7 +39,6 @@ def update_training(training_id: int, updateTraining, db: Session):
     training = db.query(Training).filter(Training.training_id == training_id).first()
     if training is None:
         raise HTTPException(status_code=404, detail="training not found")
-
     training_data = updateTraining.model_dump(exclude_unset=True)  # dit haalt alleen de ingevulde waarde op
     for key, value in training_data.items():
         setattr(training, key, value)

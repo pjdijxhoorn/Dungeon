@@ -1,10 +1,10 @@
 from datetime import date
-from typing import List
+from typing import List, Optional
 from pydantic import BaseModel, ConfigDict
 
 
 class BasePlayer(BaseModel):
-    username: str
+    name: str
 
 
 class Player(BasePlayer):
@@ -31,5 +31,10 @@ class UpdatePlayer(BasePlayer):
     name: str
 
 class UserInDB(BasePlayer):
+    username: str
     hashed_password: str
+    name: Optional[str] = None  # Make the name field optional
+
+
+
 

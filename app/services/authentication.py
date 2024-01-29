@@ -20,23 +20,11 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
-# async def login(player_login, db):
-#     player = db.query(Player).filter(Player.username == player_login.username).first()
-#     if player is None:
-#         raise HTTPException(status_code=404, detail="Incorrect username and/ or  password")
-#     if not verify_password(player_login.password, player.password):
-#         raise HTTPException(status_code=404, detail="Incorrect username and/ or  password")
-#
-#
-#     # todo make jwt token
-#     # todo add checks to all routes for own entities and login
-#
-#     return f"welcome {player.username}"
 
+# todo add checks to all routes for own entities and login
 
 def login(form_data, db: Session) -> Token:
     user = authenticate_user(db, form_data.username, form_data.password)
-    print(user)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
