@@ -1,3 +1,5 @@
+import datetime
+
 from fastapi.testclient import TestClient
 from main import app
 
@@ -81,7 +83,7 @@ def test_create_training():
         "average_speed": 0,
         "training_type": "string",
         "base_score": 0,
-        "training_date": "2024-01-28"
+        "training_date": str(datetime.date.today())
     }
 
 
