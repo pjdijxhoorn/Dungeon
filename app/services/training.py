@@ -6,20 +6,26 @@ from app.services.player import update_scores
 
 
 def get_trainings(db: Session):
+    """ Get all training records from the database. """
     return db.query(Training).all()
 
 
 def get_training(db: Session, training_id: int):
-    training = db.query(Training).filter(Training.training_id == training_id).first()
+    """ Get a specific training from the database by using a training ID. """
+    training = db.query(Training).filter(
+        Training.training_id == training_id).first()
     if training is None:
         raise HTTPException(status_code=404, detail="training not found")
     return training
 
 
 def create_training(training, db: Session):
-    average_speed = calculate_average_speed(training.distance_in_meters, training.time_in_seconds)
-    base_score = calculate_base_score(training.distance_in_meters, average_speed)
-    db_Training = Training(training_name=training.training_name,
+    """ Create a new training record, calculate scores, and add it to the database. """
+    average_speed = calculate_average_speed(
+        training.distance_in_meters, training.time_in_seconds)
+    base_score = calculate_base_score(
+        training.distance_in_meters, average_speed)
+    db_training = Training(training_name=training.training_name,
                            distance_in_meters=training.distance_in_meters,
                            time_in_seconds=training.time_in_seconds,
                            average_speed=average_speed,
@@ -28,18 +34,21 @@ def create_training(training, db: Session):
                            training_date=datetime.now(),
                            player_id=training.player_id)
     update_scores(training.player_id, db, base_score)
-    db.add(db_Training)
+    db.add(db_training)
     db.commit()
-    db.refresh(db_Training)
+    db.refresh(db_training)
 
-    return db_Training
+    return db_training
 
 
-def update_training(training_id: int, updateTraining, db: Session):
-    training = db.query(Training).filter(Training.training_id == training_id).first()
+def update_training(training_id: int, updatetraining, db: Session):
+    """ Update a specific training record based on its ID in the database. """
+    training = db.query(Training).filter(
+        Training.training_id == training_id).first()
     if training is None:
         raise HTTPException(status_code=404, detail="training not found")
-    training_data = updateTraining.model_dump(exclude_unset=True)  # dit haalt alleen de ingevulde waarde op
+    # dit haalt alleen de ingevulde waarde op
+    training_data = updatetraining.model_dump(exclude_unset=True)
     for key, value in training_data.items():
         setattr(training, key, value)
     db.add(training)
@@ -49,12 +58,14 @@ def update_training(training_id: int, updateTraining, db: Session):
 
 
 def calculate_average_speed(distance_in_meters, time_in_seconds):
+    """ Calculate the average speed in kilometers per hour. """
     average_speed_in_ms = distance_in_meters / time_in_seconds
     kilometer_per_hour = average_speed_in_ms ** 3.6
     return int(kilometer_per_hour)
 
 
 def calculate_base_score(distance_in_meters, kilometer_per_hour):
-    training_type = 10  # Is een trainings type nodig? op basis van het doel van de app
+    """ Calculate the base score for a training. """
+    training_type = 10
     base_score = distance_in_meters * kilometer_per_hour // training_type
     return base_score

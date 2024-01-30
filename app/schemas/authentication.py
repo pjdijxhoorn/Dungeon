@@ -1,12 +1,12 @@
-#from pydantic import BaseModel
+# from pydantic import BaseModel
 #
-#class Token(BaseModel):
+# class Token(BaseModel):
 #    access_token: str
 #    token_type: str
 #
-#class TokenData(BaseModel):
+# class TokenData(BaseModel):
 #    username: str | None = None
 #
-#class Login(BaseModel):
+# class Login(BaseModel):
 #    username: str
 #    password: str

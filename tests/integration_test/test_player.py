@@ -10,6 +10,7 @@ client = TestClient(app)
 
 
 def test_get_players():
+    """ Test the endpoint for retrieving player information. """
     response = client.get("/player")
     assert response.status_code == 200
     assert response.json() == [
@@ -69,6 +70,7 @@ def test_get_players():
 
 
 def test_get_leaderboard():
+    """ Test the endpoint for retrieving the player leaderboard. """
     response = client.get("/player/leaderboard")
     assert response.status_code == 200
     assert response.json() == [
@@ -92,6 +94,7 @@ def test_get_leaderboard():
 
 
 def test_get_player():
+    """ Test the endpoint for retrieving individual player details. """
     response = client.get("/player/1")
     assert response.status_code == 200
     assert response.json() == {
@@ -108,14 +111,18 @@ def test_get_player():
         ]
     }
 
+
 def test_get_player_not_found():
+    """ Test the endpoint for retrieving a non-existent player. """
     response = client.get("/player/999")
     assert response.status_code == 404
     assert response.json() == {
         "detail": "Player not found"
     }
 
+
 def test_get_player_training_scores():
+    """ Test the endpoint for retrieving player training scores. """
     response = client.get("/player/1/training-scores")
     assert response.status_code == 200
     assert response.json() == [
@@ -128,6 +135,7 @@ def test_get_player_training_scores():
 
 
 def test_get_player_training_scores_player_not_found():
+    """ Test the endpoint for retrieving training scores of a non-existent player. """
     response = client.get("/player/999/training-scores")
     assert response.status_code == 404
     assert response.json() == {
@@ -136,12 +144,14 @@ def test_get_player_training_scores_player_not_found():
 
 
 def test_get_player_average_score():
+    """ Test the endpoint for retrieving the average score of a player. """
     response = client.get("/player/1/average-score")
     assert response.status_code == 200
     assert response.json() == 425
 
 
 def test_get_player_average_score_not_found():
+    """ Test the endpoint for retrieving the average score of a non-existent player. """
     response = client.get("/player/999/average-score")
     assert response.status_code == 404
     assert response.json() == {
@@ -150,6 +160,7 @@ def test_get_player_average_score_not_found():
 
 
 def test_create_player():
+    """ Test the endpoint for creating a new player. """
     player_data = {
         "username": "string",
         "password": "string",
@@ -171,6 +182,7 @@ def test_create_player():
 
 
 def test_create_player_wrong_date():
+    """ Test the endpoint for creating a new player with an invalid date. """
     player_data = {
         "username": "string",
         "password": "string",
@@ -202,6 +214,7 @@ def test_create_player_wrong_date():
 
 
 def test_update_player():
+    """ Test the endpoint for updating player information. """
     player_data = {"name": "string"}
     response = client.put("/player/2", json=player_data)
     assert response.status_code == 200
@@ -223,6 +236,7 @@ def test_update_player():
 
 
 def test_update_player_not_found():
+    """ Test the endpoint for updating information of a non-existent player. """
     player_data = {"name": "string"}
     response = client.put("/player/999", json=player_data)
     assert response.status_code == 404
@@ -230,18 +244,21 @@ def test_update_player_not_found():
 
 
 def test_delete_player():
+    """ Test the endpoint for deleting a player. """
     response = client.delete("/player/1")
     assert response.status_code == 200
     assert response.json() == 'Player, profile, and training deleted'
 
 
 def test_delete_player_not_found():
+    """ Test the endpoint for deleting a non-existent player. """
     response = client.delete("/player/999")
     assert response.status_code == 404
     assert response.json() == {"detail": "Player not found"}
 
 
 def test_update_fitness_multiplier():
+    """ Test the function for updating player fitness multiplier. """
     db: Session = next(get_db())
     player_id = 4
     fitness_multiplier = 0.1249
@@ -251,6 +268,7 @@ def test_update_fitness_multiplier():
 
 
 def test_update_scores():
+    """ Test the function for updating player scores. """
     db: Session = next(get_db())
     player_id = 3
     basescore = 1000
@@ -258,10 +276,13 @@ def test_update_scores():
     player = db.query(Player).filter(Player.player_id == player_id).first()
     assert player.average_score == 378
 
+
 def test_update_scores_not_found():
-        player_id = 999
-        basescore = 1000
-        response = client.post(f"/update_scores/{player_id}", json={"basescore": basescore})
-        print(response.json())
-        assert response.status_code == 404
-        assert response.json() == {'detail': 'Not Found'}
+    """ Test the function for updating scores of a non-existent player. """
+    player_id = 999
+    basescore = 1000
+    response = client.post(
+        f"/update_scores/{player_id}", json={"basescore": basescore})
+    print(response.json())
+    assert response.status_code == 404
+    assert response.json() == {'detail': 'Not Found'}

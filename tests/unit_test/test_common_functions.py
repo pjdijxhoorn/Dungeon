@@ -1,13 +1,14 @@
 from datetime import date
-
-from app.utilities.common_functions import bmi_calculation, calculate_fitness_multiplier, max_heart_frequency_calculation, reserve_heart_frequency_calculation, calculate_age
 from fastapi.testclient import TestClient
+from app.utilities.common_functions import bmi_calculation, calculate_fitness_multiplier, \
+    max_heart_frequency_calculation, reserve_heart_frequency_calculation, calculate_age
 from main import app
 
 Client = TestClient(app)
 
 
 def test_bmi_calculation():
+    """ Test the BMI calculation. """
     # ARRANGE
     height_in_m = 1.93
     weight_in_kg = 72
@@ -16,7 +17,9 @@ def test_bmi_calculation():
     # ASSERT
     assert result == 19.3294
 
+
 def test_calculate_fitness_multiplier():
+    """ Test the fitness multiplier calculation. """
     # ARRANGE
     bmi = 20
     hart_reserve_frequency = 150
@@ -25,7 +28,9 @@ def test_calculate_fitness_multiplier():
     # ASSERT
     assert result == 0.12
 
+
 def test_max_heart_frequency_calculation():
+    """ Test the heart frequency calculation. """
     # ARRANGE
     age = 20
     # ACT
@@ -33,16 +38,21 @@ def test_max_heart_frequency_calculation():
     # ASSERT
     assert result == 200
 
+
 def test_reserve_heart_frequency_calculation():
+    """ Test the reserve heart frequency calculation. """
     # ARRANGE
     max_heart_frequency = 200
     rest_heart_frequency = 80
     # ACT
-    result = reserve_heart_frequency_calculation(max_heart_frequency, rest_heart_frequency)
+    result = reserve_heart_frequency_calculation(
+        max_heart_frequency, rest_heart_frequency)
     # ASSERT
     assert result == 120
 
+
 def test_calculate_age():
+    """ Test age calculation function. """
     # ARRANGE
     date_of_birth = date(1990, 1, 1)
     # ACT

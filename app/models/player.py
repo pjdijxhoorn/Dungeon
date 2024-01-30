@@ -3,7 +3,9 @@ from sqlalchemy import Column, Integer, String, ARRAY, Float
 
 Base = declarative_base()
 
+
 class Player(Base):
+    """ Represents a player with personal and game-related attributes. """
     __tablename__ = "player"
     player_id = Column(Integer, primary_key=True)
     username = Column(String)

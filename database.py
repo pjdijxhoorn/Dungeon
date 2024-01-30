@@ -8,11 +8,11 @@ load_dotenv()
 
 try:
     db_connection = psycopg2.connect(
-    database=os.environ["DBNAME"],
-    user=os.environ["DBUSER"],
-    password=os.environ["DBPASSWORD"],
-    host=os.environ["DBHOST"],  # Of het IP-adres van je databasehost
-    port=os.environ["DBPORT"]  # De standaard PostgreSQL-poort
+        database=os.environ["DBNAME"],
+        user=os.environ["DBUSER"],
+        password=os.environ["DBPASSWORD"],
+        host=os.environ["DBHOST"],
+        port=os.environ["DBPORT"]
     )
 
 except:
@@ -21,10 +21,11 @@ except:
     SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
     Base = declarative_base()
 
+
 def get_db():
+    """ This function provides a session-local database connection. """
     db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
-

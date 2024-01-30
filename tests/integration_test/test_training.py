@@ -1,5 +1,4 @@
 import datetime
-
 from fastapi.testclient import TestClient
 from main import app
 
@@ -7,6 +6,7 @@ client = TestClient(app)
 
 
 def test_get_training_sessions():
+    """ Test the endpoint to retrieve all training sessions. """
     response = client.get("/training")
     assert response.status_code == 200
     assert response.json() == [{'average_speed': 6.25,
@@ -44,6 +44,7 @@ def test_get_training_sessions():
 
 
 def test_get_training_session():
+    """ Test the endpoint to retrieve a specific training session. """
     response = client.get("/training/4")
     assert response.status_code == 200
     assert response.json() == {
@@ -57,7 +58,9 @@ def test_get_training_session():
         "training_date": "2024-01-19"
     }
 
+
 def test_get_training_session_not_found():
+    """ Test the endpoint for a non-existent training session. """
     response = client.get("/training/9999")
     assert response.status_code == 404
     assert response.json() == {
@@ -66,6 +69,7 @@ def test_get_training_session_not_found():
 
 
 def test_create_training():
+    """ Test the endpoint to create a new training session. """
     training_data = {
         "training_name": "string",
         "distance_in_meters": 1000,
@@ -88,6 +92,7 @@ def test_create_training():
 
 
 def test_update_training():
+    """ Test the endpoint to update an existing training session. """
     training_data = {"training_name": "fly you fools"}
     response = client.put("training/2", json=training_data)
     assert response.status_code == 200
@@ -105,6 +110,7 @@ def test_update_training():
 
 
 def test_update_training_not_found():
+    """ Test the endpoint to update a non-existent training session. """
     training_data = {"training_name": "fly you fools"}
     response = client.put("training/999", json=training_data)
     assert response.status_code == 404
