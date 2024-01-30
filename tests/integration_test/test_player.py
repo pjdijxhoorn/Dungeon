@@ -1,9 +1,8 @@
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
-
 from app.models.player import Player
 from app.services.player import update_fitness_multiplier, update_scores
-from database import get_db
+from database import get_db, reset_database
 from main import app
 
 client = TestClient(app)
@@ -11,86 +10,48 @@ client = TestClient(app)
 
 def test_get_players():
     """ Test the endpoint for retrieving player information. """
+    reset_database()
     response = client.get("/player")
     assert response.status_code == 200
     assert response.json() == [
-        {
-            "name": "User One",
-            "player_id": 1,
-            "username": "user1",
-            "average_score": 425,
-            "training_score": [
-                80,
-                90,
-                75,
-                85,
-                95
-            ]
-        },
-        {
-            "name": "User Two",
-            "player_id": 2,
-            "username": "user2",
-            "average_score": 429,
-            "training_score": [
-                80,
-                90,
-                75,
-                85,
-                95
-            ]
-        },
-        {
-            "name": "User Three",
-            "player_id": 3,
-            "username": "user3",
-            "average_score": 427,
-            "training_score": [
-                80,
-                90,
-                75,
-                85,
-                95
-            ]
-        },
-        {
-            "name": "User Four",
-            "player_id": 4,
-            "username": "user4",
-            "average_score": 421,
-            "training_score": [
-                80,
-                90,
-                75,
-                85,
-                95
-            ]
-        }
-    ]
+        {'average_score': 425, 'name': 'User One', 'player_id': 1,
+         'training_score': [80, 90, 75, 85, 95], 'username': 'user1'},
+        {'average_score': 429, 'name': 'User Two', 'player_id': 2,
+         'training_score': [80, 90, 75, 85, 95], 'username': 'user2'},
+        {'average_score': 427, 'name': 'User Three', 'player_id': 3,
+         'training_score': [80, 90, 75, 85, 95], 'username': 'user3'},
+        {'average_score': 421, 'name': 'User Four', 'player_id': 4,
+         'training_score': [80, 90, 75, 85, 95], 'username': 'user4'}]
 
 
 def test_get_leaderboard():
-    """ Test the endpoint for retrieving the player leaderboard. """
+    """ Test the endpoint for retrieving a leaderboard from all players. """
     response = client.get("/player/leaderboard")
     assert response.status_code == 200
     assert response.json() == [
-        {
-            "username": "user2",
-            "average_score": 429
-        },
-        {
-            "username": "user3",
-            "average_score": 427
-        },
-        {
-            "username": "user1",
-            "average_score": 425
-        },
-        {
-            "username": "user4",
-            "average_score": 421
-        }
-    ]
+        {"username": "user2", "average_score": 429},
+        {"username": "user3", "average_score": 427},
+        {"username": "user1", "average_score": 425},
+        {"username": "user4", "average_score": 421}]
+
+
+def test_get_personal_leaderboard():
+    """ Test the endpoint for retrieving a personal leaderboard, 
+    showing the five users above and under player. """
+    response = client.get("/player/personal_leaderboard/user3")
+    assert response.status_code == 200
+    assert response.json() == [
+        {'average_score': 429, 'username': 'user2'},
+        {'average_score': 427, 'username': 'user3'},
+        {'average_score': 425, 'username': 'user1'},
+        {'average_score': 421, 'username': 'user4'}]
+
+
+def test_get_personal_leaderboard_not_found():
+    """ Test the endpoint for retrieving a non-existent leaderboard. """
+    response = client.get("/player/personal_leaderboard/waldo")
+    assert response.status_code == 404
+    assert response.json() == {'detail': 'Player not found'}
 
 
 def test_get_player():
@@ -207,7 +168,7 @@ def test_create_player_wrong_date():
                 "ctx": {
                     "error": "input is too short"
                 },
-                "url": "https://errors.pydantic.dev/2.5/v/date_from_datetime_parsing"
+                "url": "https://errors.pydantic.dev/2.6/v/date_from_datetime_parsing"
             }
         ]
     }

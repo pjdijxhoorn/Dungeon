@@ -1,9 +1,10 @@
 import os
 import psycopg2
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
+
 load_dotenv()
 
 try:
@@ -29,3 +30,24 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+def reset_database():
+    """ This function resets the database. """
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    sql_file_path = os.path.join(script_dir, "test_script.sql")
+    if os.path.exists(sql_file_path):
+        with open(sql_file_path, 'r') as sql_file:
+            sql_script = sql_file.read()
+        db = next(get_db())
+        try:
+            db.execute(text(sql_script))
+            db.commit()
+
+            print("Database reset successful.")
+        except Exception as e:
+            print(f"Error resetting database: {e}")
+
+            db.rollback()
+        finally:
+            db.close()
