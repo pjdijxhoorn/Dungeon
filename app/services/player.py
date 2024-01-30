@@ -9,13 +9,30 @@ from sqlalchemy import desc
 from app.models.player import Player
 from app.models.profile import Profile
 from app.models.training import Training
-#from app.services.authentication import verify_password, get_password_hash
+# from app.services.authentication import verify_password, get_password_hash
 from app.utilities.common_functions import bmi_calculation, calculate_fitness_multiplier, calculate_age, \
     max_heart_frequency_calculation, reserve_heart_frequency_calculation
 
 
 def get_players(db: Session):
     return db.query(Player).all()
+
+
+def get_personal_leaderboard(db: Session, username: str):
+
+    players = db.query(Player.username, Player.average_score).order_by(desc(Player.average_score)).all()
+    leaderboard = [{"username": player_username, "average_score": average_score} for player_username, average_score in players]
+
+    if not leaderboard:
+        raise HTTPException(status_code=404, detail="No players found")
+
+    player_index = next((index for index, entry in enumerate(leaderboard) if entry["username"] == username), None)
+
+    if player_index is not None:
+        players_list = [player_index + i for i in range(-5, 6)]
+        leaderboard = [player for index, player in enumerate(leaderboard) if index in players_list]
+
+    return leaderboard
 
 
 def get_leaderboard(db: Session):
@@ -60,7 +77,7 @@ def create_player(player, db):
                        average_score=0,
                        training_score=[],
                        fitness_multiplier=fitness_multplier)
-                           #password=get_password_hash(player.password
+    # password=get_password_hash(player.password
     db.add(db_Player)
     db.commit()
     db.refresh(db_Player)
@@ -107,6 +124,7 @@ def update_player(player_id: int, update_player, db: Session):
     db.commit()
     db.refresh(player)
     return player
+
 
 def update_fitness_multiplier(player_id, db, fitness_multiplier):
     player = db.query(Player).filter(Player.player_id == player_id).first()

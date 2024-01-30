@@ -14,6 +14,9 @@ router = APIRouter()
 def get_players(db=Depends(get_db)) -> list[Player]:
     return services.get_players(db)
 
+@router.get("/personal_leaderboard/{username}", status_code=200, tags=["Player"])
+def get_personal_leaderboard(username: str, db=Depends(get_db)) -> List[dict]:
+    return services.get_personal_leaderboard(db,username)
 @router.get("/leaderboard", status_code=200, tags=["Player"])
 def get_leaderboard(db=Depends(get_db)) -> List[dict]:
     return services.get_leaderboard(db)
