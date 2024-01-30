@@ -9,7 +9,7 @@ from sqlalchemy import desc
 from app.models.player import Player
 from app.models.profile import Profile
 from app.models.training import Training
-from app.services.authentication import verify_password, get_password_hash
+#from app.services.authentication import verify_password, get_password_hash
 from app.utilities.common_functions import bmi_calculation, calculate_fitness_multiplier, calculate_age, \
     max_heart_frequency_calculation, reserve_heart_frequency_calculation
 
@@ -56,11 +56,11 @@ def create_player(player, db):
     reserve_heart_frequency = reserve_heart_frequency_calculation(max_heart_frequency, player.rest_heart_frequency)
     fitness_multplier = calculate_fitness_multiplier(bmi, reserve_heart_frequency)
     db_Player = Player(username=player.username,
-                       password=get_password_hash(player.password),
                        name=player.name,
                        average_score=0,
                        training_score=[],
                        fitness_multiplier=fitness_multplier)
+                           #password=get_password_hash(player.password
     db.add(db_Player)
     db.commit()
     db.refresh(db_Player)
