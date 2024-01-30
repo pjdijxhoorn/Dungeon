@@ -19,13 +19,11 @@ def get_players(db: Session):
 
 
 def get_personal_leaderboard(db: Session, username: str):
-
+    player = db.query(Player).filter(Player.username == username).first()
+    if player is None:
+        raise HTTPException(status_code=404, detail="Player not found")
     players = db.query(Player.username, Player.average_score).order_by(desc(Player.average_score)).all()
     leaderboard = [{"username": player_username, "average_score": average_score} for player_username, average_score in players]
-
-    if not leaderboard:
-        raise HTTPException(status_code=404, detail="No players found")
-
     player_index = next((index for index, entry in enumerate(leaderboard) if entry["username"] == username), None)
 
     if player_index is not None:
