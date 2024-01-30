@@ -44,19 +44,50 @@ VALUES
   ('user1', '$2a$12$vMbCRTOZcCscO4iA9EbnWeLnYrfEYtM0fr9BopK/QFB/53Ub60/42', 'User One', 425, '{80, 90, 75, 85, 95}', 0.33),
   ('user2', '$2a$12$cuv50PlaZY8gpwa.NgKQCemAkQCeSbKA7GWrjS2Imp7lE4Hd1AZ7W', 'User Two', 429, '{80, 90, 75, 85, 95}', 0.28),
   ('user3', '$2a$12$EArutIUyZoG/yFxuM2bh1.BumQP3NLIIvAnKxcKh/Y/OX39MDlQ4S', 'User Three', 427, '{80, 90, 75, 85, 95}', 0.33),
-  ('user4', '$2a$12$1b1hXeBeAL5rNsDeDdFsUu8VLdcA/ZE9IBEUug9b6kmn8t28alPFG', 'User Four', 421, '{80, 90, 75, 85, 95}', 0.30);
+  ('user4', '$2a$12$1b1hXeBeAL5rNsDeDdFsUu8VLdcA/ZE9IBEUug9b6kmn8t28alPFG', 'User Four', 421, '{80, 90, 75, 85, 95}', 0.30),
+  ('user5', '$2a$12$Yw/6PvhHd5c3X02zyFonXO9NsrGZkvXclI8/CcKdmYnWecBnKxVnC', 'User Five', 430, '{80, 85, 90, 95, 100}', 0.34),
+  ('user6', '$2a$12$q.e6Hi0RqVJbq2nDgidX4O/DWMY4UB1YIKZxfMqfBVEa3PV5TDd.i', 'User Six', 435, '{85, 90, 95, 100, 105}', 0.35),
+  ('user7', '$2a$12$BFaWTz8aKajzAbgI7Epx0eZQGNDjuGU5ynL4ile54jQzQV1/1i/PS', 'User Seven', 440, '{90, 95, 100, 105, 110}', 0.36),
+  ('user8', '$2a$12$sc7YYLq6sKVhYXGg1wWCXunWXhYr1/UtK6eagKeNCWQdOtZqHIIW6', 'User Eight', 445, '{95, 100, 105, 110, 115}', 0.37),
+  ('user9', '$2a$12$n4vajXJ65xOb4FL01b4kjeYnqsacTkSFrE.RfgMYCIHLBhJr9oosW', 'User Nine', 450, '{100, 105, 110, 115, 120}', 0.38),
+  ('user10', '$2a$12$OMg82PdM6.P1dvS64u34nOdoFkzS3Dqufqi2bw/.y6p6K4Jz59Tzm', 'User Ten', 455, '{105, 110, 115, 120, 125}', 0.39),
+  ('user11', '$2a$12$U/HFoeSNxaeGi21KqWmjiOlmftlLKgN06J/UEIpIOaEz8omKPYLnS', 'User Eleven', 460, '{110, 115, 120, 125, 130}', 0.40),
+  ('user12', '$2a$12$A4tI7jPDWDzxZeM0QFaSiO132KuN.zCjgrB5vMSkcXra56KVKYxmi', 'User Twelve', 465, '{115, 120, 125, 130, 135}', 0.41),
+  ('user13', '$2a$12$EKvqvV1hAcLGY425NnUYZO/7iZImsATZfBqASRoR7lMUE0deh0vL6', 'User Thirteen', 470, '{120, 125, 130, 135, 140}', 0.42),
+  ('user14', '$2a$12$2sNbJyNfNbmhkhHozOnJJ.Ae8LwpqYbmznJRSLfbJBVz095SBJPXC', 'User Fourteen', 475, '{125, 130, 135, 140, 145}', 0.43);
 
 INSERT INTO Fitness_profile (player_id, bmi, weight_in_kg, height_in_m, date_of_birth, max_heart_frequency, rest_heart_frequency, reserve_heart_frequency)
 VALUES
-  (1, 25.5, 70.5, 175, TO_DATE('15-01-1990', 'DD-MM-YYYY'), 180, 60, 120),
-  (2, 22.0, 65.2, 170, TO_DATE('20-03-1985', 'DD-MM-YYYY'), 175, 58, 115),
-  (3, 26.8, 75.0, 180, TO_DATE('10-07-1992', 'DD-MM-YYYY'), 185, 62, 125),
-  (4, 23.3, 68.7, 172, TO_DATE('05-05-1988', 'DD-MM-YYYY'), 178, 59, 118);
+(1, 25.5, 70.5, 175, TO_DATE('15-01-1990', 'DD-MM-YYYY'), 180, 60, 120),
+(2, 22.0, 65.2, 170, TO_DATE('20-03-1985', 'DD-MM-YYYY'), 175, 58, 115),
+(3, 26.8, 75.0, 180, TO_DATE('10-07-1992', 'DD-MM-YYYY'), 185, 62, 125),
+(4, 23.3, 68.7, 172, TO_DATE('05-05-1988', 'DD-MM-YYYY'), 178, 59, 118),
+(5, 24.0, 70.0, 175, TO_DATE('15-01-1991', 'DD-MM-YYYY'), 182, 60, 122),
+(6, 23.5, 68.0, 172, TO_DATE('20-03-1986', 'DD-MM-YYYY'), 176, 58, 116),
+(7, 25.0, 75.0, 180, TO_DATE('10-07-1993', 'DD-MM-YYYY'), 186, 62, 126),
+(8, 24.5, 72.0, 178, TO_DATE('05-05-1989', 'DD-MM-YYYY'), 180, 60, 120),
+(9, 23.0, 67.0, 170, TO_DATE('12-09-1990', 'DD-MM-YYYY'), 178, 59, 119),
+(10, 24.3, 73.0, 176, TO_DATE('23-11-1987', 'DD-MM-YYYY'), 183, 61, 123),
+(11, 22.8, 66.0, 174, TO_DATE('17-02-1992', 'DD-MM-YYYY'), 179, 60, 119),
+(12, 25.5, 76.0, 182, TO_DATE('29-08-1988', 'DD-MM-YYYY'), 188, 63, 128),
+(13, 24.7, 71.0, 177, TO_DATE('14-04-1995', 'DD-MM-YYYY'), 182, 61, 123),
+(14, 23.2, 69.0, 173, TO_DATE('21-06-1994', 'DD-MM-YYYY'), 177, 59, 118);
+
 
 INSERT INTO Training (training_name, distance_in_meters, time_in_seconds, average_speed, training_type, base_score, training_date, player_id)
 VALUES
-  ('Morning run', 5000, 1800, 10, 'Sprint', 75, TO_DATE('16-01-2024', 'DD-MM-YYYY'), 1),
-  ('round the lake', 10000, 2400, 6.25, 'Endurance', 80, TO_DATE('17-01-2024', 'DD-MM-YYYY'), 2),
-  ('romantic run towards SO', 8000, 1500, 15, 'Sprint', 90, TO_DATE('18-01-2024', 'DD-MM-YYYY'), 3),
-  ('run after icecream-van', 100, 100, 1, 'Sprint', 85, TO_DATE('19-01-2024', 'DD-MM-YYYY'), 4),
-  ('ran from scary clown', 6000, 2700, 4.44, 'Sprint', 95, TO_DATE('20-01-2024', 'DD-MM-YYYY'), 4);
+('Morning run', 5000, 1800, 10, 'Sprint', 75, TO_DATE('16-01-2024', 'DD-MM-YYYY'), 1),
+('round the lake', 10000, 2400, 6.25, 'Endurance', 80, TO_DATE('17-01-2024', 'DD-MM-YYYY'), 2),
+('romantic run towards SO', 8000, 1500, 15, 'Sprint', 90, TO_DATE('18-01-2024', 'DD-MM-YYYY'), 3),
+('run after icecream-van', 100, 100, 1, 'Sprint', 85, TO_DATE('19-01-2024', 'DD-MM-YYYY'), 4),
+('ran from scary clown', 6000, 2700, 4.44, 'Sprint', 95, TO_DATE('20-01-2024', 'DD-MM-YYYY'), 4),
+('Evening Walk', 3000, 1800, 5, 'Endurance', 60, TO_DATE('21-01-2024', 'DD-MM-YYYY'), 5),
+('Hill Climb', 4000, 2400, 4, 'Endurance', 65, TO_DATE('22-01-2024', 'DD-MM-YYYY'), 6),
+('Speed Run', 5000, 1500, 10, 'Sprint', 70, TO_DATE('23-01-2024', 'DD-MM-YYYY'), 7),
+('Trail Run', 6000, 2700, 6.66, 'Endurance', 75, TO_DATE('24-01-2024', 'DD-MM-YYYY'), 8),
+('City Jog', 7000, 2100, 7.14, 'Endurance', 80, TO_DATE('25-01-2024', 'DD-MM-YYYY'), 9),
+('Beach Run', 8000, 1600, 12.5, 'Endurance', 85, TO_DATE('26-01-2024', 'DD-MM-YYYY'), 10),
+('Forest Hike', 9000, 3600, 5, 'Endurance', 65, TO_DATE('27-01-2024', 'DD-MM-YYYY'), 11),
+('Mountain Trek', 10000, 4800, 3.75, 'Endurance', 70, TO_DATE('28-01-2024', 'DD-MM-YYYY'), 12),
+('Park Sprint', 2000, 600, 20, 'Sprint', 90, TO_DATE('29-01-2024', 'DD-MM-YYYY'), 13),
+('Night Jog', 3500, 1500, 7, 'Endurance', 75, TO_DATE('30-01-2024', 'DD-MM-YYYY'), 14);
