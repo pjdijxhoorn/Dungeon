@@ -1,95 +1,51 @@
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
-
 from app.models.player import Player
 from app.services.player import update_fitness_multiplier, update_scores
-from database import get_db
+from database import get_db, reset_database
 from main import app
 
 client = TestClient(app)
 
 
 def test_get_players():
+    reset_database()
     response = client.get("/player")
     assert response.status_code == 200
     assert response.json() == [
-        {
-            "name": "User One",
-            "player_id": 1,
-            "username": "user1",
-            "average_score": 425,
-            "training_score": [
-                80,
-                90,
-                75,
-                85,
-                95
-            ]
-        },
-        {
-            "name": "User Two",
-            "player_id": 2,
-            "username": "user2",
-            "average_score": 429,
-            "training_score": [
-                80,
-                90,
-                75,
-                85,
-                95
-            ]
-        },
-        {
-            "name": "User Three",
-            "player_id": 3,
-            "username": "user3",
-            "average_score": 427,
-            "training_score": [
-                80,
-                90,
-                75,
-                85,
-                95
-            ]
-        },
-        {
-            "name": "User Four",
-            "player_id": 4,
-            "username": "user4",
-            "average_score": 421,
-            "training_score": [
-                80,
-                90,
-                75,
-                85,
-                95
-            ]
-        }
-    ]
+        {'average_score': 425, 'name': 'User One', 'player_id': 1,
+         'training_score': [80, 90, 75, 85, 95], 'username': 'user1'},
+        {'average_score': 429, 'name': 'User Two', 'player_id': 2,
+         'training_score': [80, 90, 75, 85, 95], 'username': 'user2'},
+        {'average_score': 427, 'name': 'User Three', 'player_id': 3,
+         'training_score': [80, 90, 75, 85, 95], 'username': 'user3'},
+        {'average_score': 421, 'name': 'User Four', 'player_id': 4,
+         'training_score': [80, 90, 75, 85, 95], 'username': 'user4'}]
 
 
 def test_get_leaderboard():
     response = client.get("/player/leaderboard")
     assert response.status_code == 200
     assert response.json() == [
-        {
-            "username": "user2",
-            "average_score": 429
-        },
-        {
-            "username": "user3",
-            "average_score": 427
-        },
-        {
-            "username": "user1",
-            "average_score": 425
-        },
-        {
-            "username": "user4",
-            "average_score": 421
-        }
-    ]
+        {"username": "user2", "average_score": 429},
+        {"username": "user3", "average_score": 427},
+        {"username": "user1", "average_score": 425},
+        {"username": "user4", "average_score": 421}]
 
+
+def test_get_personal_leaderboard():
+    response = client.get("/player/personal_leaderboard/user3")
+    assert response.status_code == 200
+    assert response.json() == [
+        {'average_score': 429, 'username': 'user2'},
+        {'average_score': 427, 'username': 'user3'},
+        {'average_score': 425, 'username': 'user1'},
+        {'average_score': 421, 'username': 'user4'}]
+
+def test_get_personal_leaderboard_not_found():
+    response = client.get("/player/personal_leaderboard/waldo")
+    assert response.status_code == 404
+    assert response.json() == {'detail': 'Player not found'}
 
 def test_get_player():
     response = client.get("/player/1")
@@ -108,12 +64,14 @@ def test_get_player():
         ]
     }
 
+
 def test_get_player_not_found():
     response = client.get("/player/999")
     assert response.status_code == 404
     assert response.json() == {
         "detail": "Player not found"
     }
+
 
 def test_get_player_training_scores():
     response = client.get("/player/1/training-scores")
@@ -195,7 +153,7 @@ def test_create_player_wrong_date():
                 "ctx": {
                     "error": "input is too short"
                 },
-                "url": "https://errors.pydantic.dev/2.5/v/date_from_datetime_parsing"
+                "url": "https://errors.pydantic.dev/2.6/v/date_from_datetime_parsing"
             }
         ]
     }
@@ -258,10 +216,11 @@ def test_update_scores():
     player = db.query(Player).filter(Player.player_id == player_id).first()
     assert player.average_score == 378
 
+
 def test_update_scores_not_found():
-        player_id = 999
-        basescore = 1000
-        response = client.post(f"/update_scores/{player_id}", json={"basescore": basescore})
-        print(response.json())
-        assert response.status_code == 404
-        assert response.json() == {'detail': 'Not Found'}
+    player_id = 999
+    basescore = 1000
+    response = client.post(f"/update_scores/{player_id}", json={"basescore": basescore})
+    print(response.json())
+    assert response.status_code == 404
+    assert response.json() == {'detail': 'Not Found'}
