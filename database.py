@@ -22,7 +22,7 @@ try:
     host=os.environ["DBHOST"]
     port=os.environ["DBPORT"]
     link = "postgresql+psycopg2://" + user + ":" + password + "@" + host + "/" + database
-    SQLALCHEMY_DATABASE_URL = os.getenv(link)
+    SQLALCHEMY_DATABASE_URL = link
 
 except:
     SQLALCHEMY_DATABASE_URL = os.getenv("SQLALCHEMY_DATABASE_URL")
