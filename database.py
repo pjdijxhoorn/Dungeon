@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 try:
-    SessionLocal = psycopg2.connect(
+    db_connection = psycopg2.connect(
         database=os.environ["DBNAME"],
         user=os.environ["DBUSER"],
         password=os.environ["DBPASSWORD"],
@@ -16,11 +16,20 @@ try:
         port=os.environ["DBPORT"]
     )
 
+    database=os.environ["DBNAME"]
+    user=os.environ["DBUSER"]
+    password=os.environ["DBPASSWORD"]
+    host=os.environ["DBHOST"]
+    port=os.environ["DBPORT"]
+    link = "postgresql+psycopg2://" + user + ":" + password + "@" + host + "/" + database
+    SQLALCHEMY_DATABASE_URL = os.getenv(link)
+
 except:
     SQLALCHEMY_DATABASE_URL = os.getenv("SQLALCHEMY_DATABASE_URL")
-    engine = create_engine(SQLALCHEMY_DATABASE_URL)
-    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-    Base = declarative_base()
+    
+engine = create_engine(SQLALCHEMY_DATABASE_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
 
 
 def get_db():
