@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 try:
-    db_connection = psycopg2.connect(
+    SessionLocal = psycopg2.connect(
         database=os.environ["DBNAME"],
         user=os.environ["DBUSER"],
         password=os.environ["DBPASSWORD"],
