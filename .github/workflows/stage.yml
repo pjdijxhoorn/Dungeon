@@ -20,17 +20,17 @@ jobs:
                 with:
                     token: ${{ secrets.OCEANTOKEN }}
             
-            # -   name: Build container image
-            #     run: docker build -t ${{ secrets.Registy_digital_OCEAN }}/dungeon-run:$(echo $GITHUB_SHA | head -c7) .
+            -   name: Build container image
+                run: docker build -t ${{ secrets.Registy_digital_OCEAN }}/dungeon-run:$(echo $GITHUB_SHA | head -c7) .
 
-            # -   name: Log in to DigitalOcean Container Registry with short-lived credentials
-            #     run: doctl registry login --expiry-seconds 1200
+            -   name: Log in to DigitalOcean Container Registry with short-lived credentials
+                run: doctl registry login --expiry-seconds 1200
             
-            # -   name: Push image to DigitalOcean Container Registry
-            #     run: docker push ${{ secrets.Registy_digital_OCEAN }}/dungeon-run:$(echo $GITHUB_SHA | head -c7)
+            -   name: Push image to DigitalOcean Container Registry
+                run: docker push ${{ secrets.Registy_digital_OCEAN }}/dungeon-run:$(echo $GITHUB_SHA | head -c7)
                 
-            # -   name: Start garbage collection of the Container Registry
-            #     run: doctl registry gc start --include-untagged-manifests --force ${{ secrets.registry_key }}
+            -   name: Start garbage collection of the Container Registry
+                run: doctl registry gc start --include-untagged-manifests --force ${{ secrets.registry_key }}
     
     test:
         env:
@@ -70,50 +70,35 @@ jobs:
             pip install pytest
             python -m pytest
 
-    
-
+    deploy:
+        runs-on: ubuntu-latest
+        needs: test
+        steps:
+            -   name: Checkout files
+                uses: actions/checkout@v2
             
-
-    # deploy:
-    #     runs-on: ubuntu-latest
-    #     needs: test
-    #     steps:
-    #         -   name: Checkout files
-    #             uses: actions/checkout@v2
-            
-    #         -   name: Install doctl
-    #             uses: digitalocean/action-doctl@v2
-    #             with:
-    #                 token: ${{ secrets.OCEANTOKEN }}
+            -   name: Install doctl
+                uses: digitalocean/action-doctl@v2
+                with:
+                    token: ${{ secrets.OCEANTOKEN }}
                     
-    #         -   name: Log in to DigitalOcean Container Registry with short-lived credentials
-    #             run: doctl registry login --expiry-seconds 1200
+            -   name: Log in to DigitalOcean Container Registry with short-lived credentials
+                run: doctl registry login --expiry-seconds 1200
             
-    #         -   name: Update deployment file
-    #             run: TAG=$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>| ${{ secrets.Registy_digital_OCEAN }}/dungeon-run:'${TAG}'|' $GITHUB_WORKSPACE/config/deployment.yml
+            -   name: Update deployment file
+                run: |
+                 TAG=$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>| ${{ secrets.Registy_digital_OCEAN }}/dungeon-run:'${TAG}'|' $GITHUB_WORKSPACE/config/deployment.yml
+                 sed -i "s|<DBUSERNAME>|$(doctl db conn $(doctl db list --format ID --no-header) --format User --no-header)|" $GITHUB_WORKSPACE/config/deployment.yml
+                 sed -i "s|<DBPASSWORD>|$(doctl db conn $(doctl db list --format ID --no-header) --format Password --no-header)|" $GITHUB_WORKSPACE/config/deployment.yml
+                 sed -i "s|<DBHOST>|$(doctl db conn $(doctl db list --format ID --no-header) --format Host --no-header)|" $GITHUB_WORKSPACE/config/deployment.yml
+                 sed -i "s|<DBPORT>|$(doctl db conn $(doctl db list --format ID --no-header) --format Port --no-header)|" $GITHUB_WORKSPACE/config/deployment.yml
+                 sed -i "s|<DBDATABASE>|$(doctl db conn $(doctl db list --format ID --no-header) --format Database --no-header)|" $GITHUB_WORKSPACE/config/deployment.yml
 
-    #         -   name: Update deployment file User db
-    #             run: sed -i "s|<DBUSERNAME>|$(doctl db conn $(doctl db list --format ID --no-header) --format User --no-header)|" $GITHUB_WORKSPACE/config/deployment.yml   
-
-    #         -   name: Update deployment file Password db
-    #             run: sed -i "s|<DBPASSWORD>|$(doctl db conn $(doctl db list --format ID --no-header) --format Password --no-header)|" $GITHUB_WORKSPACE/config/deployment.yml
-
-    #         -   name: Update deployment file Host db
-    #             run: sed -i "s|<DBHOST>|$(doctl db conn $(doctl db list --format ID --no-header) --format Host --no-header)|" $GITHUB_WORKSPACE/config/deployment.yml
-
-    #         -   name: Update deployment file Port db
-    #             run: sed -i "s|<DBPORT>|$(doctl db conn $(doctl db list --format ID --no-header) --format Port --no-header)|" $GITHUB_WORKSPACE/config/deployment.yml
-
-    #         -   name: Update deployment file Database db
-    #             run: |
-    #                 sed -i "s|<DBDATABASE>|$(doctl db conn $(doctl db list --format ID --no-header) --format Database --no-header)|" $GITHUB_WORKSPACE/config/deployment.yml
-    #                 cat $GITHUB_WORKSPACE/config/deployment.yml
-
-    #         -   name: Save DigitalOcean kubeconfig with short-lived credentials
-    #             run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 dungeon-run-cluster
+            -   name: Save DigitalOcean kubeconfig with short-lived credentials
+                run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 dungeon-run-cluster
             
-    #         -   name: Deploy to DigitalOcean Kubernetes
-    #             run: kubectl apply -f $GITHUB_WORKSPACE/config/deployment.yml
+            -   name: Deploy to DigitalOcean Kubernetes
+                run: kubectl apply -f $GITHUB_WORKSPACE/config/deployment.yml
             
-    #         -   name: Verify deployment
-    #             run: kubectl rollout status deployment/dungeon-run
+            -   name: Verify deployment
+                run: kubectl rollout status deployment/dungeon-run
