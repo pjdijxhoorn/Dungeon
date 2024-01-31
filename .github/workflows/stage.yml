@@ -66,6 +66,7 @@ jobs:
         
         - name: Testing with pytest
           run: |
+            pip install fastapi[all] -upgrade
             pip install pytest
             pytest
 
