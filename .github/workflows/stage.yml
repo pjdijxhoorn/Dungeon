@@ -34,11 +34,11 @@ jobs:
     
     test:
         env:
-            DATABASE_HOSTNAME: localhost
-            DATABASE_POST: 5432
-            DATABASE_PASSWORD: postgres
-            DATABASE_NAME: postgres
-            DATABASE_USERNAME: postgres
+            DBHOST: localhost
+            DBPORT: 5432
+            DBPASSWORD: postgres
+            DBNAME: postgres
+            DBUSER: postgres
         runs-on: ubuntu-latest
         needs: build
         services:
