@@ -1,6 +1,6 @@
 from datetime import date
 from typing import List, Optional
-from pydantic import BaseModel, ConfigDict, constr, conint
+from pydantic import BaseModel, ConfigDict, constr, conint, confloat 
 
 
 class BasePlayer(BaseModel):
@@ -21,19 +21,19 @@ class Player(BasePlayer):
 class CreatePlayer(BasePlayer):
     """ Class for creating a new player. """
     model_config = ConfigDict(from_attributes=True)
-    username: str
+    username: constr(min_length=5)
     password: str
-    name: str
-    weight_in_kg: float
-    height_in_m: float
+    name: constr(min_length=3)
+    weight_in_kg: confloat(ge=10)
+    height_in_m: confloat(ge=0.5) #voor little person
     date_of_birth: date
-    rest_heart_frequency: int
-    
+    rest_heart_frequency: conint(ge=10)
+
 
 class UpdatePlayer(BasePlayer):
     """ Class for updating a player's name. """
     model_config = ConfigDict(from_attributes=True)
-    name: str
+    name: constr(min_length=3)
 
 
 class UserInDB(BasePlayer):

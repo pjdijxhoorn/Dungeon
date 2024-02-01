@@ -21,7 +21,7 @@ class Training(BaseTraining):
 
 class CreateTraining(BaseTraining):
     """ Class for creating a new training. """
-    training_name: str
+    training_name: constr(min_length=3)
     distance_in_meters: conint(ge=1)
     time_in_seconds: conint(ge=1)
     training_type: constr(min_length=1)

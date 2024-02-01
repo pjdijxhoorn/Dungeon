@@ -62,11 +62,13 @@ def get_player_training_scores(db: Session, player_id: int):
     if player is None:
         raise HTTPException(status_code=404, detail="Player not found")
 
-    trainings = db.query(Training).filter(Training.player_id == player_id).all()
+    trainings = db.query(Training).filter(
+        Training.player_id == player_id).all()
 
     scores = []
     for x in range(len(trainings)):
-        scores.append({"training_name": trainings[x].training_name, "score": player.training_score[x]})
+        scores.append(
+            {"training_name": trainings[x].training_name, "score": player.training_score[x]})
 
     return scores
 
