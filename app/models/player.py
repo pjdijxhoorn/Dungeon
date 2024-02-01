@@ -11,6 +11,6 @@ class Player(Base):
     username = Column(String)
     password = Column(String)
     name = Column(String)
-    average_score = Column(Integer)
+    main_score = Column(Integer)
     training_score = Column(ARRAY(Integer))
     fitness_multiplier = Column(Float)

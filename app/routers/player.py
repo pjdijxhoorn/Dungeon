@@ -39,9 +39,9 @@ def get_player_training_scores(player_id: int, db=Depends(get_db)) -> List[int]:
 
 
 @router.get("/{player_id}/average-score", status_code=200, tags=["Player"])
-def get_player_average_score(player_id: int, db=Depends(get_db)):
+def get_player_main_score(player_id: int, db=Depends(get_db)):
     """ Calculate and get the average score of a specific player. """
-    return services.get_player_average_score(db, player_id)
+    return services.get_player_main_score(db, player_id)
 
 
 @router.post("", status_code=201, tags=["Player"])

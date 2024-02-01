@@ -1,6 +1,6 @@
 from datetime import date
 from typing import List, Optional
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, constr, conint
 
 
 class BasePlayer(BaseModel):
@@ -14,7 +14,7 @@ class Player(BasePlayer):
     player_id: int
     username: str
     name: str
-    average_score: int
+    main_score: int
     training_score: List[int]
 
 
@@ -28,7 +28,7 @@ class CreatePlayer(BasePlayer):
     height_in_m: float
     date_of_birth: date
     rest_heart_frequency: int
-
+    
 
 class UpdatePlayer(BasePlayer):
     """ Class for updating a player's name. """

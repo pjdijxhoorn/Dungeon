@@ -21,10 +21,10 @@ def get_personal_leaderboard(db: Session, username: str):
     player = db.query(Player).filter(Player.username == username).first()
     if player is None:
         raise HTTPException(status_code=404, detail="Player not found")
-    players = db.query(Player.username, Player.average_score).order_by(
-        desc(Player.average_score)).all()
-    leaderboard = [{"username": player_username, "average_score": average_score}
-                   for player_username, average_score in players]
+    players = db.query(Player.username, Player.main_score).order_by(
+        desc(Player.main_score)).all()
+    leaderboard = [{"username": player_username, "main_score": main_score}
+                   for player_username, main_score in players]
     player_index = next((index for index, entry in enumerate(
         leaderboard) if entry["username"] == username), None)
 
@@ -38,10 +38,10 @@ def get_personal_leaderboard(db: Session, username: str):
 
 def get_leaderboard(db: Session):
     """ Get the leaderboard for all players. """
-    players = db.query(Player.username, Player.average_score).order_by(
-        desc(Player.average_score)).all()
-    leaderboard = [{"username": username, "average_score": average_score}
-                   for username, average_score in players]
+    players = db.query(Player.username, Player.main_score).order_by(
+        desc(Player.main_score)).all()
+    leaderboard = [{"username": username, "main_score": main_score}
+                   for username, main_score in players]
     if not leaderboard:
         raise HTTPException(status_code=404, detail="No players found")
     return leaderboard
@@ -64,13 +64,13 @@ def get_player_training_scores(db: Session, player_id: int):
     return player_score
 
 
-def get_player_average_score(db: Session, player_id: int):
-    """ Get the average score for a specific player. """
+def get_player_main_score(db: Session, player_id: int):
+    """ Get the main score for a specific player. """
     player = db.query(Player).filter(Player.player_id == player_id).first()
     if player is None:
         raise HTTPException(status_code=404, detail="Player not found")
-    average_score = player.average_score
-    return average_score
+    main_score = player.main_score
+    return main_score
 
 
 def create_player(player, db):
@@ -84,7 +84,7 @@ def create_player(player, db):
         bmi, reserve_heart_frequency)
     db_player = Player(username=player.username,
                        name=player.name,
-                       average_score=0,
+                       main_score=0,
                        training_score=[],
                        fitness_multiplier=fitness_multplier)
     # password=get_password_hash(player.password
@@ -154,22 +154,22 @@ def calculate_training_score(base_score, fitness_multiplier):
     return int(training_score)
 
 
-def calculate_personal_average(training_score_list):
-    """ Calculate the personal average score based on the last 5 training scores. """
-    average_score = sum(training_score_list[-5:])
-    return average_score
+def calculate_personal_main(training_score_list):
+    """ Calculate the personal main score based on the last 5 training scores. """
+    main_score = sum(training_score_list[-5:])
+    return main_score
 
 
 def update_scores(player_id, db, basescore):
-    """ Update the training scores and average score for a specific player. """
+    """ Update the training scores and main score for a specific player. """
     player = db.query(Player).filter(Player.player_id == player_id).first()
     new_score = calculate_training_score(basescore, player.fitness_multiplier)
 
     player.training_score.append(new_score)
     flag_modified(player, "training_score")
-    new_average_score = calculate_personal_average(player.training_score)
+    new_main_score = calculate_personal_main(player.training_score)
 
-    player.average_score = new_average_score
+    player.main_score = new_main_score
     db.add(player)
     db.commit()
     db.refresh(player)
