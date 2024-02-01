@@ -58,10 +58,17 @@ def get_player(db: Session, player_id: int):
 def get_player_training_scores(db: Session, player_id: int):
     """ Get the training scores for a specific player. """
     player = db.query(Player).filter(Player.player_id == player_id).first()
+
     if player is None:
         raise HTTPException(status_code=404, detail="Player not found")
-    player_score = player.training_score
-    return player_score
+
+    trainings = db.query(Training).filter(Training.player_id == player_id).all()
+
+    scores = []
+    for x in range(len(trainings)):
+        scores.append({"training_name": trainings[x].training_name, "score": player.training_score[x]})
+
+    return scores
 
 
 def get_player_average_score(db: Session, player_id: int):

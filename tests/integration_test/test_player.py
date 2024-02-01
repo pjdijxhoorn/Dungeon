@@ -13,26 +13,42 @@ def test_get_players():
     reset_database()
     response = client.get("/player")
     assert response.status_code == 200
-    assert response.json() == [
-        {'average_score': 425, 'name': 'User One', 'player_id': 1,
-         'training_score': [80, 90, 75, 85, 95], 'username': 'user1'},
-        {'average_score': 429, 'name': 'User Two', 'player_id': 2,
-         'training_score': [80, 90, 75, 85, 95], 'username': 'user2'},
-        {'average_score': 427, 'name': 'User Three', 'player_id': 3,
-         'training_score': [80, 90, 75, 85, 95], 'username': 'user3'},
-        {'average_score': 421, 'name': 'User Four', 'player_id': 4,
-         'training_score': [80, 90, 75, 85, 95], 'username': 'user4'}]
+    assert response.json() == [{'average_score': 425,
+                                'name': 'User One',
+                                'player_id': 1,
+                                'training_score': [80, 90, 75, 85, 95],
+                                'username': 'user1'},
+                               {'average_score': 429,
+                                'name': 'User Two',
+                                'player_id': 2,
+                                'training_score': [80, 90, 75, 85, 95],
+                                'username': 'user2'},
+                               {'average_score': 427,
+                                'name': 'User Three',
+                                'player_id': 3,
+                                'training_score': [80, 90, 75, 85, 95],
+                                'username': 'user3'},
+                               {'average_score': 421,
+                                'name': 'User Four',
+                                'player_id': 4,
+                                'training_score': [80, 90, 75, 85, 95],
+                                'username': 'user4'},
+                               {'average_score': 3315,
+                                'name': 'User Five',
+                                'player_id': 5,
+                                'training_score': [663, 663, 663, 663, 663],
+                                'username': 'user5'}]
 
 
 def test_get_leaderboard():
     """ Test the endpoint for retrieving a leaderboard from all players. """
     response = client.get("/player/leaderboard")
     assert response.status_code == 200
-    assert response.json() == [
-        {"username": "user2", "average_score": 429},
-        {"username": "user3", "average_score": 427},
-        {"username": "user1", "average_score": 425},
-        {"username": "user4", "average_score": 421}]
+    assert response.json() == [{'average_score': 3315, 'username': 'user5'},
+ {'average_score': 429, 'username': 'user2'},
+ {'average_score': 427, 'username': 'user3'},
+ {'average_score': 425, 'username': 'user1'},
+ {'average_score': 421, 'username': 'user4'}]
 
 
 def test_get_personal_leaderboard():
@@ -40,11 +56,11 @@ def test_get_personal_leaderboard():
     showing the five users above and under player. """
     response = client.get("/player/personal_leaderboard/user3")
     assert response.status_code == 200
-    assert response.json() == [
-        {'average_score': 429, 'username': 'user2'},
-        {'average_score': 427, 'username': 'user3'},
-        {'average_score': 425, 'username': 'user1'},
-        {'average_score': 421, 'username': 'user4'}]
+    assert response.json() == [{'average_score': 3315, 'username': 'user5'},
+ {'average_score': 429, 'username': 'user2'},
+ {'average_score': 427, 'username': 'user3'},
+ {'average_score': 425, 'username': 'user1'},
+ {'average_score': 421, 'username': 'user4'}]
 
 
 def test_get_personal_leaderboard_not_found():
@@ -84,16 +100,13 @@ def test_get_player_not_found():
 
 def test_get_player_training_scores():
     """ Test the endpoint for retrieving player training scores. """
-    response = client.get("/player/1/training-scores")
+    response = client.get("/player/5/training-scores")
     assert response.status_code == 200
-    assert response.json() == [
-        80,
-        90,
-        75,
-        85,
-        95
-    ]
-
+    assert response.json() ==[{'score': 663, 'training_name': 'Run forest run'},
+ {'score': 663, 'training_name': 'forest run forest'},
+ {'score': 663, 'training_name': 'run run forest'},
+ {'score': 663, 'training_name': 'spam spam spam'},
+ {'score': 663, 'training_name': 'egs bacon and spam'}]
 
 def test_get_player_training_scores_player_not_found():
     """ Test the endpoint for retrieving training scores of a non-existent player. """
@@ -133,13 +146,11 @@ def test_create_player():
     }
     response = client.post("/player", json=player_data)
     assert response.status_code == 201
-    assert response.json() == {
-        "username": "string",
-        "player_id": 5,
-        "name": "string",
-        "average_score": 0,
-        "training_score": []
-    }
+    assert response.json() == {'average_score': 0,
+ 'name': 'string',
+ 'player_id': 6,
+ 'training_score': [],
+ 'username': 'string'}
 
 
 def test_create_player_wrong_date():
