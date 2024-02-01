@@ -33,7 +33,7 @@ def get_player(player_id: int, db=Depends(get_db)) -> Player:
 
 
 @router.get("/{player_id}/training-scores", status_code=200, tags=["Player"])
-def get_player_training_scores(player_id: int, db=Depends(get_db)) -> List[int]:
+def get_player_training_scores(player_id: int, db=Depends(get_db)):
     """ Get the training scores of a specific player by their ID. """
     return services.get_player_training_scores(db, player_id)
 
