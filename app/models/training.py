@@ -8,7 +8,7 @@ class Training(Base):
     """ Represents a record of a training session for a player. """
     __tablename__ = "training"
     training_id = Column(Integer, primary_key=True)
-    training_name = Column(String, default="endurance")
+    training_name = Column(String, default="training")
     distance_in_meters = Column(Integer)
     time_in_seconds = Column(Integer)
     average_speed = Column(Float)
