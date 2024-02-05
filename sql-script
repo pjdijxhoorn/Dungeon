@@ -46,6 +46,11 @@ CREATE TABLE Monsters (
     distance_strength INT
 );
 
+CREATE TABLE Gear (
+    gear_id SERIAL PRIMARY KEY,
+    gear_name VARCHAR(255),
+    gear_type VARCHAR(255)
+);
 
 INSERT INTO Player (username, password, name, main_score, training_score, fitness_multiplier)
 VALUES
@@ -114,3 +119,15 @@ INSERT INTO Monsters (monster_id, monster_name, base_strength, distance_strength
 (9, 'Werewolf', 10, 14),
 (10, 'Minotaur', 13, 16);
 
+
+INSERT INTO Gear (gear_id, gear_name, gear_type) VALUES
+(1, 'Baseball Cap', 'Helmet'),
+(2, 'Iron Sword', 'Weapon'),
+(3, 'Leather Armor', 'Armor'),
+(4, 'Magic Ring', 'lefthand'),
+(5, 'Steel Shield', 'righthand'),
+(6, 'water pistol', 'weapon'),
+(7, 'Silver Dagger', 'Weapon'),
+(8, 'Chainmail', 'Armor'),
+(9, 'Pink Boots', 'Boots'),
+(10, 'Fork', 'weapon');
