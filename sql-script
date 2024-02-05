@@ -1,6 +1,6 @@
 DROP TABLE IF EXISTS Training, Fitness_profile, player;
 
--- Create the player table
+
 CREATE TABLE player (
     player_id SERIAL PRIMARY KEY,
     username VARCHAR(255) UNIQUE,
@@ -11,7 +11,7 @@ CREATE TABLE player (
     fitness_multiplier FLOAT
 );
 
--- Create the Fitness_profile table with a foreign key reference to player
+
 CREATE TABLE Fitness_profile (
     profile_id SERIAL PRIMARY KEY,
     player_id INT UNIQUE,
@@ -25,7 +25,7 @@ CREATE TABLE Fitness_profile (
     FOREIGN KEY (player_id) REFERENCES player(player_id)
 );
 
--- Create the Training table with a foreign key reference to player
+
 CREATE TABLE Training (
     training_id SERIAL PRIMARY KEY,
     training_name VARCHAR(255),
@@ -39,6 +39,7 @@ CREATE TABLE Training (
     FOREIGN KEY (player_id) REFERENCES player(player_id)
 );
 
+
 CREATE TABLE Monsters (
     monster_id SERIAL PRIMARY KEY,
     monster_name VARCHAR(255),
@@ -46,11 +47,24 @@ CREATE TABLE Monsters (
     distance_strength INT
 );
 
+
 CREATE TABLE Gear (
     gear_id SERIAL PRIMARY KEY,
     gear_name VARCHAR(255),
     gear_type VARCHAR(255)
 );
+
+
+CREATE TABLE Encounters (
+    encounter_id SERIAL PRIMARY KEY,
+    player_id INT,
+    monster_id INT,
+    result VARCHAR(50),
+    loot_collected INT,
+    FOREIGN KEY (player_id) REFERENCES player(player_id),
+    FOREIGN KEY (monster_id) REFERENCES Monsters(monster_id)
+);
+
 
 INSERT INTO Player (username, password, name, main_score, training_score, fitness_multiplier)
 VALUES
@@ -131,3 +145,16 @@ INSERT INTO Gear (gear_id, gear_name, gear_type) VALUES
 (8, 'Chainmail', 'Armor'),
 (9, 'Pink Boots', 'Boots'),
 (10, 'Fork', 'weapon');
+
+
+INSERT INTO Encounters (encounter_id, player_id, monster_id, result, loot_collected) VALUES
+(1, 1, 1, 'Victory', 3),
+(2, 1, 2, 'Victory', 5),
+(3, 1, 4, 'Defeat', 0),
+(4, 2, 3, 'Victory', 6),
+(5, 2, 5, 'Victory', 10),
+(6, 2, 7, 'Defeat', 0),
+(7, 3, 1, 'Victory', 9),
+(8, 3, 6, 'Victory', 14),
+(9, 3, 9, 'Defeat', 0),
+(10, 4, 4, 'Victory', 13);
