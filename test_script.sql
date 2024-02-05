@@ -6,7 +6,7 @@ CREATE TABLE player (
     username VARCHAR(255) UNIQUE,
     password VARCHAR(255),
     name VARCHAR(255),
-    average_score INT,
+    main_score INT,
     training_score INT[],
     fitness_multiplier FLOAT
 );
@@ -39,7 +39,7 @@ CREATE TABLE Training (
     FOREIGN KEY (player_id) REFERENCES player(player_id)
 );
 
-INSERT INTO Player (username, password, name, average_score, training_score, fitness_multiplier)
+INSERT INTO Player (username, password, name, main_score, training_score, fitness_multiplier)
 VALUES
   ('user1', '$2a$12$vMbCRTOZcCscO4iA9EbnWeLnYrfEYtM0fr9BopK/QFB/53Ub60/42', 'User One', 425, '{80, 90, 75, 85, 95}', 0.33),
   ('user2', '$2a$12$cuv50PlaZY8gpwa.NgKQCemAkQCeSbKA7GWrjS2Imp7lE4Hd1AZ7W', 'User Two', 429, '{80, 90, 75, 85, 95}', 0.28),
