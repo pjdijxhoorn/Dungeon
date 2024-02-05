@@ -39,6 +39,14 @@ CREATE TABLE Training (
     FOREIGN KEY (player_id) REFERENCES player(player_id)
 );
 
+CREATE TABLE Monsters (
+    monster_id SERIAL PRIMARY KEY,
+    monster_name VARCHAR(255),
+    base_strength INT,
+    distance_strength INT
+);
+
+
 INSERT INTO Player (username, password, name, main_score, training_score, fitness_multiplier)
 VALUES
   ('user1', '$2a$12$vMbCRTOZcCscO4iA9EbnWeLnYrfEYtM0fr9BopK/QFB/53Ub60/42', 'User One', 430, '{80, 95, 75, 85, 95}', 0.33),
@@ -55,6 +63,7 @@ VALUES
   ('user12', '$2a$12$A4tI7jPDWDzxZeM0QFaSiO132KuN.zCjgrB5vMSkcXra56KVKYxmi', 'User Twelve', 625, '{115, 120, 125, 130, 135}', 0.41),
   ('user13', '$2a$12$EKvqvV1hAcLGY425NnUYZO/7iZImsATZfBqASRoR7lMUE0deh0vL6', 'User Thirteen', 650, '{120, 125, 130, 135, 140}', 0.42),
   ('user14', '$2a$12$2sNbJyNfNbmhkhHozOnJJ.Ae8LwpqYbmznJRSLfbJBVz095SBJPXC', 'User Fourteen', 675, '{125, 130, 135, 140, 145}', 0.43);
+
 
 INSERT INTO Fitness_profile (player_id, bmi, weight_in_kg, height_in_m, date_of_birth, max_heart_frequency, rest_heart_frequency, reserve_heart_frequency)
 VALUES
@@ -91,3 +100,17 @@ VALUES
 ('Mountain Trek', 10000, 4800, 3.75, 'Endurance', 70, TO_DATE('28-01-2024', 'DD-MM-YYYY'), 12),
 ('Park Sprint', 2000, 600, 20, 'Sprint', 90, TO_DATE('29-01-2024', 'DD-MM-YYYY'), 13),
 ('Night Jog', 3500, 1500, 7, 'Endurance', 75, TO_DATE('30-01-2024', 'DD-MM-YYYY'), 14);
+
+
+INSERT INTO Monsters (monster_id, monster_name, base_strength, distance_strength) VALUES
+(1, 'Rat', 5, 5),
+(2, 'Skeleton', 7, 8),
+(3, 'Zombie', 10, 10),
+(4, 'Orc', 8, 12),
+(5, 'Dragon', 15, 20),
+(6, 'Goblin', 6, 9),
+(7, 'Troll', 9, 11),
+(8, 'Ghost', 12, 15),
+(9, 'Werewolf', 10, 14),
+(10, 'Minotaur', 13, 16);
+
