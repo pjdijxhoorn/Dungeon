@@ -33,7 +33,7 @@ def test_get_players():
                                 'player_id': 4,
                                 'training_score': [80, 90, 75, 85, 95],
                                 'username': 'user4'},
-                               {'average_score': 3315,
+                               {'main_score': 3315,
                                 'name': 'User Five',
                                 'player_id': 5,
                                 'training_score': [663, 663, 663, 663, 663],
@@ -44,7 +44,7 @@ def test_get_leaderboard():
     """ Test the endpoint for retrieving a leaderboard from all players. """
     response = client.get("/player/leaderboard")
     assert response.status_code == 200
-    assert response.json() == [{'average_score': 3315, 'username': 'user5'},
+    assert response.json() == [{'main_score': 3315, 'username': 'user5'},
  {'main_score': 429, 'username': 'user2'},
  {'main_score': 427, 'username': 'user3'},
  {'main_score': 425, 'username': 'user1'},

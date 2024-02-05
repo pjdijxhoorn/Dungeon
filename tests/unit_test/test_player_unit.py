@@ -1,5 +1,5 @@
 from fastapi.testclient import TestClient
-from app.services.player import calculate_personal_average, calculate_training_score
+from app.services.player import calculate_personal_main, calculate_training_score
 from main import app
 
 Client = TestClient(app)
@@ -16,11 +16,11 @@ def test_training_score_calculation():
     assert result == 1249
 
 
-def test_calculate_personal_average():
+def test_calculate_personal_main():
     """ Test the calculation of personal average. """
     # ARRANGE
     training_score_list = [0, 1, 2, 3, 4, 5]
     # ACT
-    result = calculate_personal_average(training_score_list)
+    result = calculate_personal_main(training_score_list)
     # ASSERT
     assert result == 15
