@@ -81,6 +81,40 @@ def get_player_main_score(db: Session, player_id: int):
     main_score = player.main_score
     return main_score
 
+def get_player_performance_percentage(db: Session, player_id: int):
+    """ Get the player's performance percentage compared to other players. """
+    player_main_score = get_player_main_score(db, player_id)
+
+    all_players = get_players(db)
+    all_players_scores = [get_player_main_score(db, player.player_id) for player in all_players]
+
+    players_below_count = 0
+
+    highest_score_found = 0
+    for score in all_players_scores:
+        if score > highest_score_found:
+            highest_score_found = score
+
+    for score in all_players_scores:
+        if score < player_main_score:
+            players_below_count += 1
+
+    total_players_count = 0
+    for _ in all_players:
+        total_players_count += 1
+
+    percentage_below = 0
+    for _ in range(players_below_count):
+        percentage_below += 1
+
+    if player_main_score == highest_score_found:
+        percentage_below = 100.0
+    else:
+        percentage_below = calculate_percentage(players_below_count, total_players_count)
+
+    performance_message = f"You are performing better than {percentage_below:.2f}% of players."
+
+    return performance_message
 
 def create_player(player, db):
     """ Create a new player and associated profile in the database. """
@@ -156,6 +190,9 @@ def update_fitness_multiplier(player_id, db, fitness_multiplier):
     db.commit()
     db.refresh(player)
 
+def calculate_percentage(count: int, total: int):
+    """ Calculate the how many players a player outpreforms """
+    return (count / total) * 100 if total != 0 else 0
 
 def calculate_training_score(base_score, fitness_multiplier):
     """ Calculate the training score based on a base score and fitness multiplier. """

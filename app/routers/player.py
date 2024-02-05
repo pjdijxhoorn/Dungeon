@@ -43,6 +43,10 @@ def get_player_main_score(player_id: int, db=Depends(get_db)):
     """ Calculate and get the average score of a specific player. """
     return services.get_player_main_score(db, player_id)
 
+@router.get("/{player_id}/performance", status_code=200, tags=["Player"])
+def get_player_performance_percentage(player_id: int, db=Depends(get_db)):
+    """ Calculate and get the average score of a specific player. """
+    return services.get_player_performance_percentage(db, player_id)
 
 @router.post("", status_code=201, tags=["Player"])
 def create_player(player: CreatePlayer, db=Depends(get_db)) -> Player:
