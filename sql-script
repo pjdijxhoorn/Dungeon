@@ -47,7 +47,7 @@ CREATE TABLE Training (
     base_score INT,
     training_date DATE,
     player_id INT,
-    dungeon_status VARCHAR(255),
+    dungeon_status BOOLEAN,
     FOREIGN KEY (player_id) REFERENCES player(player_id)
 );
 
@@ -63,22 +63,22 @@ CREATE TABLE Monsters (
 
 CREATE TABLE Gear (
     gear_id SERIAL PRIMARY KEY,
-    player_id INT,
     gear_name VARCHAR(255),
     gear_class VARCHAR(255),
     gear_slot VARCHAR(255),
-    gear_price INT,
-    FOREIGN KEY (player_id) REFERENCES player(player_id)
+    gear_price INT
 );
 
 
 CREATE TABLE Equipped_gear (
     equipped_gear_id SERIAL PRIMARY KEY,
+    player_id INT,
     equipped_slot_head INT,
     equipped_slot_weapon INT,
     equipped_slot_armor INT,
     equipped_slot_boots INT,
     equipped_slot_title INT,
+    FOREIGN KEY (player_id) REFERENCES player(player_id)
     FOREIGN KEY (equipped_slot_head) REFERENCES Gear(gear_id),
     FOREIGN KEY (equipped_slot_weapon) REFERENCES Gear(gear_id),
     FOREIGN KEY (equipped_slot_armor) REFERENCES Gear(gear_id),
@@ -139,21 +139,21 @@ VALUES
 
 INSERT INTO Training (training_name, distance_in_meters, time_in_seconds, average_speed, training_type, base_score, training_date, player_id, dungeon_status)
 VALUES
-('Morning run', 5000, 1800, 10, 'Sprint', 75, TO_DATE('16-01-2024', 'DD-MM-YYYY'), 1, 'Used'),
-('round the lake', 10000, 2400, 6.25, 'Endurance', 80, TO_DATE('17-01-2024', 'DD-MM-YYYY'), 2, 'Unused'),
-('romantic run towards SO', 8000, 1500, 15, 'Sprint', 90, TO_DATE('18-01-2024', 'DD-MM-YYYY'), 3, 'Unused'),
-('run after icecream-van', 100, 100, 1, 'Sprint', 85, TO_DATE('19-01-2024', 'DD-MM-YYYY'), 4, 'Unused'),
-('ran from scary clown', 6000, 2700, 4.44, 'Sprint', 95, TO_DATE('20-01-2024', 'DD-MM-YYYY'), 4, 'Unused'),
-('Evening Walk', 3000, 1800, 5, 'Endurance', 60, TO_DATE('21-01-2024', 'DD-MM-YYYY'), 5, 'Used'),
-('Hill Climb', 4000, 2400, 4, 'Endurance', 65, TO_DATE('22-01-2024', 'DD-MM-YYYY'), 6, 'Unused'),
-('Speed Run', 5000, 1500, 10, 'Sprint', 70, TO_DATE('23-01-2024', 'DD-MM-YYYY'), 7, 'Used'),
-('Trail Run', 6000, 2700, 6.66, 'Endurance', 75, TO_DATE('24-01-2024', 'DD-MM-YYYY'), 8, 'Used'),
-('City Jog', 7000, 2100, 7.14, 'Endurance', 80, TO_DATE('25-01-2024', 'DD-MM-YYYY'), 9, 'Unused'),
-('Beach Run', 8000, 1600, 12.5, 'Endurance', 85, TO_DATE('26-01-2024', 'DD-MM-YYYY'), 10, 'Unused'),
-('Forest Hike', 9000, 3600, 5, 'Endurance', 65, TO_DATE('27-01-2024', 'DD-MM-YYYY'), 11, 'Used'),
-('Mountain Trek', 10000, 4800, 3.75, 'Endurance', 70, TO_DATE('28-01-2024', 'DD-MM-YYYY'), 12, 'Used'),
-('Park Sprint', 2000, 600, 20, 'Sprint', 90, TO_DATE('29-01-2024', 'DD-MM-YYYY'), 13, 'Unused'),
-('Night Jog', 3500, 1500, 7, 'Endurance', 75, TO_DATE('30-01-2024', 'DD-MM-YYYY'), 14, 'Used');
+('Morning run', 5000, 1800, 10, 'Sprint', 75, TO_DATE('16-01-2024', 'DD-MM-YYYY'), 1, TRUE),
+('round the lake', 10000, 2400, 6.25, 'Endurance', 80, TO_DATE('17-01-2024', 'DD-MM-YYYY'), 2, FALSE),
+('romantic run towards SO', 8000, 1500, 15, 'Sprint', 90, TO_DATE('18-01-2024', 'DD-MM-YYYY'), 3, FALSE),
+('run after icecream-van', 100, 100, 1, 'Sprint', 85, TO_DATE('19-01-2024', 'DD-MM-YYYY'), 4, FALSE),
+('ran from scary clown', 6000, 2700, 4.44, 'Sprint', 95, TO_DATE('20-01-2024', 'DD-MM-YYYY'), 4, FALSE),
+('Evening Walk', 3000, 1800, 5, 'Endurance', 60, TO_DATE('21-01-2024', 'DD-MM-YYYY'), 5, TRUE),
+('Hill Climb', 4000, 2400, 4, 'Endurance', 65, TO_DATE('22-01-2024', 'DD-MM-YYYY'), 6, FALSE),
+('Speed Run', 5000, 1500, 10, 'Sprint', 70, TO_DATE('23-01-2024', 'DD-MM-YYYY'), 7, TRUE),
+('Trail Run', 6000, 2700, 6.66, 'Endurance', 75, TO_DATE('24-01-2024', 'DD-MM-YYYY'), 8, TRUE),
+('City Jog', 7000, 2100, 7.14, 'Endurance', 80, TO_DATE('25-01-2024', 'DD-MM-YYYY'), 9, FALSE),
+('Beach Run', 8000, 1600, 12.5, 'Endurance', 85, TO_DATE('26-01-2024', 'DD-MM-YYYY'), 10, FALSE),
+('Forest Hike', 9000, 3600, 5, 'Endurance', 65, TO_DATE('27-01-2024', 'DD-MM-YYYY'), 11, TRUE),
+('Mountain Trek', 10000, 4800, 3.75, 'Endurance', 70, TO_DATE('28-01-2024', 'DD-MM-YYYY'), 12, TRUE),
+('Park Sprint', 2000, 600, 20, 'Sprint', 90, TO_DATE('29-01-2024', 'DD-MM-YYYY'), 13, FALSE),
+('Night Jog', 3500, 1500, 7, 'Endurance', 75, TO_DATE('30-01-2024', 'DD-MM-YYYY'), 14, TRUE);
 
 
 INSERT INTO Monsters (monster_name, base_strength, distance_strength, zone_difficulty) 
@@ -170,19 +170,19 @@ VALUES
 ('Mother in law', 17, 22, 'boss');
 
 
-INSERT INTO Gear (player_id, gear_name, gear_class, gear_slot, gear_stats, gear_price) 
+INSERT INTO Gear (gear_name, gear_class, gear_slot, gear_stats, gear_price) 
 VALUES
-(1, 'Baseball Cap', 'common', 'Head', 'defense', 20),        
-(2, 'Iron Sword', 'uncommon', 'Weapon', 'strength', 50),         
-(3, 'Leather Armor', 'common', 'Armor', 'defense', 30),        
-(4, 'Twig', 'legendary', 'Weapon', 'accuracy', 100),   
-(5, 'Steel Armor', 'uncommon', 'Armor', 'defense', 60), 
-(6, 'Water Pistol', 'common', 'Weapon', 'speed', 15),     
-(7, 'Silver Dagger', 'epic', 'Weapon', 'strength', 80),
-(8, 'Chainmail', 'uncommon', 'Armor', 'defense', 70),            
-(9, 'Pink Boots', 'common', 'Boots', 'speed', 25),            
-(10, 'Fork', 'common', 'Weapon', 'strength', 5),
-(11, 'Mr. Spaghetti arms', 'common', 'Title', 'strength', 0);            
+('Baseball Cap', 'common', 'Head', 'defense', 20),        
+('Iron Sword', 'uncommon', 'Weapon', 'strength', 50),         
+('Leather Armor', 'common', 'Armor', 'defense', 30),        
+('Twig', 'legendary', 'Weapon', 'accuracy', 100),   
+('Steel Armor', 'uncommon', 'Armor', 'defense', 60), 
+('Water Pistol', 'common', 'Weapon', 'speed', 15),     
+('Silver Dagger', 'epic', 'Weapon', 'strength', 80),
+('Chainmail', 'uncommon', 'Armor', 'defense', 70),            
+('Pink Boots', 'common', 'Boots', 'speed', 25),            
+('Fork', 'common', 'Weapon', 'strength', 5),
+('Mr. Spaghetti arms', 'common', 'Title', 'strength', 0);            
 
 INSERT INTO Equipped_gear (player_id, equipped_slot_head, equipped_slot_weapon, equipped_slot_armor, equipped_slot_boots, equipped_slot_title) 
 VALUES
