@@ -16,11 +16,19 @@ try:
         port=os.environ["DBPORT"]
     )
 
+    database=os.environ["DBNAME"]
+    user=os.environ["DBUSER"]
+    password=os.environ["DBPASSWORD"]
+    host=os.environ["DBHOST"]
+    port=os.environ["DBPORT"]
+    SQLALCHEMY_DATABASE_URL = "postgresql+psycopg2://" + user + ":" + password + "@" + host + "/" + database
+
 except:
     SQLALCHEMY_DATABASE_URL = os.getenv("SQLALCHEMY_DATABASE_URL")
-    engine = create_engine(SQLALCHEMY_DATABASE_URL)
-    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-    Base = declarative_base()
+    
+engine = create_engine(SQLALCHEMY_DATABASE_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
 
 
 def get_db():

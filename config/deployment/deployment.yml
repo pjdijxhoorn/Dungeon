@@ -5,7 +5,7 @@ metadata:
   labels:
     app: dungeon-run
 spec:
-  replicas: 1
+  replicas: 4
   selector:
     matchLabels:
       app: dungeon-run
@@ -35,7 +35,6 @@ spec:
             value: "<DBPORT>"
           - name: DBNAME
             value: "<DBDATABASE>"
-
 ---
 apiVersion: v1
 kind: Service
