@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS Training, Fitness_profile, player;
+DROP TABLE IF EXISTS Training, Fitness_profile, player_base_stats, Monsters, Gear,Equipped_gear, Clan, player;
 
 
 CREATE TABLE player (
@@ -57,7 +57,7 @@ CREATE TABLE Monsters (
     monster_name VARCHAR(255),
     base_strength INT,
     distance_strength INT,
-    zone_difficulty VARCHAR(255),
+    zone_difficulty VARCHAR(255)
 );
 
 
@@ -80,7 +80,7 @@ CREATE TABLE Equipped_gear (
     equipped_slot_armor INT,
     equipped_slot_boots INT,
     equipped_slot_title INT,
-    FOREIGN KEY (player_id) REFERENCES player(player_id)
+    FOREIGN KEY (player_id) REFERENCES player(player_id),
     FOREIGN KEY (equipped_slot_head) REFERENCES Gear(gear_id),
     FOREIGN KEY (equipped_slot_weapon) REFERENCES Gear(gear_id),
     FOREIGN KEY (equipped_slot_armor) REFERENCES Gear(gear_id),
@@ -115,7 +115,7 @@ VALUES
   ('user14', '$2a$12$2sNbJyNfNbmhkhHozOnJJ.Ae8LwpqYbmznJRSLfbJBVz095SBJPXC', 'User Fourteen', 675, '{125, 130, 135, 140, 145}', 0.43);
 
 
-INSERT INTO player_base_stats (player_id, strenght, defense, speed, health, accuracy, player_level) 
+INSERT INTO player_base_stats (player_id, strenght, defense, speed, health, accuracy, player_level)
 VALUES
   (1, 10, 10, 10, 100, 95, 1),
   (2, 20, 20, 20, 200, 90, 2);
@@ -158,7 +158,7 @@ VALUES
 ('Night Jog', 3500, 1500, 7, 'Endurance', 75, TO_DATE('30-01-2024', 'DD-MM-YYYY'), 14, TRUE);
 
 
-INSERT INTO Monsters (monster_name, base_strength, distance_strength, zone_difficulty) 
+INSERT INTO Monsters (monster_name, base_strength, distance_strength, zone_difficulty)
 VALUES
 ('Rat', 5, 5, 'easy'),
 ('Skeleton', 7, 8, 'easy'),
@@ -172,21 +172,21 @@ VALUES
 ('Mother in law', 17, 22, 'boss');
 
 
-INSERT INTO Gear (gear_name, gear_class, gear_slot, gear_stat_type, gear_stat, gear_price) 
+INSERT INTO Gear (gear_name, gear_class, gear_slot, gear_stat_type, gear_stat, gear_price)
 VALUES
-('Baseball Cap', 'common', 'Head', 'defense', 10, 20),        
-('Iron Sword', 'uncommon', 'Weapon', 'strength', 15, 50),         
-('Leather Armor', 'common', 'Armor', 'defense', 10, 30),        
-('Twig', 'legendary', 'Weapon', 'accuracy', 90, 100),   
-('Steel Armor', 'uncommon', 'Armor', 'defense', 20, 60), 
-('Water Pistol', 'common', 'Weapon', 'speed', 7, 15),     
+('Baseball Cap', 'common', 'Head', 'defense', 10, 20),
+('Iron Sword', 'uncommon', 'Weapon', 'strength', 15, 50),
+('Leather Armor', 'common', 'Armor', 'defense', 10, 30),
+('Twig', 'legendary', 'Weapon', 'accuracy', 90, 100),
+('Steel Armor', 'uncommon', 'Armor', 'defense', 20, 60),
+('Water Pistol', 'common', 'Weapon', 'speed', 7, 15),
 ('Silver Dagger', 'epic', 'Weapon', 'strength', 60, 80),
-('Chainmail', 'uncommon', 'Armor', 'defense', 20, 70),            
-('Pink Boots', 'common', 'Boots', 'speed', 18, 25),            
+('Chainmail', 'uncommon', 'Armor', 'defense', 20, 70),
+('Pink Boots', 'common', 'Boots', 'speed', 18, 25),
 ('Fork', 'common', 'Weapon', 'strength', 3, 5),
-('Mr. Spaghetti arms', 'common', 'Title', 'strength', 5, 0);            
+('Mr. Spaghetti arms', 'common', 'Title', 'strength', 5, 0);
 
-INSERT INTO Equipped_gear (player_id, equipped_slot_head, equipped_slot_weapon, equipped_slot_armor, equipped_slot_boots, equipped_slot_title) 
+INSERT INTO Equipped_gear (player_id, equipped_slot_head, equipped_slot_weapon, equipped_slot_armor, equipped_slot_boots, equipped_slot_title)
 VALUES
 (1, 1, 2, 3, 9, 11),
 (2, 4, 7, 8, 10, 11),
