@@ -18,8 +18,8 @@ CREATE TABLE player_base_stats (
     defense INT,
     speed INT,
     health INT,
-    accarcy INT,
-    level INT,
+    accuracy INT,
+    player_level INT,
     FOREIGN KEY (player_id) REFERENCES player(player_id)
 );
 
@@ -47,26 +47,51 @@ CREATE TABLE Training (
     base_score INT,
     training_date DATE,
     player_id INT,
+    training_status VARCHAR(255),
     FOREIGN KEY (player_id) REFERENCES player(player_id)
+);
+
+
+CREATE TABLE Monster_zone (
+    zone_id SERIAL PRIMARY KEY,
+    zone_difficulty VARCHAR(255)
 );
 
 
 CREATE TABLE Monsters (
     monster_id SERIAL PRIMARY KEY,
+    zone_id INT,
     monster_name VARCHAR(255),
     base_strength INT,
-    distance_strength INT
+    distance_strength INT,
+    FOREIGN KEY (zone_id) REFERENCES Monster_zone(zone_id)
 );
 
 
 CREATE TABLE Gear (
     gear_id SERIAL PRIMARY KEY,
     gear_name VARCHAR(255),
-    gear_class VARCHAR(255)
-    gear_slot VACHAR(255)
+    gear_class VARCHAR(255),
+    gear_slot VARCHAR(255),
+    gear_price VARCHAR(255)
 );
 
 
+CREATE TABLE Eccuiped_gear (
+    gear_id SERIAL PRIMARY KEY,
+    gear_name VARCHAR(255),
+    gear_class VARCHAR(255),
+    gear_slot VARCHAR(255)
+);
+
+
+CREATE TABLE Clan (
+    clan_id SERIAL PRIMARY KEY,
+    clan_name VARCHAR(255),
+    player_id INT,
+    clan_role VARCHAR(255),
+    FOREIGN KEY (player_id) REFERENCES player(player_id)
+);
 
 INSERT INTO Player (username, password, name, main_score, training_score, fitness_multiplier)
 VALUES
