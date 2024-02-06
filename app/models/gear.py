@@ -1,5 +1,5 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, Boolean
 
 Base = declarative_base()
 
@@ -14,3 +14,4 @@ class Gear(Base):
     gear_stat_type = Column(String)
     gear_stat = Column(Integer)
     gear_price = Column(Integer)
+    buy_able = Column(Boolean)

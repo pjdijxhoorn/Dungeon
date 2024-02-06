@@ -70,7 +70,8 @@ CREATE TABLE Gear (
     gear_slot VARCHAR(255),
     gear_stat_type VARCHAR(255),
     gear_stat INT,
-    gear_price INT
+    gear_price INT,
+    buy_able BOOLEAN
 );
 
 
@@ -174,19 +175,19 @@ VALUES
 ('Mother in law', 17, 22, 'boss');
 
 
-INSERT INTO Gear (gear_name, gear_class, gear_slot, gear_stat_type, gear_stat, gear_price)
+INSERT INTO Gear (gear_name, gear_class, gear_slot, gear_stat_type, gear_stat, gear_price, buy_able)
 VALUES
-('Baseball Cap', 'common', 'Head', 'defense', 10, 20),
-('Iron Sword', 'uncommon', 'Weapon', 'strength', 15, 50),
-('Leather Armor', 'common', 'Armor', 'defense', 10, 30),
-('Twig', 'legendary', 'Weapon', 'accuracy', 90, 100),
-('Steel Armor', 'uncommon', 'Armor', 'defense', 20, 60),
-('Water Pistol', 'common', 'Weapon', 'speed', 7, 15),
-('Silver Dagger', 'epic', 'Weapon', 'strength', 60, 80),
-('Chainmail', 'uncommon', 'Armor', 'defense', 20, 70),
-('Pink Boots', 'common', 'Boots', 'speed', 18, 25),
-('Fork', 'common', 'Weapon', 'strength', 3, 5),
-('Mr. Spaghetti arms', 'common', 'Title', 'strength', 5, 0);
+('Baseball Cap', 'common', 'Head', 'defense', 10, 20, True),
+('Iron Sword', 'uncommon', 'Weapon', 'strength', 15, 50, True),
+('Leather Armor', 'common', 'Armor', 'defense', 10, 30, True),
+('Twig', 'legendary', 'Weapon', 'accuracy', 90, 100, True),
+('Steel Armor', 'uncommon', 'Armor', 'defense', 20, 60, True),
+('Water Pistol', 'common', 'Weapon', 'speed', 7, 15, True),
+('Silver Dagger', 'epic', 'Weapon', 'strength', 60, 80, True),
+('Chainmail', 'uncommon', 'Armor', 'defense', 20, 70, True),
+('Pink Boots', 'common', 'Boots', 'speed', 18, 25, True),
+('Fork', 'common', 'Weapon', 'strength', 3, 5, True),
+('Mr. Spaghetti arms', 'common', 'Title', 'strength', 5, 0, False);
 
 INSERT INTO Equipped_gear (player_id, equipped_slot_head, equipped_slot_weapon, equipped_slot_armor, equipped_slot_boots, equipped_slot_title)
 VALUES
