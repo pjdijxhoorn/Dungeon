@@ -4,11 +4,11 @@ from sqlalchemy import Column, Integer, String
 Base = declarative_base()
 
 
-class Monster(Base):
+class Monsters(Base):
     """ Represents a monster that the player is able to encounter in a dungeon run. """
-    __tablename__ = "monster"
+    __tablename__ = "monsters"
     monster_id = Column(Integer, primary_key=True)
-    zone_id = Column(Integer)
-    monster_name = Column(String, default="monster")
+    monster_name = Column(String)
     base_strength = Column(Integer)
     distance_strength = Column(Integer)
+    zone_difficulty = Column(String)
