@@ -47,48 +47,50 @@ CREATE TABLE Training (
     base_score INT,
     training_date DATE,
     player_id INT,
-    training_status VARCHAR(255),
+    dungeon_status VARCHAR(255),
     FOREIGN KEY (player_id) REFERENCES player(player_id)
-);
-
-
-CREATE TABLE Monster_zone (
-    zone_id SERIAL PRIMARY KEY,
-    zone_difficulty VARCHAR(255)
 );
 
 
 CREATE TABLE Monsters (
     monster_id SERIAL PRIMARY KEY,
-    zone_id INT,
     monster_name VARCHAR(255),
     base_strength INT,
     distance_strength INT,
-    FOREIGN KEY (zone_id) REFERENCES Monster_zone(zone_id)
+    zone_difficulty VARCHAR(255),
 );
 
 
 CREATE TABLE Gear (
     gear_id SERIAL PRIMARY KEY,
+    player_id INT,
     gear_name VARCHAR(255),
     gear_class VARCHAR(255),
     gear_slot VARCHAR(255),
-    gear_price VARCHAR(255)
+    gear_price INT,
+    FOREIGN KEY (player_id) REFERENCES player(player_id)
 );
 
 
-CREATE TABLE Eccuiped_gear (
-    gear_id SERIAL PRIMARY KEY,
-    gear_name VARCHAR(255),
-    gear_class VARCHAR(255),
-    gear_slot VARCHAR(255)
+CREATE TABLE Equipped_gear (
+    equipped_gear_id SERIAL PRIMARY KEY,
+    equipped_slot_head INT,
+    equipped_slot_weapon INT,
+    equipped_slot_armor INT,
+    equipped_slot_boots INT,
+    equipped_slot_title INT,
+    FOREIGN KEY (equipped_slot_head) REFERENCES Gear(gear_id),
+    FOREIGN KEY (equipped_slot_weapon) REFERENCES Gear(gear_id),
+    FOREIGN KEY (equipped_slot_armor) REFERENCES Gear(gear_id),
+    FOREIGN KEY (equipped_slot_boots) REFERENCES Gear(gear_id),
+    FOREIGN KEY (equipped_slot_title) REFERENCES Gear(gear_id)
 );
 
 
 CREATE TABLE Clan (
     clan_id SERIAL PRIMARY KEY,
-    clan_name VARCHAR(255),
     player_id INT,
+    clan_name VARCHAR(255),
     clan_role VARCHAR(255),
     FOREIGN KEY (player_id) REFERENCES player(player_id)
 );
@@ -111,6 +113,12 @@ VALUES
   ('user14', '$2a$12$2sNbJyNfNbmhkhHozOnJJ.Ae8LwpqYbmznJRSLfbJBVz095SBJPXC', 'User Fourteen', 675, '{125, 130, 135, 140, 145}', 0.43);
 
 
+INSERT INTO player_base_stats (player_id, strenght, defense, speed, health, accuracy, player_level) 
+VALUES
+  (1, 10, 10, 10, 100, 95, 1),
+  (2, 20, 20, 20, 200, 90, 2);
+
+
 INSERT INTO Fitness_profile (player_id, bmi, weight_in_kg, height_in_m, date_of_birth, max_heart_frequency, rest_heart_frequency, reserve_heart_frequency)
 VALUES
 (1, 25.5, 70.5, 175, TO_DATE('15-01-1990', 'DD-MM-YYYY'), 180, 60, 120),
@@ -129,48 +137,79 @@ VALUES
 (14, 23.2, 69.0, 173, TO_DATE('21-06-1994', 'DD-MM-YYYY'), 177, 59, 118);
 
 
-INSERT INTO Training (training_name, distance_in_meters, time_in_seconds, average_speed, training_type, base_score, training_date, player_id)
+INSERT INTO Training (training_name, distance_in_meters, time_in_seconds, average_speed, training_type, base_score, training_date, player_id, dungeon_status)
 VALUES
-('Morning run', 5000, 1800, 10, 'Sprint', 75, TO_DATE('16-01-2024', 'DD-MM-YYYY'), 1),
-('round the lake', 10000, 2400, 6.25, 'Endurance', 80, TO_DATE('17-01-2024', 'DD-MM-YYYY'), 2),
-('romantic run towards SO', 8000, 1500, 15, 'Sprint', 90, TO_DATE('18-01-2024', 'DD-MM-YYYY'), 3),
-('run after icecream-van', 100, 100, 1, 'Sprint', 85, TO_DATE('19-01-2024', 'DD-MM-YYYY'), 4),
-('ran from scary clown', 6000, 2700, 4.44, 'Sprint', 95, TO_DATE('20-01-2024', 'DD-MM-YYYY'), 4),
-('Evening Walk', 3000, 1800, 5, 'Endurance', 60, TO_DATE('21-01-2024', 'DD-MM-YYYY'), 5),
-('Hill Climb', 4000, 2400, 4, 'Endurance', 65, TO_DATE('22-01-2024', 'DD-MM-YYYY'), 6),
-('Speed Run', 5000, 1500, 10, 'Sprint', 70, TO_DATE('23-01-2024', 'DD-MM-YYYY'), 7),
-('Trail Run', 6000, 2700, 6.66, 'Endurance', 75, TO_DATE('24-01-2024', 'DD-MM-YYYY'), 8),
-('City Jog', 7000, 2100, 7.14, 'Endurance', 80, TO_DATE('25-01-2024', 'DD-MM-YYYY'), 9),
-('Beach Run', 8000, 1600, 12.5, 'Endurance', 85, TO_DATE('26-01-2024', 'DD-MM-YYYY'), 10),
-('Forest Hike', 9000, 3600, 5, 'Endurance', 65, TO_DATE('27-01-2024', 'DD-MM-YYYY'), 11),
-('Mountain Trek', 10000, 4800, 3.75, 'Endurance', 70, TO_DATE('28-01-2024', 'DD-MM-YYYY'), 12),
-('Park Sprint', 2000, 600, 20, 'Sprint', 90, TO_DATE('29-01-2024', 'DD-MM-YYYY'), 13),
-('Night Jog', 3500, 1500, 7, 'Endurance', 75, TO_DATE('30-01-2024', 'DD-MM-YYYY'), 14);
+('Morning run', 5000, 1800, 10, 'Sprint', 75, TO_DATE('16-01-2024', 'DD-MM-YYYY'), 1, 'Used'),
+('round the lake', 10000, 2400, 6.25, 'Endurance', 80, TO_DATE('17-01-2024', 'DD-MM-YYYY'), 2, 'Unused'),
+('romantic run towards SO', 8000, 1500, 15, 'Sprint', 90, TO_DATE('18-01-2024', 'DD-MM-YYYY'), 3, 'Unused'),
+('run after icecream-van', 100, 100, 1, 'Sprint', 85, TO_DATE('19-01-2024', 'DD-MM-YYYY'), 4, 'Unused'),
+('ran from scary clown', 6000, 2700, 4.44, 'Sprint', 95, TO_DATE('20-01-2024', 'DD-MM-YYYY'), 4, 'Unused'),
+('Evening Walk', 3000, 1800, 5, 'Endurance', 60, TO_DATE('21-01-2024', 'DD-MM-YYYY'), 5, 'Used'),
+('Hill Climb', 4000, 2400, 4, 'Endurance', 65, TO_DATE('22-01-2024', 'DD-MM-YYYY'), 6, 'Unused'),
+('Speed Run', 5000, 1500, 10, 'Sprint', 70, TO_DATE('23-01-2024', 'DD-MM-YYYY'), 7, 'Used'),
+('Trail Run', 6000, 2700, 6.66, 'Endurance', 75, TO_DATE('24-01-2024', 'DD-MM-YYYY'), 8, 'Used'),
+('City Jog', 7000, 2100, 7.14, 'Endurance', 80, TO_DATE('25-01-2024', 'DD-MM-YYYY'), 9, 'Unused'),
+('Beach Run', 8000, 1600, 12.5, 'Endurance', 85, TO_DATE('26-01-2024', 'DD-MM-YYYY'), 10, 'Unused'),
+('Forest Hike', 9000, 3600, 5, 'Endurance', 65, TO_DATE('27-01-2024', 'DD-MM-YYYY'), 11, 'Used'),
+('Mountain Trek', 10000, 4800, 3.75, 'Endurance', 70, TO_DATE('28-01-2024', 'DD-MM-YYYY'), 12, 'Used'),
+('Park Sprint', 2000, 600, 20, 'Sprint', 90, TO_DATE('29-01-2024', 'DD-MM-YYYY'), 13, 'Unused'),
+('Night Jog', 3500, 1500, 7, 'Endurance', 75, TO_DATE('30-01-2024', 'DD-MM-YYYY'), 14, 'Used');
 
 
-INSERT INTO Monsters (monster_id, monster_name, base_strength, distance_strength) VALUES
-(1, 'Rat', 5, 5),
-(2, 'Skeleton', 7, 8),
-(3, 'Zombie', 10, 10),
-(4, 'Orc', 8, 12),
-(5, 'Dragon', 15, 20),
-(6, 'Goblin', 6, 9),
-(7, 'Troll', 9, 11),
-(8, 'Ghost', 12, 15),
-(9, 'Werewolf', 10, 14),
-(10, 'Minotaur', 13, 16);
+INSERT INTO Monsters (monster_name, base_strength, distance_strength, zone_difficulty) 
+VALUES
+('Rat', 5, 5, 'easy'),
+('Skeleton', 7, 8, 'easy'),
+('Zombie', 10, 10, 'easy'),
+('Orc', 8, 12, 'medium'),
+('Dragon', 15, 20, 'boss'),
+('Goblin', 6, 9, 'medium'),
+('Troll', 9, 11, 'medium'),
+('Cyclops', 12, 15, 'hard'),
+('Werewolf', 10, 14, 'hard'),
+('Mother in law', 17, 22, 'boss');
 
 
-INSERT INTO Gear (gear_id, gear_name, gear_type) VALUES
-(1, 'Baseball Cap', 'Helmet', strenght, 10),
-(2, 'Iron Sword', 'Weapon'),
-(3, 'Leather Armor', 'Armor'),
-(4, 'Magic Ring', 'lefthand'),
-(5, 'Steel Shield', 'righthand'),
-(6, 'water pistol', 'weapon'),
-(7, 'Silver Dagger', 'Weapon'),
-(8, 'Chainmail', 'Armor'),
-(9, 'Pink Boots', 'Boots'),
-(10, 'Fork', 'weapon');
+INSERT INTO Gear (player_id, gear_name, gear_class, gear_slot, gear_stats, gear_price) 
+VALUES
+(1, 'Baseball Cap', 'common', 'Head', 'defense', 20),        
+(2, 'Iron Sword', 'uncommon', 'Weapon', 'strength', 50),         
+(3, 'Leather Armor', 'common', 'Armor', 'defense', 30),        
+(4, 'Twig', 'legendary', 'Weapon', 'accuracy', 100),   
+(5, 'Steel Armor', 'uncommon', 'Armor', 'defense', 60), 
+(6, 'Water Pistol', 'common', 'Weapon', 'speed', 15),     
+(7, 'Silver Dagger', 'epic', 'Weapon', 'strength', 80),
+(8, 'Chainmail', 'uncommon', 'Armor', 'defense', 70),            
+(9, 'Pink Boots', 'common', 'Boots', 'speed', 25),            
+(10, 'Fork', 'common', 'Weapon', 'strength', 5),
+(11, 'Mr. Spaghetti arms', 'common', 'Title', 'strength', 0);            
 
+INSERT INTO Equipped_gear (player_id, equipped_slot_head, equipped_slot_weapon, equipped_slot_armor, equipped_slot_boots, equipped_slot_title) 
+VALUES
+(1, 1, 2, 3, 9, 11),
+(2, 4, 7, 8, 10, 11),
+(3, 3, 5, 6, 9, 11),
+(4, 2, 4, 8, 9, 11),
+(5, 1, 7, 5, 10, 11),
+(6, 6, 3, 8, 9, 11),
+(7, 4, 1, 2, 9, 11),
+(8, 2, 5, 7, 10, 11),
+(9, 1, 9, 4, 10, 11),
+(10, 3, 6, 8, 9, 11);
 
+INSERT INTO Clan (player_id, clan_name, clan_role)
+VALUES
+  (1, 'Sassy Sisters', 'Leader'),
+  (2, 'Sassy Sisters', 'Member'),
+  (3, 'Sassy Sisters', 'Member'),
+  (4, 'Sassy Sisters', 'Leader'),
+  (5, 'Sassy Sisters', 'Member'),
+  (6, 'Glitter Bandits', 'Leader'),
+  (7, 'Glitter Bandits', 'Member'),
+  (8, 'Glitter Bandits', 'Member'),
+  (9, 'Glitter Bandits', 'Member'),
+  (10, 'Glitter Bandits', 'Member'),
+  (11, 'Swole Patrol', 'Leader'),
+  (12, 'Swole Patrol', 'Member'),
+  (13, 'Swole Patrol', 'Member'),
+  (14, 'Swole Patrol', 'Member');
