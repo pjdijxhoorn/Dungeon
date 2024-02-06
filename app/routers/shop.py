@@ -18,7 +18,7 @@ def get_player_loot(player_base_stats_id: int, db=Depends(get_db)):
     return services.get_player_loot(db, player_base_stats_id)
 
 
-#@router.post("/buy-and-equip", status_code=200, tags=["Shop"])
-#def buy_and_equip_gear_endpoint(player_base_stats_id: int, gear_id: int, db=Depends(get_db)):
-#    """ Buy and equip a piece of gear. """
-#    return services.buy_and_equip_gear(db, player_base_stats_id, gear_id)
+@router.post("/buy-and-equip", status_code=200, tags=["Shop"])
+def buy_and_equip_gear(player_base_stats_id: int, gear_id: int, db=Depends(get_db)):
+    """ Buy and equip a piece of gear. """
+    return services.buy_and_equip_gear(db, player_base_stats_id, gear_id)
