@@ -192,7 +192,7 @@ VALUES
 
 INSERT INTO equipped_gear (player_id, equipped_slot_head, equipped_slot_weapon, equipped_slot_armor, equipped_slot_boots, equipped_slot_title)
 VALUES
-(1, 1, 2, 3, 9, 11),
+(1, 0, 0, 0, 0, 0),
 (2, 4, 7, 8, 10, 11),
 (3, 3, 5, 6, 9, 11),
 (4, 2, 4, 8, 9, 11),

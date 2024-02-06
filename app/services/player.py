@@ -4,6 +4,7 @@ from sqlalchemy.orm.attributes import flag_modified
 from sqlalchemy import desc
 
 from app.models.equipped_gear import EquippedGear
+from app.models.gear import Gear
 from app.models.player import Player
 from app.models.player_base_stats import PlayerBaseStats
 from app.models.profile import Profile
@@ -24,6 +25,20 @@ def get_base_stats(db: Session, username: str):
         raise HTTPException(status_code=404, detail="Player not found")
     base_stats = db.query(PlayerBaseStats).filter(PlayerBaseStats.player_id == player.player_id).first()
     return base_stats
+
+def get_equipment(db, username):
+    """ Get the personal equipment for a specific user. """
+    player = db.query(Player).filter(Player.username == username).first()
+    if player is None:
+        raise HTTPException(status_code=404, detail="Player not found")
+    equipment = db.query(EquippedGear).filter(EquippedGear.player_id == player.player_id).first()
+    head_gear = db.query(Gear).filter(Gear.gear_id == equipment.equipped_slot_head).first()
+    weapon_gear = db.query(Gear).filter(Gear.gear_id == equipment.equipped_slot_weapon).first()
+    armor_gear = db.query(Gear).filter(Gear.gear_id == equipment.equipped_slot_armor).first()
+    boots_gear = db.query(Gear).filter(Gear.gear_id == equipment.equipped_slot_boots).first()
+    title_gear = db.query(Gear).filter(Gear.gear_id == equipment.equipped_slot_title).first()
+
+    return [head_gear, weapon_gear, armor_gear, boots_gear, title_gear]
 
 def get_personal_leaderboard(db: Session, username: str):
     """ Get the personal leaderboard for a specific player. """
@@ -261,3 +276,5 @@ def update_scores(player_id, db, basescore):
     db.add(player)
     db.commit()
     db.refresh(player)
+
+
