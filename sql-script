@@ -20,6 +20,8 @@ CREATE TABLE player_base_stats (
     health INT,
     accuracy INT,
     player_level INT,
+    xp INT,
+    loot INT,
     FOREIGN KEY (player_id) REFERENCES player(player_id)
 );
 
@@ -115,10 +117,10 @@ VALUES
   ('user14', '$2a$12$2sNbJyNfNbmhkhHozOnJJ.Ae8LwpqYbmznJRSLfbJBVz095SBJPXC', 'User Fourteen', 675, '{125, 130, 135, 140, 145}', 0.43);
 
 
-INSERT INTO player_base_stats (player_id, strenght, defense, speed, health, accuracy, player_level)
+INSERT INTO player_base_stats (player_id, strenght, defense, speed, health, accuracy, player_level, xp, loot)
 VALUES
-  (1, 10, 10, 10, 100, 95, 1),
-  (2, 20, 20, 20, 200, 90, 2);
+  (1, 10, 10, 10, 100, 95, 1, 0, 0),
+  (2, 20, 20, 20, 200, 90, 2, 0, 0);
 
 
 INSERT INTO Fitness_profile (player_id, bmi, weight_in_kg, height_in_m, date_of_birth, max_heart_frequency, rest_heart_frequency, reserve_heart_frequency)

@@ -18,6 +18,7 @@ def get_Dungeon_run():
     # einde van de dungeon zonder dood te gaan xp genoeg om te levelen?
     # loot erbij
     # bonus voor bereiken einde dungeon
+    # titles toekennen aan de speler
     return "hello"
 
 
@@ -33,4 +34,3 @@ def get_monster():
 
 # def get monster block
 
-# def
