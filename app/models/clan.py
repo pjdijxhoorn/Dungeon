@@ -8,6 +8,6 @@ class Clan(Base):
     """ Represents a clan a player can join. """
     __tablename__ = "clan"
     clan_id = Column(Integer, primary_key=True)
-    clan_name = Column(String, default="clan")
     player_id = Column(Integer)
+    clan_name = Column(String)
     clan_role = Column(String)

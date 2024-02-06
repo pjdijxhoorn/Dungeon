@@ -1,6 +1,5 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, ARRAY, Float
-from sqlalchemy.orm import relationship
 
 Base = declarative_base()
 
@@ -15,4 +14,3 @@ class Player(Base):
     main_score = Column(Integer)
     training_score = Column(ARRAY(Integer))
     fitness_multiplier = Column(Float)
-    children = relationship("Child", back_populates="parent")

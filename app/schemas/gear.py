@@ -12,6 +12,6 @@ class Gear(BaseGear):
     gear_name: str
     gear_class: str
     gear_slot: str
-    gear_price: int
     gear_stat_type: str
     gear_stat: int
+    gear_price: int
