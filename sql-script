@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS Training, Fitness_profile, player_base_stats, Monsters, Gear,Equipped_gear, Clan, player;
+DROP TABLE IF EXISTS Training, Fitness_profile, player_base_stats, Monsters, Gear,equipped_gear, Clan, player;
 
 
 CREATE TABLE player (
@@ -75,7 +75,7 @@ CREATE TABLE Gear (
 );
 
 
-CREATE TABLE Equipped_gear (
+CREATE TABLE equipped_gear (
     equipped_gear_id SERIAL PRIMARY KEY,
     player_id INT,
     equipped_slot_head INT,
@@ -175,21 +175,22 @@ VALUES
 ('Mother in law', 17, 22, 'boss');
 
 
-INSERT INTO Gear (gear_name, gear_class, gear_slot, gear_stat_type, gear_stat, gear_price, buy_able)
+INSERT INTO Gear (gear_id, gear_name, gear_class, gear_slot, gear_stat_type, gear_stat, gear_price, buy_able)
 VALUES
-('Baseball Cap', 'common', 'Head', 'defense', 10, 20, True),
-('Iron Sword', 'uncommon', 'Weapon', 'strength', 15, 50, True),
-('Leather Armor', 'common', 'Armor', 'defense', 10, 30, True),
-('Twig', 'legendary', 'Weapon', 'accuracy', 90, 100, True),
-('Steel Armor', 'uncommon', 'Armor', 'defense', 20, 60, True),
-('Water Pistol', 'common', 'Weapon', 'speed', 7, 15, True),
-('Silver Dagger', 'epic', 'Weapon', 'strength', 60, 80, True),
-('Chainmail', 'uncommon', 'Armor', 'defense', 20, 70, True),
-('Pink Boots', 'common', 'Boots', 'speed', 18, 25, True),
-('Fork', 'common', 'Weapon', 'strength', 3, 5, True),
-('Mr. Spaghetti arms', 'common', 'Title', 'strength', 5, 0, False);
+(0, 'empty', 'common', 'all', 'none', 0, 0, False),
+(1, 'Baseball Cap', 'common', 'Head', 'defense', 10, 20, True),
+(2, 'Iron Sword', 'uncommon', 'Weapon', 'strength', 15, 50, True),
+(3, 'Leather Armor', 'common', 'Armor', 'defense', 10, 30, True),
+(4, 'Twig', 'legendary', 'Weapon', 'accuracy', 90, 100, True),
+(5, 'Steel Armor', 'uncommon', 'Armor', 'defense', 20, 60, True),
+(6, 'Water Pistol', 'common', 'Weapon', 'speed', 7, 15, True),
+(7, 'Silver Dagger', 'epic', 'Weapon', 'strength', 60, 80, True),
+(8, 'Chainmail', 'uncommon', 'Armor', 'defense', 20, 70, True),
+(9, 'Pink Boots', 'common', 'Boots', 'speed', 18, 25, True),
+(10, 'Fork', 'common', 'Weapon', 'strength', 3, 5, True),
+(11, 'Mr. Spaghetti arms', 'common', 'Title', 'strength', 5, 0, False);
 
-INSERT INTO Equipped_gear (player_id, equipped_slot_head, equipped_slot_weapon, equipped_slot_armor, equipped_slot_boots, equipped_slot_title)
+INSERT INTO equipped_gear (player_id, equipped_slot_head, equipped_slot_weapon, equipped_slot_armor, equipped_slot_boots, equipped_slot_title)
 VALUES
 (1, 1, 2, 3, 9, 11),
 (2, 4, 7, 8, 10, 11),

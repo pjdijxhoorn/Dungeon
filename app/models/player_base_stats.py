@@ -14,3 +14,5 @@ class PlayerBaseStats(Base):
     health = Column(Integer)
     accuracy = Column(Integer)
     player_level = Column(Integer)
+    xp = Column(Integer)
+    loot = Column(Integer)
