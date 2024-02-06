@@ -17,6 +17,13 @@ def get_players(db: Session):
     """ Get all players from the database. """
     return db.query(Player).all()
 
+def get_base_stats(db: Session, username: str):
+    """ Get the personal base_stats for a specific player. """
+    player = db.query(Player).filter(Player.username == username).first()
+    if player is None:
+        raise HTTPException(status_code=404, detail="Player not found")
+    base_stats = db.query(PlayerBaseStats).filter(PlayerBaseStats.player_id == player.player_id).first()
+    return base_stats
 
 def get_personal_leaderboard(db: Session, username: str):
     """ Get the personal leaderboard for a specific player. """

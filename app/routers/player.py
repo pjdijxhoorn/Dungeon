@@ -2,6 +2,7 @@ from typing import List
 from fastapi import APIRouter, Depends
 
 import app.services.player as services
+from app.schemas.basestats import Playerstats
 from app.schemas.player import CreatePlayer, Player, UpdatePlayer
 from database import get_db
 
@@ -13,6 +14,10 @@ def get_players(db=Depends(get_db)) -> list[Player]:
     """ Get a list of all players. """
     return services.get_players(db)
 
+@router.get("/base_stats/{username}", status_code=200, tags=["Player"])
+def get_base_stats(username: str, db=Depends(get_db))-> Playerstats:
+    """ Get the personal base_stats for a specific user. """
+    return services.get_base_stats(db, username)
 
 @router.get("/personal_leaderboard/{username}", status_code=200, tags=["Player"])
 def get_personal_leaderboard(username: str, db=Depends(get_db)) -> List[dict]:
