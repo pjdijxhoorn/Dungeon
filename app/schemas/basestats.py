@@ -9,7 +9,7 @@ class BasePlayerstats(BaseModel):
 class Playerstats(BasePlayerstats):
     """ Class for player basestats with additional attributes. """
     player_id: int
-    defense: int
+    defencee: int
     strenght: int
     speed: int
     accuracy: int

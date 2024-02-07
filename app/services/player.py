@@ -179,7 +179,7 @@ def create_player(player, db):
 
     db_base_stats = PlayerBaseStats(
         strenght=5,
-        defense=5,
+        defence=5,
         speed=5,
         health=100,
         accuracy=5,

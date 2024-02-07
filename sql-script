@@ -15,7 +15,7 @@ CREATE TABLE player_base_stats (
     player_base_stats_id SERIAL PRIMARY KEY,
     player_id INT UNIQUE,
     strenght INT,
-    defense INT,
+    defence INT,
     speed INT,
     health INT,
     accuracy INT,
@@ -58,7 +58,7 @@ CREATE TABLE Monsters (
     monster_id SERIAL PRIMARY KEY,
     name VARCHAR(255),
     defence INT,
-    strength INT,
+    strenght INT,
     health INT,
     speed INT,
     accuracy INT,
@@ -121,7 +121,7 @@ VALUES
   ('user14', '$2a$12$2sNbJyNfNbmhkhHozOnJJ.Ae8LwpqYbmznJRSLfbJBVz095SBJPXC', 'User Fourteen', 675, '{125, 130, 135, 140, 145}', 0.43);
 
 
-INSERT INTO player_base_stats (player_id, strenght, defense, speed, health, accuracy, player_level, xp, loot)
+INSERT INTO player_base_stats (player_id, strenght, defence, speed, health, accuracy, player_level, xp, loot)
 VALUES
   (1, 10, 10, 10, 100, 95, 1, 0, 0),
   (2, 20, 20, 20, 200, 90, 2, 0, 0);
@@ -164,7 +164,7 @@ VALUES
 ('Night Jog', 3500, 1500, 7, 'Endurance', 75, TO_DATE('30-01-2024', 'DD-MM-YYYY'), 14, TRUE);
 
 
-INSERT INTO Monsters (monster_name, defence, strength, health, speed, accuracy, zone_difficulty)
+INSERT INTO Monsters (name, defence, strenght, health, speed, accuracy, zone_difficulty)
 VALUES
 ('Rat', 2, 2, 3, 4, 4, 'easy'),
 ('Slime', 1, 1, 2, 3, 3, 'easy'),
@@ -213,14 +213,14 @@ VALUES
 INSERT INTO Gear (gear_id, gear_name, gear_class, gear_slot, gear_stat_type, gear_stat, gear_price, buy_able)
 VALUES
 (0, 'empty', 'common', 'all', 'none', 0, 0, False),
-(1, 'Baseball Cap', 'common', 'Head', 'defense', 10, 20, True),
+(1, 'Baseball Cap', 'common', 'Head', 'defence', 10, 20, True),
 (2, 'Iron Sword', 'uncommon', 'Weapon', 'strength', 15, 50, True),
-(3, 'Leather Armor', 'common', 'Armor', 'defense', 10, 30, True),
+(3, 'Leather Armor', 'common', 'Armor', 'defence', 10, 30, True),
 (4, 'Twig', 'legendary', 'Weapon', 'accuracy', 90, 100, True),
-(5, 'Steel Armor', 'uncommon', 'Armor', 'defense', 20, 60, True),
+(5, 'Steel Armor', 'uncommon', 'Armor', 'defence', 20, 60, True),
 (6, 'Water Pistol', 'common', 'Weapon', 'speed', 7, 15, True),
 (7, 'Silver Dagger', 'epic', 'Weapon', 'strength', 60, 80, True),
-(8, 'Chainmail', 'uncommon', 'Armor', 'defense', 20, 70, True),
+(8, 'Chainmail', 'uncommon', 'Armor', 'defence', 20, 70, True),
 (9, 'Pink Boots', 'common', 'Boots', 'speed', 18, 25, True),
 (10, 'Fork', 'common', 'Weapon', 'strength', 3, 5, True),
 (11, 'Mr. Spaghetti arms', 'common', 'Title', 'strength', 5, 0, False);

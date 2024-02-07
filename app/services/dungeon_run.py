@@ -14,10 +14,10 @@ from app.models.equipped_gear import EquippedGear
 
 class TempPlayer:
     
-    def __init__(self, name, strenght, defense, speed, accuracy, health, player_level, xp, loot):
+    def __init__(self, name, strenght, defence, speed, accuracy, health, player_level, xp, loot):
         self.name = name
         self.strenght = strenght
-        self.defense = defense
+        self.defence = defence
         self.speed = speed
         self.accuracy = accuracy
         self.health = health
@@ -26,26 +26,19 @@ class TempPlayer:
         self.loot = loot
 
 
-def get_temporary_player(training_id, player_id, db: Session):
+def get_temporary_player(training, player, db):
     """ Function to get a temporary player for the dungeon run. """
-    player = db.query(Player).filter(Player.player_id == player_id).first()
-    if player is None:
-        raise HTTPException(status_code=404, detail="Player not found")
 
-    training = db.query(Training).filter(
-        Training.training_id == training_id).first()
-    if training is None:
-        raise HTTPException(status_code=404, detail="Training not found")
 
     player_stats = db.query(PlayerBaseStats).filter(
-        PlayerBaseStats.player_id == player_id).first()
+        PlayerBaseStats.player_id == player.player_id).first()
     if player_stats is None:
         raise HTTPException(status_code=404, detail="Player stats not found")
 
     temp_player = TempPlayer(
         name=player.name,
         strenght=player_stats.strenght,
-        defense=player_stats.defense,
+        defence=player_stats.defence,
         speed=player_stats.speed,
         accuracy=player_stats.accuracy,
         health=player_stats.health,
@@ -55,7 +48,7 @@ def get_temporary_player(training_id, player_id, db: Session):
     )
 
     equipped_gear = db.query(EquippedGear).filter(
-        EquippedGear.player_id == player_id).first()
+        EquippedGear.player_id == player.player_id).first()
 
     if equipped_gear:
         head = db.query(Gear).filter(
@@ -84,8 +77,8 @@ def get_temporary_player(training_id, player_id, db: Session):
 def apply_gear_stats(player, gear):
     if gear.gear_stat_type == 'strenght':
         player.strenght += gear.gear_stat
-    elif gear.gear_stat_type == 'defense':
-        player.defense += gear.gear_stat
+    elif gear.gear_stat_type == 'defence':
+        player.defence += gear.gear_stat
     elif gear.gear_stat_type == 'speed':
         player.speed += gear.gear_stat
     elif gear.gear_stat_type == 'accuracy':
@@ -110,10 +103,11 @@ def get_dungeon_run(training_id, player_id, db: Session):
         raise HTTPException(
             status_code=404, detail="training already used for a dungeon run")
 
+    temp_player = get_temporary_player(training, player, db)
     # calculatie voor kans tegenkomen van monster per afgelegde meter
-    monster_battle(player, monsterspawener(100,db))
-    monster_battle(player, monsterspawener(6000, db))
-    monster_battle(player, monsterspawener(10000, db))
+    # monster_battle(temp_player, monsterspawener(100,db))
+    # monster_battle(temp_player, monsterspawener(6000, db))
+    # monster_battle(temp_player, monsterspawener(10000, db))
     for distance in range(training.distance_in_meters):
         if distance % 1000 == 0:
             story += f"Distance traveled: {distance} meters"
@@ -121,7 +115,7 @@ def get_dungeon_run(training_id, player_id, db: Session):
         if random_number(chance) == 1:
             monster = monsterspawener(distance, db)
             story += f"You have encountered a {monster.name}!"
-            #monster_battle(player, monster) # player moet nog temp player worden
+            #monster_battle(temp_player, monster) # player moet nog temp player worden
             # roep monster gevecht aan
             chance = 500  # Reset kans na monster encounter
         else:
@@ -133,6 +127,8 @@ def get_dungeon_run(training_id, player_id, db: Session):
     # bonus voor bereiken einde dungeon zonder dood te gaan
     # titles toekennen aan de speler
     return story
+
+
 
 
 def monsterspawener(distance, db):
@@ -155,11 +151,10 @@ def monsterspawener(distance, db):
 
 
 def monster_battle(player, monster):
-    while player.health or monster.health != 0:
+    while player.health >= 0 and monster.health >= 0:
         # calculated chance of successful dodge
         dodged = False
-        player_dodge_chance = min(100, max(0, player.speed - monster.speed))
-        print(player_dodge_chance)
+        player_dodge_chance = min(100, max(1, player.speed - monster.speed))
 
         if random_number(100) <= player_dodge_chance:
             dodged = True
@@ -168,25 +163,27 @@ def monster_battle(player, monster):
         # calculate attack damage based on strenght (base- damage) and accuracy(multiplier) where the multiplier give a chance to extra or even double damage
         if dodged is not True:
             damage = player.strenght
-            if random_number(100) <= player.accurcy:
+            if random_number(100) <= player.accuracy:
                 damage = damage * 2
-            print (damage)
 
-        # calculate reduction of attack damage based of defence
-        # every point of defence catches a half point of damage
-        actual_damage = max(0, damage - (monster.defence * 0.5))
-        print(actual_damage)
-        if actual_damage < 1:
-            print(f"{player.name} his damage wasn't high enough to penetrate {monster.name}'s defence")
-        else:
-            print(f"{player.name} does {actual_damage} damage to {monster.name}'s health")
-        # do the damage (update health in player or monster)
-            monster.health -= actual_damage
-            print(f"the monster has {monster.health} health left ")
+
+            # calculate reduction of attack damage based of defence
+            # every point of defence catches a half point of damage
+            actual_damage = max(0, damage - (monster.defence * 0.5))
+            if actual_damage < 1:
+                print(f"{player.name} his damage wasn't high enough to penetrate {monster.name}'s defence")
+            else:
+                monster.health -= actual_damage
+                print(f"{player.name} does {actual_damage} damage to {monster.name}'s health {monster.name} has {monster.health} health left")
+            # do the damage (update health in player or monster)
+                if monster.health <= 0:
+                    print(f"{monster.name} has been slain")
+                else:
+                    monster_battle(monster, player)
         # recursion
-        monster_battle(monster, player)
-    # ELSE
-    print(f"{player.name}{player.health}{monster.name}{monster.health}")
+    if isinstance(player, TempPlayer):
+        print(f"{player.name} has {player.health} health left")
+        print("=============================================================================================================")
         # check who is the real player
         # calculate xp and loot
         # add xp and loot to the player
