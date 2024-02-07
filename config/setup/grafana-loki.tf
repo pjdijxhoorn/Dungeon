@@ -41,7 +41,7 @@ resource "helm_release" "loki" {
   namespace = "loki-stack"
 
   values = [
-    "${file("${path.module}/../config/dashboard/values.yaml")}"
+    "${file("${path.module}/../dashboard/values.yaml")}"
   ]
 
   set {
