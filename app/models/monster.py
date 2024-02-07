@@ -9,7 +9,7 @@ class Monster(Base):
     __tablename__ = "monsters"
 
     monster_id = Column(Integer, primary_key=True)
-    monster_name = Column(String)
+    name = Column(String)
     defence = Column(Integer)
     strength = Column(Integer)
     health = Column(Integer)

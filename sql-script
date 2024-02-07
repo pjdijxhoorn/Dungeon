@@ -56,7 +56,7 @@ CREATE TABLE Training (
 
 CREATE TABLE Monsters (
     monster_id SERIAL PRIMARY KEY,
-    monster_name VARCHAR(255),
+    name VARCHAR(255),
     defence INT,
     strength INT,
     health INT,

@@ -10,10 +10,8 @@ from app.models.training import Training
 
 
 def get_dungeon_run(training_id, player_id, db: Session):
-    story = ""
+    story = """ """
     chance = 500
-    loot_from_dungeon = 0
-    xp_gained_from_dungeon = 0
 
     # ophalen van speler
     player = db.query(Player).filter(Player.player_id == player_id).first()
@@ -36,27 +34,23 @@ def get_dungeon_run(training_id, player_id, db: Session):
         # tel average speed op bij strenght
 
     # calculatie voor kans tegenkomen van monster per afgelegde meter
-
+    monster_battle(player, monsterspawener(100,db))
+    monster_battle(player, monsterspawener(6000, db))
+    monster_battle(player, monsterspawener(10000, db))
     for distance in range(training.distance_in_meters):
         if distance % 1000 == 0:
             story += f"Distance traveled: {distance} meters"
 
         if random_number(chance) == 1:
             monster = monsterspawener(distance, db)
-            story += f"You have encountered a {monster.monster_name}!"
-
+            story += f"You have encountered a {monster.name}!"
+            #monster_battle(player, monster) # player moet nog temp player worden
             # roep monster gevecht aan
             chance = 500  # Reset kans na monster encounter
         else:
             chance = max(1, chance - 1)
             # story += f"Remaining chance: {chance}\n"
 
-    # als monseter tegen komen monster zone ophalen  en mosnter ophalen
-    # monster kracht berekenen
-    # gevecht met monster
-    # meerder beurten totdat of jij of het monster dood is monster moet dezelfde stats hebben?
-    # monster dood loot berekenen en toevoegen aan speler? aan het einde ?
-    # berekenen opgedane xp
     # einde van de dungeon te gaan xp genoeg om te levelen?
     # loot erbij
     # bonus voor bereiken einde dungeon zonder dood te gaan
@@ -78,10 +72,49 @@ def monsterspawener(distance, db):
         else:
             monsters = db.query(Monster).filter(Monster.zone_difficulty == "hard")
     selected_monster = monsters.order_by(func.random()).first()
+    #todo build a random stats monster from base stats
     return selected_monster
 
-def random_number(chance):
-    return randint(1, chance)
+
+
+def monster_battle(player, monster):
+    while player.health or monster.health != 0:
+        # calculated chance of successful dodge
+        dodged = False
+        player_dodge_chance = min(100, max(0, player.speed - monster.speed))
+        print(player_dodge_chance)
+
+        if random_number(100) <= player_dodge_chance:
+            dodged = True
+            print(f"{player.name} succesfully evaded {monster.name}'s attack")
+
+        # calculate attack damage based on strenght (base- damage) and accuracy(multiplier) where the multiplier give a chance to extra or even double damage
+        if dodged is not True:
+            damage = player.strenght
+            if random_number(100) <= player.accurcy:
+                damage = damage * 2
+            print (damage)
+
+        # calculate reduction of attack damage based of defence
+        # every point of defence catches a half point of damage
+        actual_damage = max(0, damage - (monster.defence * 0.5))
+        print(actual_damage)
+        if actual_damage < 1:
+            print(f"{player.name} his damage wasn't high enough to penetrate {monster.name}'s defence")
+        else:
+            print(f"{player.name} does {actual_damage} damage to {monster.name}'s health")
+        # do the damage (update health in player or monster)
+            monster.health -= actual_damage
+            print(f"the monster has {monster.health} health left ")
+        # recursion
+        monster_battle(monster, player)
+    # ELSE
+    print(f"{player.name}{player.health}{monster.name}{monster.health}")
+        # check who is the real player
+        # calculate xp and loot
+        # add xp and loot to the player
+        # return player with updated loot and xp
+
 
 
 # def monster battle
@@ -109,3 +142,6 @@ def level_up(base_stats):
 
 def calculate_xp_required(base_stats):
     return 100 + (base_stats.level - 1) ** 3
+
+def random_number(chance):
+    return randint(1, chance)
