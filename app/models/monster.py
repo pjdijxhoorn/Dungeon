@@ -4,7 +4,7 @@ from sqlalchemy import Column, Integer, String
 Base = declarative_base()
 
 
-class Monsters(Base):
+class Monster(Base):
     """ Represents a monster that the player is able to encounter in a dungeon run. """
     __tablename__ = "monsters"
     monster_id = Column(Integer, primary_key=True)

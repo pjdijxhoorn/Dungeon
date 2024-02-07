@@ -1,8 +1,10 @@
 from http.client import HTTPException
 from random import randint
 
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
+from app.models.monster import Monster
 from app.models.player import Player
 from app.models.training import Training
 
@@ -35,12 +37,14 @@ def get_dungeon_run(training_id, player_id, db: Session):
 
     # calculatie voor kans tegenkomen van monster per afgelegde meter
 
-    for meter in range(training.distance_in_meters):
-        if meter % 500 == 0:
-            story += f"Distance traveled: {meter} meters\n"
+    for distance in range(training.distance_in_meters):
+        if distance % 1000 == 0:
+            story += f"Distance traveled: {distance} meters"
 
         if random_number(chance) == 1:
-            story += "you have encountered a Monster!\n"
+            monster = monsterspawener(distance, db)
+            story += f"You have encountered a {monster.monster_name}!"
+
             # roep monster gevecht aan
             chance = 500  # Reset kans na monster encounter
         else:
@@ -60,12 +64,24 @@ def get_dungeon_run(training_id, player_id, db: Session):
     return story
 
 
+def monsterspawener(distance, db):
+    """ checks the distances and returns a monster from the appropriate distances-zone"""
+    if distance < 1000:
+        monsters = db.query(Monster).filter(Monster.zone_difficulty == "easy")
+    elif distance < 5000:
+        monsters = db.query(Monster).filter(Monster.zone_difficulty == "medium" or Monster.zone_difficulty == "easy")
+    elif distance < 10000:
+        monsters = db.query(Monster).filter(Monster.zone_difficulty == "hard" or Monster.zone_difficulty == "medium")
+    else:
+        if random_number(10) == 1:
+            monsters = db.query(Monster).filter(Monster.zone_difficulty == "boss")
+        else:
+            monsters = db.query(Monster).filter(Monster.zone_difficulty == "hard")
+    selected_monster = monsters.order_by(func.random()).first()
+    return selected_monster
+
 def random_number(chance):
     return randint(1, chance)
-
-
-def get_monster():
-    return "nog niks"
 
 
 # def monster battle

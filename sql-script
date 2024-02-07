@@ -144,7 +144,7 @@ VALUES
 
 INSERT INTO Training (training_name, distance_in_meters, time_in_seconds, average_speed, training_type, base_score, training_date, player_id, dungeon_status)
 VALUES
-('Morning run', 5000, 1800, 10, 'Sprint', 75, TO_DATE('16-01-2024', 'DD-MM-YYYY'), 1, TRUE),
+('Morning run', 8000, 1800, 10, 'Sprint', 75, TO_DATE('16-01-2024', 'DD-MM-YYYY'), 1, TRUE),
 ('round the lake', 10000, 2400, 6.25, 'Endurance', 80, TO_DATE('17-01-2024', 'DD-MM-YYYY'), 2, FALSE),
 ('romantic run towards SO', 8000, 1500, 15, 'Sprint', 90, TO_DATE('18-01-2024', 'DD-MM-YYYY'), 3, FALSE),
 ('run after icecream-van', 100, 100, 1, 'Sprint', 85, TO_DATE('19-01-2024', 'DD-MM-YYYY'), 4, FALSE),
@@ -164,16 +164,48 @@ VALUES
 INSERT INTO Monsters (monster_name, base_strength, distance_strength, zone_difficulty)
 VALUES
 ('Rat', 5, 5, 'easy'),
+('Slime', 4, 4, 'easy'),
+('Gnome', 7, 8, 'easy'),
+('Spider', 5, 6, 'easy'),
+('Bat', 3, 3, 'easy'),
+('Snake', 3, 4, 'easy'),
+('Kobold', 5, 6, 'easy'),
 ('Skeleton', 7, 8, 'easy'),
 ('Zombie', 10, 10, 'easy'),
 ('Orc', 8, 12, 'medium'),
-('Dragon', 15, 20, 'boss'),
 ('Goblin', 6, 9, 'medium'),
 ('Troll', 9, 11, 'medium'),
+('ghost', 9, 11, 'medium'),
+('mummy', 9, 11, 'medium'),
+('Ghoul', 10, 14, 'medium'),
+('Specter', 11, 13, 'medium'),
+('Wraith', 12, 14, 'medium'),
+('Lizardman', 11, 14, 'medium'),
+('Centaur', 12, 15, 'medium'),
+('vampire', 9, 11, 'medium'),
+('harpy', 9, 11, 'medium'),
+('Yeti', 12, 16, 'hard'),
 ('Cyclops', 12, 15, 'hard'),
+('Manticore', 15, 18, 'hard'),
+('Necromancer', 13, 16, 'hard'),
 ('Werewolf', 10, 14, 'hard'),
-('Mother in law', 17, 22, 'boss');
-
+('demon', 10, 14, 'hard'),
+('minotaur', 10, 14, 'hard'),
+('banshee', 10, 14, 'hard'),
+('Chimera', 14, 18, 'hard'),
+('Gorgon', 13, 16, 'hard'),
+('Jinn', 16, 19, 'hard'),
+('Giant', 14, 17, 'hard'),
+('Basilisk', 11, 15, 'hard'),
+('Cerberus', 16, 19, 'hard'),
+('Mother in law', 17, 22, 'boss'),
+('Dragon', 15, 20, 'boss'),
+('lich-king', 15, 20, 'boss'),
+('hydra', 15, 20, 'boss'),
+('kraken', 15, 20, 'boss'),
+('Phoenix', 18, 21, 'boss'),
+('Siren', 13, 17, 'boss'),
+('Banshee', 14, 18, 'boss');
 
 INSERT INTO Gear (gear_id, gear_name, gear_class, gear_slot, gear_stat_type, gear_stat, gear_price, buy_able)
 VALUES
