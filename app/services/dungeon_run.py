@@ -1,29 +1,68 @@
+from http.client import HTTPException
 from random import randint
 
+from sqlalchemy.orm import Session
 
-def get_Dungeon_run():
+from app.models.player import Player
+from app.models.training import Training
+
+
+def get_dungeon_run(training_id, player_id, db: Session):
+    story = ""
+    chance = 500
+    loot_from_dungeon = 0
+    xp_gained_from_dungeon = 0
+
     # ophalen van speler
+    player = db.query(Player).filter(Player.player_id == player_id).first()
+    if player is None:
+        raise HTTPException(status_code=404, detail="Player not found")
     # ophalen van training
-    # checken of training al gebruikt is voor dungeon run
-    # ophalen basestats + gear bij optellen
-    # average speed optellen? gebruiken voor extra stats
+    training = db.query(Training).filter(
+        Training.training_id == training_id).first()
+    if training is None:
+        raise HTTPException(status_code=404, detail="training not found")
+
+    if not training.dungeon_status:
+        raise HTTPException(status_code=404, detail="training already used for a dungeon run")
+    # construct een dungeon-run player ophalen basestats + gear bij optellen
+        # ophalen van basestats
+        # ophalen gearstats
+        # variabele array? list?  met daarin een tijdelijke speler
+        # zet de waarde van basestats in tijdelijke speler
+        # tel de gear stats bij tijdelijke speler op
+        # tel average speed op bij strenght
 
     # calculatie voor kans tegenkomen van monster per afgelegde meter
+
+    for meter in range(training.distance_in_meters):
+        if meter % 500 == 0:
+            story += f"Distance traveled: {meter} meters\n"
+
+        if random_number(chance) == 1:
+            story += "you have encountered a Monster!\n"
+            # roep monster gevecht aan
+            chance = 500  # Reset kans na monster encounter
+        else:
+            chance = max(1, chance - 1)
+            # story += f"Remaining chance: {chance}\n"
+
     # als monseter tegen komen monster zone ophalen  en mosnter ophalen
     # monster kracht berekenen
     # gevecht met monster
-        # meerder beurten totdat of jij of het monster dood is monster moet dezelfde stats hebben?
-        # monster dood loot berekenen en toevoegen aan speler? aan het einde ?
-        # berekenen opgedane xp
+    # meerder beurten totdat of jij of het monster dood is monster moet dezelfde stats hebben?
+    # monster dood loot berekenen en toevoegen aan speler? aan het einde ?
+    # berekenen opgedane xp
     # einde van de dungeon te gaan xp genoeg om te levelen?
     # loot erbij
     # bonus voor bereiken einde dungeon zonder dood te gaan
     # titles toekennen aan de speler
-    return "hello"
+    return story
 
 
 def random_number(chance):
     return randint(1, chance)
+
 
 def get_monster():
     return "nog niks"
@@ -42,12 +81,15 @@ def gain_xp(base_stats, amount):
         level_up(base_stats)
     # todo increase base stats
 
+
 def level_up(base_stats):
     base_stats.level += 1
     remaining_xp = base_stats.xp - calculate_xp_required()
     base_stats.xp = 0 if remaining_xp < 0 else remaining_xp
-   # print(f"{self.name} leveled up to level {self.level}!")
+
+
+# print(f"{self.name} leveled up to level {self.level}!")
 
 
 def calculate_xp_required(base_stats):
-    return 100 + (base_stats.level-1) ** 3
+    return 100 + (base_stats.level - 1) ** 3
