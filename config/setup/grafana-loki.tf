@@ -22,10 +22,6 @@ provider "helm" {
   }
 }
 
-data "local_file" "grafana_values" {
-  filename = "${file("${path.module}/../dashboard/values.yaml")}"
-}
-
 resource "kubernetes_namespace" "loki-stack" {
   metadata {
     annotations = {
@@ -45,7 +41,7 @@ resource "helm_release" "loki" {
   namespace = "loki-stack"
 
   values = [
-    data.local_file.grafana_values.content
+    templatefile("${path.module}/../dashboard/values.yaml")
   ]
 
   set {
