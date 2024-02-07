@@ -1,7 +1,5 @@
 from http.client import HTTPException
 from random import randint
-
-from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from app.models.monster import Monster
@@ -104,10 +102,10 @@ def get_dungeon_run(training_id, player_id, db: Session):
             status_code=404, detail="training already used for a dungeon run")
 
     temp_player = get_temporary_player(training, player, db)
-    # calculatie voor kans tegenkomen van monster per afgelegde meter
-    # monster_battle(temp_player, monsterspawener(100,db))
-    # monster_battle(temp_player, monsterspawener(6000, db))
-    # monster_battle(temp_player, monsterspawener(10000, db))
+    #calculatie voor kans tegenkomen van monster per afgelegde meter
+    monster_battle(temp_player, monsterspawener(100,db))
+    monster_battle(temp_player, monsterspawener(6000, db))
+    monster_battle(temp_player, monsterspawener(10000, db))
     for distance in range(training.distance_in_meters):
         if distance % 1000 == 0:
             story += f"Distance traveled: {distance} meters"
@@ -134,18 +132,20 @@ def get_dungeon_run(training_id, player_id, db: Session):
 def monsterspawener(distance, db):
     """ checks the distances and returns a monster from the appropriate distances-zone"""
     if distance < 1000:
-        monsters = db.query(Monster).filter(Monster.zone_difficulty == "easy")
+        monsters = db.query(Monster).filter(Monster.zone_difficulty == "easy").all()
     elif distance < 5000:
-        monsters = db.query(Monster).filter(Monster.zone_difficulty == "medium" or Monster.zone_difficulty == "easy")
+        monsters = db.query(Monster).filter(Monster.zone_difficulty == "medium" or Monster.zone_difficulty == "easy").all()
     elif distance < 10000:
-        monsters = db.query(Monster).filter(Monster.zone_difficulty == "hard" or Monster.zone_difficulty == "medium")
+        monsters = db.query(Monster).filter(Monster.zone_difficulty == "hard" or Monster.zone_difficulty == "medium").all()
     else:
         if random_number(10) == 1:
-            monsters = db.query(Monster).filter(Monster.zone_difficulty == "boss")
+            monsters = db.query(Monster).filter(Monster.zone_difficulty == "boss").all()
         else:
-            monsters = db.query(Monster).filter(Monster.zone_difficulty == "hard")
-    selected_monster = monsters.order_by(func.random()).first()
-    #todo build a random stats monster from base stats
+            monsters = db.query(Monster).filter(Monster.zone_difficulty == "hard").all()
+            # i want a random number between 0 (including) and the lenght of monsters
+    random_index = randint(0, len(monsters)-1)
+    selected_monster = monsters[random_index]
+
     return selected_monster
 
 
@@ -153,6 +153,7 @@ def monsterspawener(distance, db):
 def monster_battle(player, monster):
     while player.health >= 0 and monster.health >= 0:
         # calculated chance of successful dodge
+
         dodged = False
         player_dodge_chance = min(100, max(1, player.speed - monster.speed))
 
@@ -170,24 +171,34 @@ def monster_battle(player, monster):
             # calculate reduction of attack damage based of defence
             # every point of defence catches a half point of damage
             actual_damage = max(0, damage - (monster.defence * 0.5))
-            if actual_damage < 1:
+            if actual_damage <= 0:
                 print(f"{player.name} his damage wasn't high enough to penetrate {monster.name}'s defence")
+                monster_battle(monster, player)
             else:
                 monster.health -= actual_damage
                 print(f"{player.name} does {actual_damage} damage to {monster.name}'s health {monster.name} has {monster.health} health left")
             # do the damage (update health in player or monster)
                 if monster.health <= 0:
-                    print(f"{monster.name} has been slain")
+                    if isinstance(monster, TempPlayer):
+                        print(f"{monster.name} has been slain")
+
+                    else:
+                        print(f"{monster.name} has been slain")
+                        print(f"{player.name} has {player.health} health left")
+                        # calculate xp and loot
+                        # add xp and loot to the player
+                        # return player with updated loot and xp
+
+                    print("=============================================================================================================")
                 else:
                     monster_battle(monster, player)
-        # recursion
-    if isinstance(player, TempPlayer):
-        print(f"{player.name} has {player.health} health left")
-        print("=============================================================================================================")
-        # check who is the real player
-        # calculate xp and loot
-        # add xp and loot to the player
-        # return player with updated loot and xp
+        
+
+
+
+
+
+
 
 
 
@@ -207,7 +218,7 @@ def gain_xp(base_stats, amount):
 
 def level_up(base_stats):
     base_stats.level += 1
-    remaining_xp = base_stats.xp - calculate_xp_required()
+    remaining_xp = base_stats.xp - calculate_xp_required(base_stats)
     base_stats.xp = 0 if remaining_xp < 0 else remaining_xp
 
 
