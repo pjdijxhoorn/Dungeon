@@ -41,7 +41,11 @@ resource "helm_release" "loki" {
   namespace = "loki-stack"
 
   values = [
-    templatefile("${path.module}/../dashboard/values.yaml")
+    templatefile("${path.module}/../dashboard/values.yaml", {
+      admin_user_key        = "admin-user"
+      admin_password_key    = "admin-password"
+      replicas              = 1
+    })
   ]
 
   set {
