@@ -40,6 +40,10 @@ resource "helm_release" "loki" {
   version    = "2.10.1"
   namespace = "loki-stack"
 
+  values = [
+    "${file("${path.module}/../dashboard/values.yaml")}"
+  ]
+
   set {
     name  = "grafana.enabled"
     value = "true"
