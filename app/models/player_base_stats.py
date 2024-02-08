@@ -16,3 +16,4 @@ class PlayerBaseStats(Base):
     player_level = Column(Integer)
     xp = Column(Integer)
     loot = Column(Integer)
+    xp_remaining = Column(Integer)

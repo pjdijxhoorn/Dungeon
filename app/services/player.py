@@ -18,6 +18,7 @@ def get_players(db: Session):
     """ Get all players from the database. """
     return db.query(Player).all()
 
+
 def get_base_stats(db: Session, username: str):
     """ Get the personal base_stats for a specific player. """
     player = db.query(Player).filter(Player.username == username).first()
@@ -25,6 +26,7 @@ def get_base_stats(db: Session, username: str):
         raise HTTPException(status_code=404, detail="Player not found")
     base_stats = db.query(PlayerBaseStats).filter(PlayerBaseStats.player_id == player.player_id).first()
     return base_stats
+
 
 def get_equipment(db, username):
     """ Get the personal equipment for a specific user. """
@@ -39,6 +41,7 @@ def get_equipment(db, username):
     title_gear = db.query(Gear).filter(Gear.gear_id == equipment.equipped_slot_title).first()
 
     return [head_gear, weapon_gear, armor_gear, boots_gear, title_gear]
+
 
 def get_personal_leaderboard(db: Session, username: str):
     """ Get the personal leaderboard for a specific player. """
@@ -142,7 +145,6 @@ def get_player_performance_percentage(db: Session, player_id: int):
     return performance_message
 
 
-
 def create_player(player, db):
     """ Create a new player and associated profile in the database. """
     bmi = bmi_calculation(player.height_in_m, player.weight_in_kg)
@@ -186,6 +188,7 @@ def create_player(player, db):
         player_level=1,
         xp=0,
         loot=0,
+        xp_remaining=100,
         player_id=db_player.player_id
     )
     db.add(db_base_stats)
@@ -204,8 +207,6 @@ def create_player(player, db):
     db.commit()
     db.refresh(db_EquippedGear)
     return db_player
-
-
 
 
 def delete_player(player_id: int, db: Session):
@@ -276,5 +277,3 @@ def update_scores(player_id, db, basescore):
     db.add(player)
     db.commit()
     db.refresh(player)
-
-

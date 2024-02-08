@@ -25,14 +25,11 @@ class TempPlayer:
         self.story = story
 
 
-def get_temporary_player(training, player, db):
+def get_temporary_player(training, player, player_stats, db):
     """ Function to get a temporary player for the dungeon run. """
 
 
-    player_stats = db.query(PlayerBaseStats).filter(
-        PlayerBaseStats.player_id == player.player_id).first()
-    if player_stats is None:
-        raise HTTPException(status_code=404, detail="Player stats not found")
+
 
     temp_player = TempPlayer(
         name=player.name,
@@ -103,7 +100,12 @@ def get_dungeon_run(training_id, player_id, db: Session):
         raise HTTPException(
             status_code=404, detail="training already used for a dungeon run")
 
-    temp_player = get_temporary_player(training, player, db)
+    player_stats = db.query(PlayerBaseStats).filter(
+        PlayerBaseStats.player_id == player.player_id).first()
+    if player_stats is None:
+        raise HTTPException(status_code=404, detail="Player stats not found")
+
+    temp_player = get_temporary_player(training, player,player_stats, db)
     #calculatie voor kans tegenkomen van monster per afgelegde meter
 
     for distance in range(training.distance_in_meters):
@@ -122,13 +124,18 @@ def get_dungeon_run(training_id, player_id, db: Session):
             else:
                 chance = max(1, chance - 1)
                 # story += f"Remaining chance: {chance}\n"
+    print(temp_player.xp)
+    if temp_player.health > 0:
+        temp_player.story += f"You have cleared the dungeon."
+        temp_player.xp = temp_player.xp + 100
+        #todo maak de beloning een betere weerspiegeling van de geleverde prestatie
 
     # einde van de dungeon te gaan xp genoeg om te levelen?
     # loot erbij
     # bonus voor bereiken einde dungeon zonder dood te gaan
     # titles toekennen aan de speler
-    formatted_story = temp_player.story.replace('.', '.\n').replace('slain.',
-                                                                    'slain.\n=============================================================\n')
+    print(temp_player.xp)
+    gain_xp(player_stats, temp_player.xp, db)
     return temp_player.story
 
 
@@ -176,14 +183,22 @@ def monster_encounter(player, monster):
             monster, player = monster_battle(monster, player)
 
 
+    monster.health = original_health_monster
 
     # calculate xp and loot
+
+
     # add xp and loot to the player
     # return player with updated loot and xp
-    monster.health = original_health_monster
+
     return player if isinstance(player, TempPlayer) else monster
 
+def xp_calculator(monster):
+    xp = (monster.defence + monster.strenght + monster.health + monster.speed + monster.accuracy) * 2
+    return xp
+
 def monster_battle(player, monster):
+    xp_gained = xp_calculator(monster)
     if isinstance(player, TempPlayer):
         player.story += f"{player.name} attacks."
     else:
@@ -224,34 +239,46 @@ def monster_battle(player, monster):
                     monster.story +=f"{monster.name} has been slain."
                     return player, monster
                 else:
-                    player.story +=f"{monster.name} has been slain."
+                    player.story +=f"{monster.name} has been slain. you have gained {xp_gained} xp"
                     player.story +=f"{player.name} has {player.health} health left."
+                    player.xp += xp_gained
                     return player, monster
             else:
                 return player, monster
     return player, monster
 
-def gain_xp(base_stats, amount):
+def gain_xp(base_stats, amount, db):
     base_stats.xp += amount
-    # print(f"{base_stats.name} gained {amount} XP!")
+    print(f" you gained {amount} XP!")
 
     # Check for level up
     while base_stats.xp >= calculate_xp_required(base_stats):
-        level_up(base_stats)
-    # todo increase base stats
-
-
-def level_up(base_stats):
-    base_stats.level += 1
+        base_stats.player_level += 1
+        remaining_xp = base_stats.xp - calculate_xp_required(base_stats)
+        base_stats.xp = 0 if remaining_xp < 0 else remaining_xp
+        print(f"{base_stats.player_base_stats_id} leveled up to level {base_stats.player_level}!")
+        base_stats.defence = (base_stats.player_level * 5)
+        base_stats.speed = (base_stats.player_level * 5)
+        base_stats.strenght = (base_stats.player_level * 5)
+        base_stats.accuracy = (base_stats.player_level * 5)
+        base_stats.health = (100 + (base_stats.player_level * 10))
+        print(f"speed is now{base_stats.speed}!")
     remaining_xp = base_stats.xp - calculate_xp_required(base_stats)
-    base_stats.xp = 0 if remaining_xp < 0 else remaining_xp
+    base_stats.xp_remaining = (calculate_xp_required(base_stats)) - remaining_xp
+    db.add(base_stats)
+    db.commit()
+    db.refresh(base_stats)
+
+    remainder = calculate_xp_required(base_stats)
 
 
-# print(f"{self.name} leveled up to level {self.level}!")
+
+
+
 
 
 def calculate_xp_required(base_stats):
-    return 100 + (base_stats.level - 1) ** 3
+    return 150 + (base_stats.player_level) ** 4
 
 def random_number(chance):
     return randint(1, chance)
