@@ -12,7 +12,7 @@ from app.models.equipped_gear import EquippedGear
 
 class TempPlayer:
     
-    def __init__(self, name, strenght, defence, speed, accuracy, health, player_level, xp, loot):
+    def __init__(self, name, strenght, defence, speed, accuracy, health, player_level, xp, loot, story):
         self.name = name
         self.strenght = strenght
         self.defence = defence
@@ -22,6 +22,7 @@ class TempPlayer:
         self.player_level = player_level
         self.xp = xp
         self.loot = loot
+        self.story = story
 
 
 def get_temporary_player(training, player, db):
@@ -42,7 +43,8 @@ def get_temporary_player(training, player, db):
         health=player_stats.health,
         player_level=player_stats.player_level,
         xp=player_stats.xp,
-        loot=player_stats.loot
+        loot=player_stats.loot,
+        story=""
     )
 
     equipped_gear = db.query(EquippedGear).filter(
@@ -103,109 +105,132 @@ def get_dungeon_run(training_id, player_id, db: Session):
 
     temp_player = get_temporary_player(training, player, db)
     #calculatie voor kans tegenkomen van monster per afgelegde meter
-    monster_battle(temp_player, monsterspawener(100,db))
-    monster_battle(temp_player, monsterspawener(6000, db))
-    monster_battle(temp_player, monsterspawener(10000, db))
-    for distance in range(training.distance_in_meters):
-        if distance % 1000 == 0:
-            story += f"Distance traveled: {distance} meters"
 
-        if random_number(chance) == 1:
-            monster = monsterspawener(distance, db)
-            story += f"You have encountered a {monster.name}!"
-            #monster_battle(temp_player, monster) # player moet nog temp player worden
-            # roep monster gevecht aan
-            chance = 500  # Reset kans na monster encounter
-        else:
-            chance = max(1, chance - 1)
-            # story += f"Remaining chance: {chance}\n"
+    for distance in range(training.distance_in_meters):
+        if temp_player.health >= 0:
+            if distance % 1000 == 0:
+                temp_player.story += f"Distance traveled: {distance} meters."
+
+            if random_number(chance) == 1:
+                monster = monsterspawner(distance, db)
+                temp_player.story +=  f"You have encountered a {monster.name} with {monster.health} health."
+
+                temp_player = monster_encounter(temp_player, monster)   # player moet nog temp player worden
+
+                # roep monster gevecht aan
+                chance = 500  # Reset kans na monster encounter
+            else:
+                chance = max(1, chance - 1)
+                # story += f"Remaining chance: {chance}\n"
 
     # einde van de dungeon te gaan xp genoeg om te levelen?
     # loot erbij
     # bonus voor bereiken einde dungeon zonder dood te gaan
     # titles toekennen aan de speler
-    return story
+    formatted_story = temp_player.story.replace('.', '.\n').replace('slain.',
+                                                                    'slain.\n=============================================================\n')
+    return temp_player.story
 
 
 
 
-def monsterspawener(distance, db):
-    """ checks the distances and returns a monster from the appropriate distances-zone"""
-    if distance < 1000:
-        monsters = db.query(Monster).filter(Monster.zone_difficulty == "easy").all()
-    elif distance < 5000:
-        monsters = db.query(Monster).filter(Monster.zone_difficulty == "medium" or Monster.zone_difficulty == "easy").all()
-    elif distance < 10000:
-        monsters = db.query(Monster).filter(Monster.zone_difficulty == "hard" or Monster.zone_difficulty == "medium").all()
+def monsterspawner(distance, db):
+
+    monsters = db.query(Monster).all()
+
+
+    if distance <= 1000:
+        monsters = [monster for monster in monsters if monster.zone_difficulty == 'easy']
+    elif distance <= 5000:
+        monsters = [monster for monster in monsters if monster.zone_difficulty in ['easy', 'medium']]
+    elif distance <= 10000:
+        monsters = [monster for monster in monsters if monster.zone_difficulty in ['medium', 'hard']]
     else:
-        if random_number(10) == 1:
-            monsters = db.query(Monster).filter(Monster.zone_difficulty == "boss").all()
+        if randint(1, 10) == 1:
+            monsters = [monster for monster in monsters if monster.zone_difficulty == 'boss']
         else:
-            monsters = db.query(Monster).filter(Monster.zone_difficulty == "hard").all()
-            # i want a random number between 0 (including) and the lenght of monsters
+            monsters = [monster for monster in monsters if monster.zone_difficulty == 'hard']
+
+    if not monsters:
+        raise ValueError("No monsters found for the given distance and difficulty zones")
+
     random_index = randint(0, len(monsters)-1)
     selected_monster = monsters[random_index]
 
     return selected_monster
 
 
+def switch(player, monster):
+    print(player.health)
+    switchplayer = player
+    player = monster
+    monster = switchplayer
+    return player, monster
+
+
+def monster_encounter(player, monster):
+    original_health_monster = monster.health
+    while player.health >= 0 and monster.health > 0:
+        player, monster = monster_battle(player, monster)
+        if monster.health > 0:
+            monster, player = monster_battle(monster, player)
+
+
+
+    # calculate xp and loot
+    # add xp and loot to the player
+    # return player with updated loot and xp
+    monster.health = original_health_monster
+    return player if isinstance(player, TempPlayer) else monster
 
 def monster_battle(player, monster):
-    while player.health >= 0 and monster.health >= 0:
-        # calculated chance of successful dodge
-
-        dodged = False
-        player_dodge_chance = min(100, max(1, player.speed - monster.speed))
-
-        if random_number(100) <= player_dodge_chance:
-            dodged = True
-            print(f"{player.name} succesfully evaded {monster.name}'s attack")
-
+    if isinstance(player, TempPlayer):
+        player.story += f"{player.name} attacks."
+    else:
+        monster.story += f"{player.name} attacks."
+    # calculated chance of successful dodge
+    dodged = False
+    player_dodge_chance = min(100, max(1, player.speed - monster.speed))
+    if random_number(100) <= player_dodge_chance:
+        dodged = True
+        if isinstance(player, TempPlayer):
+            player.story +=f"{monster.name} succesfully evaded {player.name}'s attack."
+        else:
+            monster.story += f"{monster.name} succesfully evaded {player.name}'s attack."
         # calculate attack damage based on strenght (base- damage) and accuracy(multiplier) where the multiplier give a chance to extra or even double damage
-        if dodged is not True:
-            damage = player.strenght
-            if random_number(100) <= player.accuracy:
-                damage = damage * 2
+    if dodged is not True:
+        damage = player.strenght
+        if random_number(100) <= player.accuracy:
+            damage = damage * 2
 
-
-            # calculate reduction of attack damage based of defence
-            # every point of defence catches a half point of damage
-            actual_damage = max(0, damage - (monster.defence * 0.5))
-            if actual_damage <= 0:
-                print(f"{player.name} his damage wasn't high enough to penetrate {monster.name}'s defence")
-                monster_battle(monster, player)
+        # calculate reduction of attack damage based of defence
+        # every point of defence catches a half point of damage
+        actual_damage = max(0, damage - (monster.defence * 0.5))
+        if actual_damage <= 0:
+            if isinstance(player, TempPlayer):
+                player.story += f"{player.name} his damage wasn't high enough to penetrate {monster.name}'s defence."
             else:
-                monster.health -= actual_damage
-                print(f"{player.name} does {actual_damage} damage to {monster.name}'s health {monster.name} has {monster.health} health left")
+                monster.story += f"{player.name} his damage wasn't high enough to penetrate {monster.name}'s defence."
+            return player, monster
+        else:
+            monster.health = int(monster.health - actual_damage)
+            if isinstance(player, TempPlayer):
+                player.story +=f"{player.name} does {actual_damage} damage to {monster.name}'s health {monster.name} has {monster.health} health left."
+            else:
+                monster.story += f"{player.name} does {actual_damage} damage to {monster.name}'s health {monster.name} has {monster.health} health left."
             # do the damage (update health in player or monster)
-                if monster.health <= 0:
-                    if isinstance(monster, TempPlayer):
-                        print(f"{monster.name} has been slain")
-
-                    else:
-                        print(f"{monster.name} has been slain")
-                        print(f"{player.name} has {player.health} health left")
-                        # calculate xp and loot
-                        # add xp and loot to the player
-                        # return player with updated loot and xp
-
-                    print("=============================================================================================================")
+            if monster.health <= 0:
+                if isinstance(monster, TempPlayer):
+                    monster.story +=f"{monster.name} has been slain."
+                    return player, monster
                 else:
-                    monster_battle(monster, player)
-        
+                    player.story +=f"{monster.name} has been slain."
+                    player.story +=f"{player.name} has {player.health} health left."
+                    return player, monster
+            else:
+                return player, monster
+    return player, monster
 
-
-
-
-
-
-
-
-
-# def monster battle
-# gebaseerd op stats
-
-# def get monster block
 def gain_xp(base_stats, amount):
     base_stats.xp += amount
     # print(f"{base_stats.name} gained {amount} XP!")
