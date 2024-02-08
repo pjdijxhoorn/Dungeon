@@ -85,7 +85,8 @@ def apply_gear_stats(player, gear):
 
 
 def get_dungeon_run(training_id, player_id, db: Session):
-    chance = 500
+    monster_chance = 500
+    encounter_chance = 3000
 
     # ophalen van speler
     player = db.query(Player).filter(Player.player_id == player_id).first()
@@ -114,20 +115,26 @@ def get_dungeon_run(training_id, player_id, db: Session):
             if distance % 1000 == 0:
                 temp_player.story += f"Distance traveled: {distance} meters."
 
-            if random_number(chance) == 1:
+            if random_number(monster_chance) == 1:
                 monster = monsterspawner(distance, db)
                 temp_player.story +=  f"You have encountered a {monster.name} with {monster.health} health."
 
                 temp_player = monster_encounter(temp_player, monster)   # player moet nog temp player worden
+                # roep monster gevecht aan
+                monster_chance = 500  # Reset kans na monster encounter
+            else:
+                monster_chance = max(1, monster_chance - 1)
+            
+            if random_number(encounter_chance) == 1:
                 encounter = get_random_encounter(db)  # Fetch a random encounter if it exists
                 if encounter:
                     apply_encounter_effects(temp_player, encounter)  # Apply the effects of the encounter
                     temp_player.story += f" Encountered: {encounter.encounter_text}. \n"
                 # roep monster gevecht aan
-                chance = 500  # Reset kans na monster encounter
+                encounter_chance = 3000  # Reset kans na monster encounter
             else:
-                chance = max(1, chance - 1)
-                # story += f"Remaining chance: {chance}\n"
+                encounter_chance = max(1, encounter_chance - 1)
+                
     print(temp_player.xp)
     if temp_player.health > 0:
         temp_player.story += "You have cleared the dungeon."
@@ -156,17 +163,17 @@ def get_random_encounter(db: Session):
 def apply_encounter_effects(temp_player, encounter):
     """Apply encounter effects to the player."""
     if encounter.encounter_stat_type == 'speed':
-        temp_player.speed += encounter.encounter_stat
+        temp_player.speed = max(0, temp_player.speed + encounter.encounter_stat)
     elif encounter.encounter_stat_type == 'accuracy':
-        temp_player.accuracy += encounter.encounter_stat
+        temp_player.accuracy = max(0, temp_player.accuracy + encounter.encounter_stat)
     elif encounter.encounter_stat_type == 'strength':
-        temp_player.strength += encounter.encounter_stat
+        temp_player.strength = max(0, temp_player.strength + encounter.encounter_stat)
     elif encounter.encounter_stat_type == 'health':
-        temp_player.health += encounter.encounter_stat
+        temp_player.health = max(0, temp_player.health + encounter.encounter_stat)
     elif encounter.encounter_stat_type == 'defence':
-        temp_player.defence += encounter.encounter_stat
+        temp_player.defence = max(0, temp_player.defence + encounter.encounter_stat)
     elif encounter.encounter_stat_type == 'xp':
-        temp_player.xp += encounter.encounter_stat
+        temp_player.xp = max(0, temp_player.xp + encounter.encounter_stat)
 
 
 def monsterspawner(distance, db):
@@ -231,7 +238,7 @@ def monster_battle(player, monster):
         player.story += f"{player.name} attacks."
     else:
         monster.story += f"{player.name} attacks."
-    # calculated chance of successful dodge
+    # calculated monster_chance of successful dodge
     dodged = False
     player_dodge_chance = min(100, max(1, player.speed - monster.speed))
     if random_number(100) <= player_dodge_chance:
@@ -240,7 +247,7 @@ def monster_battle(player, monster):
             player.story +=f"{monster.name} succesfully evaded {player.name}'s attack."
         else:
             monster.story += f"{monster.name} succesfully evaded {player.name}'s attack."
-        # calculate attack damage based on strenght (base- damage) and accuracy(multiplier) where the multiplier give a chance to extra or even double damage
+        # calculate attack damage based on strenght (base- damage) and accuracy(multiplier) where the multiplier give a monster_chance to extra or even double damage
     if dodged is not True:
         damage = player.strenght
         if random_number(100) <= player.accuracy:
@@ -301,5 +308,5 @@ def gain_xp(base_stats, amount, db):
 def calculate_xp_required(base_stats):
     return 150 + (base_stats.player_level) ** 4
 
-def random_number(chance):
-    return randint(1, chance)
+def random_number(monster_chance):
+    return randint(1, monster_chance)
