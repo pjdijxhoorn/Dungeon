@@ -4,6 +4,7 @@ on:
     push:
         branches:
             -   main
+            -   Dashboard
 
 jobs:
     # test:
