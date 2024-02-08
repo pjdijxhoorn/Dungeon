@@ -173,7 +173,9 @@ def apply_encounter_effects(temp_player, encounter):
     elif encounter.encounter_stat_type == 'defence':
         temp_player.defence = max(0, temp_player.defence + encounter.encounter_stat)
     elif encounter.encounter_stat_type == 'xp':
-        temp_player.xp = max(0, temp_player.xp + encounter.encounter_stat)
+        temp_player.loot = max(0, temp_player.loot + encounter.encounter_stat)
+    elif encounter.encounter_stat_type == 'loot':
+        temp_player.loot = max(0, temp_player.loot + encounter.encounter_stat)
 
 
 def monsterspawner(distance, db):
