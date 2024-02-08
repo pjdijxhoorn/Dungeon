@@ -137,8 +137,8 @@ def get_dungeon_run(training_id, player_id, db: Session):
 
     print(temp_player.xp)
     if temp_player.health > 0:
-        temp_player.story += "You have cleared the dungeon."
         temp_player.xp = temp_player.xp + 100
+        temp_player.story += f"You have cleared the dungeon so you have gained a 100 bonus xp, so your total xp is: {temp_player.xp} and your total loot is: {temp_player.loot}."
         #todo maak de beloning een betere weerspiegeling van de geleverde prestatie
 
     # einde van de dungeon te gaan xp genoeg om te levelen?
@@ -233,11 +233,15 @@ def xp_calculator(monster):
     return xp
 
 def monster_battle(player, monster):
+    """ A function to simulate a battle between a player and a monster. """
     xp_gained = xp_calculator(monster)
+    loot_gained = calculate_loot(monster)
+    
     if isinstance(player, TempPlayer):
         player.story += f"{player.name} attacks."
     else:
         monster.story += f"{player.name} attacks."
+        
     # calculated chance of successful dodge
     dodged = False
     player_dodge_chance = min(100, max(1, player.speed - monster.speed))
@@ -247,6 +251,7 @@ def monster_battle(player, monster):
             player.story +=f"{monster.name} succesfully evaded {player.name}'s attack."
         else:
             monster.story += f"{monster.name} succesfully evaded {player.name}'s attack."
+        
         # calculate attack damage based on strenght (base- damage) and accuracy(multiplier) where the multiplier give a chance to extra or even double damage
     if dodged is not True:
         damage = player.strenght
@@ -274,13 +279,28 @@ def monster_battle(player, monster):
                     monster.story +=f"{monster.name} has been slain."
                     return player, monster
                 else:
-                    player.story +=f"{monster.name} has been slain. you have gained {xp_gained} xp"
-                    player.story +=f"{player.name} has {player.health} health left."
+                    player.story += f"{monster.name} has been slain. You have gained {xp_gained} XP and {loot_gained} loot."
+                    player.loot += loot_gained
                     player.xp += xp_gained
+                    player.story += f"{player.name} has {player.health} health left."
                     return player, monster
             else:
                 return player, monster
     return player, monster
+
+def calculate_loot(monster):
+    """ Function to calculate loot based on the difficulty of the monster. """
+    if isinstance(monster, Monster):
+        if monster.zone_difficulty == 'easy':
+            return randint(1, 10)  
+        elif monster.zone_difficulty == 'medium':
+            return randint(10, 50)  
+        elif monster.zone_difficulty == 'hard':
+            return randint(50, 150)  
+        elif monster.zone_difficulty == 'boss':
+            return randint(150, 300)  
+    else:
+        return 0
 
 def gain_xp(base_stats, amount, db):
     base_stats.xp += amount
