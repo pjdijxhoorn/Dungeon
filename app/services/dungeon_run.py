@@ -27,61 +27,7 @@ class TempPlayer:
         self.story = story
 
 
-def get_temporary_player(training, player, player_stats, db):
-    """ Function to get a temporary player for the dungeon run. """
 
-
-
-
-    temp_player = TempPlayer(
-        name=player.name,
-        strenght=player_stats.strenght,
-        defence=player_stats.defence,
-        speed=player_stats.speed,
-        accuracy=player_stats.accuracy,
-        health=player_stats.health,
-        player_level=player_stats.player_level,
-        xp=player_stats.xp,
-        loot=player_stats.loot,
-        story=""
-    )
-
-    equipped_gear = db.query(EquippedGear).filter(
-        EquippedGear.player_id == player.player_id).first()
-
-    if equipped_gear:
-        head = db.query(Gear).filter(
-            Gear.gear_id == equipped_gear.equipped_slot_head).first()
-        weapon = db.query(Gear).filter(
-            Gear.gear_id == equipped_gear.equipped_slot_weapon).first()
-        armor = db.query(Gear).filter(
-            Gear.gear_id == equipped_gear.equipped_slot_armor).first()
-        boots = db.query(Gear).filter(
-            Gear.gear_id == equipped_gear.equipped_slot_boots).first()
-
-        if head:
-            apply_gear_stats(temp_player, head)
-        if weapon:
-            apply_gear_stats(temp_player, weapon)
-        if armor:
-            apply_gear_stats(temp_player, armor)
-        if boots:
-            apply_gear_stats(temp_player, boots)
-
-        temp_player.speed += training.average_speed
-
-    return temp_player
-
-
-def apply_gear_stats(player, gear):
-    if gear.gear_stat_type == 'strenght':
-        player.strenght += gear.gear_stat
-    elif gear.gear_stat_type == 'defence':
-        player.defence += gear.gear_stat
-    elif gear.gear_stat_type == 'speed':
-        player.speed += gear.gear_stat
-    elif gear.gear_stat_type == 'accuracy':
-        player.accuracy += gear.gear_stat
 
 
 def get_dungeon_run(training_id, player_id, db: Session):
@@ -148,6 +94,58 @@ def get_dungeon_run(training_id, player_id, db: Session):
     print(temp_player.xp)
     gain_xp(player_stats, temp_player.xp, db)
     return temp_player.story
+
+def get_temporary_player(training, player, player_stats, db):
+    """ Function to get a temporary player for the dungeon run. """
+    temp_player = TempPlayer(
+        name=player.name,
+        strenght=player_stats.strenght,
+        defence=player_stats.defence,
+        speed=player_stats.speed,
+        accuracy=player_stats.accuracy,
+        health=player_stats.health,
+        player_level=player_stats.player_level,
+        xp=player_stats.xp,
+        loot=player_stats.loot,
+        story=""
+    )
+
+    equipped_gear = db.query(EquippedGear).filter(
+        EquippedGear.player_id == player.player_id).first()
+
+    if equipped_gear:
+        head = db.query(Gear).filter(
+            Gear.gear_id == equipped_gear.equipped_slot_head).first()
+        weapon = db.query(Gear).filter(
+            Gear.gear_id == equipped_gear.equipped_slot_weapon).first()
+        armor = db.query(Gear).filter(
+            Gear.gear_id == equipped_gear.equipped_slot_armor).first()
+        boots = db.query(Gear).filter(
+            Gear.gear_id == equipped_gear.equipped_slot_boots).first()
+
+        if head:
+            apply_gear_stats(temp_player, head)
+        if weapon:
+            apply_gear_stats(temp_player, weapon)
+        if armor:
+            apply_gear_stats(temp_player, armor)
+        if boots:
+            apply_gear_stats(temp_player, boots)
+
+        temp_player.speed += training.average_speed
+
+    return temp_player
+
+
+def apply_gear_stats(player, gear):
+    if gear.gear_stat_type == 'strenght':
+        player.strenght += gear.gear_stat
+    elif gear.gear_stat_type == 'defence':
+        player.defence += gear.gear_stat
+    elif gear.gear_stat_type == 'speed':
+        player.speed += gear.gear_stat
+    elif gear.gear_stat_type == 'accuracy':
+        player.accuracy += gear.gear_stat
 
 def get_random_encounter(db: Session):
     """Get a random encounter from the database."""
