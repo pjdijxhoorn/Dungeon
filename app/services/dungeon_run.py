@@ -27,11 +27,8 @@ class TempPlayer:
         self.story = story
 
 
-def get_temporary_player(training, player, player_stats, db):
+def get_temporary_player(training, player, player_stats, equipped_gear, db):
     """ Function to get a temporary player for the dungeon run. """
-
-
-
 
     temp_player = TempPlayer(
         name=player.name,
@@ -45,9 +42,6 @@ def get_temporary_player(training, player, player_stats, db):
         loot=player_stats.loot,
         story=""
     )
-
-    equipped_gear = db.query(EquippedGear).filter(
-        EquippedGear.player_id == player.player_id).first()
 
     if equipped_gear:
         head = db.query(Gear).filter(
@@ -85,7 +79,7 @@ def apply_gear_stats(player, gear):
 
 
 def get_dungeon_run(training_id, player_id, db: Session):
-    chance = 500
+    monster_chance = 500
 
     # ophalen van speler
     player = db.query(Player).filter(Player.player_id == player_id).first()
@@ -106,7 +100,10 @@ def get_dungeon_run(training_id, player_id, db: Session):
     if player_stats is None:
         raise HTTPException(status_code=404, detail="Player stats not found")
 
-    temp_player = get_temporary_player(training, player,player_stats, db)
+    equipped_gear = db.query(EquippedGear).filter(
+        EquippedGear.player_id == player.player_id).first()
+
+    temp_player = get_temporary_player(training, player,player_stats, equipped_gear,db)
     #calculatie voor kans tegenkomen van monster per afgelegde meter
     
     for distance in range(training.distance_in_meters):
@@ -114,7 +111,7 @@ def get_dungeon_run(training_id, player_id, db: Session):
             if distance % 1000 == 0:
                 temp_player.story += f"Distance traveled: {distance} meters."
 
-            if random_number(chance) == 1:
+            if random_number(monster_chance) == 1:
                 monster = monsterspawner(distance, db)
                 temp_player.story +=  f"You have encountered a {monster.name} with {monster.health} health."
 
@@ -124,20 +121,17 @@ def get_dungeon_run(training_id, player_id, db: Session):
                     apply_encounter_effects(temp_player, encounter)  # Apply the effects of the encounter
                     temp_player.story += f" Encountered: {encounter.encounter_text}. \n"
                 # roep monster gevecht aan
-                chance = 500  # Reset kans na monster encounter
+                monster_chance = 500  # Reset kans na monster encounter
             else:
-                chance = max(1, chance - 1)
+                monster_chance = max(1, monster_chance - 1)
                 # story += f"Remaining chance: {chance}\n"
     print(temp_player.xp)
     if temp_player.health > 0:
         temp_player.story += "You have cleared the dungeon."
         temp_player.xp = temp_player.xp + 100
-        #todo maak de beloning een betere weerspiegeling van de geleverde prestatie
 
-    # einde van de dungeon te gaan xp genoeg om te levelen?
     # loot erbij
-    # bonus voor bereiken einde dungeon zonder dood te gaan
-    # titles toekennen aan de speler
+
     print(temp_player.xp)
     gain_xp(player_stats, temp_player.xp, db)
     return temp_player.story

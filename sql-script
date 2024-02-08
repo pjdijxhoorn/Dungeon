@@ -175,6 +175,7 @@ VALUES
 INSERT INTO Monsters (name, defence, strenght, health, speed, accuracy, zone_difficulty)
 VALUES
 ('Rat', 2, 2, 3, 4, 4, 'easy'),
+('sturdy potted plant', 5, 0, 20, 0, 0, 'easy'),
 ('Slime', 1, 1, 2, 3, 3, 'easy'),
 ('Gnome', 3, 4, 4, 5, 6, 'easy'),
 ('Spider', 2, 3, 3, 4, 4, 'easy'),
@@ -186,6 +187,7 @@ VALUES
 ('Orc', 20, 22, 25, 23, 24, 'medium'),
 ('Goblin', 18, 20, 22, 20, 21, 'medium'),
 ('Troll', 22, 24, 26, 24, 25, 'medium'),
+('stoned golem', 22, 24, 26, 24, 25, 'medium'),
 ('ghost', 22, 24, 26, 24, 25, 'medium'),
 ('mummy', 22, 24, 26, 24, 25, 'medium'),
 ('Ghoul', 23, 25, 27, 25, 26, 'medium'),
@@ -209,6 +211,8 @@ VALUES
 ('Giant', 42, 45, 48, 45, 46, 'hard'),
 ('Basilisk', 30, 35, 38, 35, 36, 'hard'),
 ('Cerberus', 48, 50, 52, 50, 51, 'hard'),
+('suing lawyers', 48, 50, 52, 50, 51, 'hard'),
+('5,389 orcs', 48, 50, 52, 50, 51, 'hard'),
 ('Mother in law', 80, 90, 150, 96, 98, 'boss'),
 ('Dragon', 75, 80, 130, 88, 90, 'boss'),
 ('lich-king', 75, 80, 120, 88, 90, 'boss'),
@@ -227,7 +231,18 @@ VALUES
 ('An enchanted mirror reflects your true self. Lose 5 accuracy points, but gain self-awareness.', 'accuracy', -5),
 ('You accidentally step on a banana peel. Your speed decreases by 4 points, and you learn the importance of caution.', 'speed', -4),
 ('A group of friendly ghosts offers you spectral tea. Your health is restored by 15 points, and you make new ghostly friends.', 'health', 15),
-('A disco ball descends from the sky, and you can’t resist dancing. Lose 2 defence points.', 'defence', -2);
+('A disco ball descends from the sky, and you can’t resist dancing. Lose 2 defence points.', 'defence', -2),
+('A lawyer left a curse of income tax you have to pay 10 coins form your loot to continue.', 'loot', -10),
+('You encounter a dragon layer however there you see that the dragon is out to lunch so you loot his treasure.', 'loot', 100),
+('Curse duck of doom you should know better then picking up a duck inn a dungeon.', 'health', -5),
+('You meet a sitcom witch to teach you a valuable lesson she turns you to the opposite gender nothing happens with you stats its just strange.', 'health', 0),
+('You rescue a lost kitten, and its grateful owner turns out to be a wealthy merchant. You got 25 loot as a token of appreciation for your kindness.', 'loot', 25),
+('Operations Paul, the guardian of coding standards, sends you an animated GIF expressing his displeasure with the recent code changes. Lose 15 XP points as you attempt to decode his GIF-based feedback.', 'xp', -15),
+('Hyperactive hamster insists you join their wheel workout. You gained 7 speed points.', 'speed', 7),
+('you meet one of the developers he gives you a cheat if you stop annoying and go away.', 'health', 100);
+
+
+
 
 INSERT INTO Gear (gear_id, gear_name, gear_class, gear_slot, gear_stat_type, gear_stat, gear_price, buy_able)
 VALUES
@@ -242,7 +257,14 @@ VALUES
 (8, 'Chainmail', 'uncommon', 'Armor', 'defence', 20, 70, True),
 (9, 'Pink Boots', 'common', 'Boots', 'speed', 18, 25, True),
 (10, 'Fork', 'common', 'Weapon', 'strength', 3, 5, True),
-(11, 'Mr. Spaghetti arms', 'common', 'Title', 'strength', 5, 0, False);
+(11, 'Mr. Spaghetti arms', 'common', 'Title', 'strength', 5, 0, False),
+(12, 'mace of sharpness(stick with knife tied to it)', 'common', 'Weapon', 'strength', 2, 20, True),
+(13, 'huge rock', 'common', 'Weapon', 'strength', 3, 20, True),
+(14, 'horny helmet', 'common', 'Head', 'defence', 3, 20, True),
+(15, 'big spender', 'epic', 'Title', 'defence', 3, 1500, True),
+(16, 'boots of running really fast', 'epic', 'Boots', 'speed', 15, 100, True),
+(17, 'rat on a stick(hey its better then nothing)', 'common', 'Weapon', 'Boots', 1, 1, True),
+(18, 'really impressive title', 'legendary', 'Title', 'strength', 15, 0, False);
 
 INSERT INTO equipped_gear (player_id, equipped_slot_head, equipped_slot_weapon, equipped_slot_armor, equipped_slot_boots, equipped_slot_title)
 VALUES
