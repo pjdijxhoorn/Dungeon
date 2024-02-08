@@ -22,13 +22,13 @@ provider "helm" {
   }
 }
 
-resource "kubernetes_namespace" "loki-stack" {
+resource "kubernetes_namespace" "monitoring-logging" {
   metadata {
     annotations = {
-      name = "loki-stack"
+      name = "monitoring-logging"
     }
 
-    name = "loki-stack"
+    name = "monitoring-logging"
   }
   depends_on = [digitalocean_kubernetes_cluster.dungeon-run]
 }
@@ -38,14 +38,10 @@ resource "helm_release" "loki" {
   repository = "https://grafana.github.io/helm-charts"
   chart      = "loki-stack"
   version    = "2.10.1"
-  namespace = "loki-stack"
+  namespace = "monitoring-logging"
 
   values = [
-    templatefile("${path.module}/../dashboard/values.yaml", {
-      admin_user_key        = "admin-user"
-      admin_password_key    = "admin-password"
-      replicas              = 1
-    })
+    "${file("${path.module}/dashboard/values.yaml")}"
   ]
 
   set {
@@ -57,5 +53,44 @@ resource "helm_release" "loki" {
     name  = "promtail.enabled"
     value = "true"
   }
-  depends_on = [kubernetes_namespace.loki-stack]
+  depends_on = [kubernetes_namespace.monitoring-logging]
+}
+
+resource "helm_release" "prometheus" {
+  name       = "prometheus"
+  repository = "https://prometheus-community.github.io/helm-charts"
+  chart      = "kube-prometheus-stack"
+  version    = "56.6.2"
+  namespace = "monitoring-logging"
+  depends_on = [kubernetes_namespace.monitoring-logging]
+
+  set {
+    name = "scrapeInterval"
+    value = "30s"
+  }
+
+  set {
+    name = "evaluationInterval"
+    value = "30s"
+  }
+}
+
+resource "kubernetes_config_map" "grafana-dashboards-custom" {
+  metadata {
+    name      = "grafana-dashboard-custom"
+    namespace = "monitoring-logging"
+
+    labels = {
+      grafana_dashboard = 1
+    }
+
+    annotations = {
+      k8s-sidecar-target-directory = "/tmp/dashboards/custom"
+    }
+  }
+
+  data = {
+    "dungeon-run-dashboard.json" = file("${path.module}/dashboard/dungeon-run-dashboard.json"),
+  }
+  depends_on = [kubernetes_namespace.monitoring-logging]
 }

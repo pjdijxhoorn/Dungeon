@@ -3,17 +3,13 @@ terraform {
     organization = "samohtww"
 
     workspaces {
-      name = "Dev-Ops-dungeon-run"
+      name = "Dev-Ops-dungeon-run-v2"
     }
   }
   required_providers {
     digitalocean = {
       source  = "digitalocean/digitalocean"
       version = "~> 2.34.0"
-    }
-    helm = {
-      source  = "hashicorp/helm"
-      version = ">= 2.0.1"
     }
   }
 }
@@ -42,8 +38,9 @@ resource "digitalocean_database_cluster" "dungeon-run-database" {
 resource "digitalocean_kubernetes_cluster" "dungeon-run" {
   name    = "dungeon-run-cluster"
   region  = "ams3"
-  version = "1.29.0-do.0"
+  version = "1.29.1-do.0"
   registry_integration = true
+  destroy_all_associated_resources = true
 
   node_pool {
     name       = "dungeon-run-cluster-pool"
@@ -53,4 +50,5 @@ resource "digitalocean_kubernetes_cluster" "dungeon-run" {
     max_nodes  = 2
     tags = ["dungeon-run-nodes"]
   }
+
 }
