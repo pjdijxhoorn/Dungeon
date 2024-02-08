@@ -239,7 +239,7 @@ VALUES
 ('You rescue a lost kitten, and its grateful owner turns out to be a wealthy merchant. You got 25 loot as a token of appreciation for your kindness.', 'loot', 25),
 ('Operations Paul, the guardian of coding standards, sends you an animated GIF expressing his displeasure with the recent code changes. Lose 15 XP points as you attempt to decode his GIF-based feedback.', 'xp', -15),
 ('Hyperactive hamster insists you join their wheel workout. You gained 7 speed points.', 'speed', 7),
-('you meet one of the developers he gives you a cheat if you stop annoying and go away.', 'health', 100);
+('You meet one of the developers he gives you a cheat if you stop being annoying and go away.', 'health', 100);
 
 
 
@@ -284,7 +284,7 @@ VALUES
   (1, 'Sassy Sisters', 'Leader'),
   (2, 'Sassy Sisters', 'Member'),
   (3, 'Sassy Sisters', 'Member'),
-  (4, 'Sassy Sisters', 'Leader'),
+  (4, 'Sassy Sisters', 'Member'),
   (5, 'Sassy Sisters', 'Member'),
   (6, 'Glitter Bandits', 'Leader'),
   (7, 'Glitter Bandits', 'Member'),
