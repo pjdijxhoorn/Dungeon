@@ -1,4 +1,5 @@
 from http.client import HTTPException
+import random
 from random import randint
 from sqlalchemy.orm import Session
 
@@ -8,6 +9,7 @@ from app.models.training import Training
 from app.models.player_base_stats import PlayerBaseStats
 from app.models.gear import Gear
 from app.models.equipped_gear import EquippedGear
+from app.models.encounter import Encounter
 
 
 class TempPlayer:
@@ -83,7 +85,6 @@ def apply_gear_stats(player, gear):
 
 
 def get_dungeon_run(training_id, player_id, db: Session):
-    story = """ """
     chance = 500
 
     # ophalen van speler
@@ -107,7 +108,7 @@ def get_dungeon_run(training_id, player_id, db: Session):
 
     temp_player = get_temporary_player(training, player,player_stats, db)
     #calculatie voor kans tegenkomen van monster per afgelegde meter
-
+    
     for distance in range(training.distance_in_meters):
         if temp_player.health >= 0:
             if distance % 1000 == 0:
@@ -118,7 +119,10 @@ def get_dungeon_run(training_id, player_id, db: Session):
                 temp_player.story +=  f"You have encountered a {monster.name} with {monster.health} health."
 
                 temp_player = monster_encounter(temp_player, monster)   # player moet nog temp player worden
-
+                encounter = get_random_encounter(db)  # Fetch a random encounter if it exists
+                if encounter:
+                    apply_encounter_effects(temp_player, encounter)  # Apply the effects of the encounter
+                    temp_player.story += f" Encountered: {encounter.encounter_text}. \n"
                 # roep monster gevecht aan
                 chance = 500  # Reset kans na monster encounter
             else:
@@ -126,7 +130,7 @@ def get_dungeon_run(training_id, player_id, db: Session):
                 # story += f"Remaining chance: {chance}\n"
     print(temp_player.xp)
     if temp_player.health > 0:
-        temp_player.story += f"You have cleared the dungeon."
+        temp_player.story += "You have cleared the dungeon."
         temp_player.xp = temp_player.xp + 100
         #todo maak de beloning een betere weerspiegeling van de geleverde prestatie
 
@@ -138,7 +142,31 @@ def get_dungeon_run(training_id, player_id, db: Session):
     gain_xp(player_stats, temp_player.xp, db)
     return temp_player.story
 
+def get_random_encounter(db: Session):
+    """Get a random encounter from the database."""
+    encounters = db.query(Encounter).all()
+    random_encounter = None
 
+    if encounters:
+        random_encounters = random.sample(encounters, len(encounters))
+        random_encounter = random_encounters[0]
+
+    return random_encounter
+
+def apply_encounter_effects(temp_player, encounter):
+    """Apply encounter effects to the player."""
+    if encounter.encounter_stat_type == 'speed':
+        temp_player.speed += encounter.encounter_stat
+    elif encounter.encounter_stat_type == 'accuracy':
+        temp_player.accuracy += encounter.encounter_stat
+    elif encounter.encounter_stat_type == 'strength':
+        temp_player.strength += encounter.encounter_stat
+    elif encounter.encounter_stat_type == 'health':
+        temp_player.health += encounter.encounter_stat
+    elif encounter.encounter_stat_type == 'defence':
+        temp_player.defence += encounter.encounter_stat
+    elif encounter.encounter_stat_type == 'xp':
+        temp_player.xp += encounter.encounter_stat
 
 
 def monsterspawner(distance, db):
@@ -268,13 +296,6 @@ def gain_xp(base_stats, amount, db):
     db.add(base_stats)
     db.commit()
     db.refresh(base_stats)
-
-    remainder = calculate_xp_required(base_stats)
-
-
-
-
-
 
 
 def calculate_xp_required(base_stats):
