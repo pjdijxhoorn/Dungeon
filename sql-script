@@ -1,5 +1,4 @@
-DROP TABLE IF EXISTS Training, Fitness_profile, player_base_stats, Monsters, Gear,equipped_gear, Clan, player;
-
+DROP TABLE IF EXISTS Training, Fitness_profile, player_base_stats, Monsters, Encounters, Gear,equipped_gear, Clan, player;
 
 CREATE TABLE player (
     player_id SERIAL PRIMARY KEY,
@@ -64,6 +63,14 @@ CREATE TABLE Monsters (
     speed INT,
     accuracy INT,
     zone_difficulty VARCHAR(255)
+);
+
+
+CREATE TABLE Encounters (
+    encounter_id SERIAL PRIMARY KEY,
+    encounter_text VARCHAR(255),
+    encounter_stat_type VARCHAR(255),
+    encounter_stat INT
 );
 
 
@@ -210,6 +217,17 @@ VALUES
 ('Phoenix', 85, 88, 250, 92, 95, 'boss'),
 ('Siren', 70, 75, 160, 82, 85, 'boss'),
 ('Banshee', 72, 78, 180, 85, 88, 'boss');
+
+INSERT INTO Encounters (encounter_text, encounter_stat_type, encounter_stat)
+VALUES
+('A mischievous squirrel challenges you to a dance-off! Lose 3 speed points, but gain street cred.', 'speed', -3),
+('You encounter a group of singing mushrooms. Your accuracy improves by 8 points as you join their harmony.', 'accuracy', 8),
+('A clumsy wizard turns you into a rubber chicken. Your defences drop by 5 points, but your enemies find you hilarious.', 'defence', -5),
+('You stumble upon a talking rock. It insults you, but you gain wisdom. Your XP increases by 15 points.', 'xp', 15),
+('An enchanted mirror reflects your true self. Lose 5 accuracy points, but gain self-awareness.', 'accuracy', -5),
+('You accidentally step on a banana peel. Your speed decreases by 4 points, and you learn the importance of caution.', 'speed', -4),
+('A group of friendly ghosts offers you spectral tea. Your health is restored by 15 points, and you make new ghostly friends.', 'health', 15),
+('A disco ball descends from the sky, and you can’t resist dancing. Lose 2 defence points.', 'defence', -2);
 
 INSERT INTO Gear (gear_id, gear_name, gear_class, gear_slot, gear_stat_type, gear_stat, gear_price, buy_able)
 VALUES
