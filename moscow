@@ -22,6 +22,7 @@ NICE TO HAVE CLAN
 -  xp multiplier for more players
 -  choice difficulty of dungeon
 - beste player krijgt kleine bonus
+- verschillende rollen mage, ranger, tank, healer etc
 
 MUST HAVE CLAN
 - maken van een clan
@@ -30,22 +31,22 @@ MUST HAVE CLAN
 - meer monsters of start hogere monsters?
 
 STAPPEN CLAN RUN
-- invoer van alle
-- get all players
-- get all trainings
-- get all base stats
-- get all equipment
-- create temp players
-- average distance meters
-- distances calculator
-- more monsters or start at higher
-- random encounters how for who
-- ! geldt niet voor wie dood is?
-- battle
-    -volgorde van attacks
-    - who attacks first based on what?
-    - xp/ loot verdeler over de nog levende spelers
-- print story for combined players
+# invoer van alle
+# get all players
+# get all trainings
+# get all base stats
+# get all equipment
+# create temp players
+# average distance meters
+# distances calculator
+# more monsters or start at higher
+# random encounters how for who
+# ! geldt niet voor wie dood is?
+# battle
+    #volgorde van attacks
+    # who attacks first based on what?
+    # xp/ loot verdeler over de nog levende spelers
+# print story for combined players
 
 
 
