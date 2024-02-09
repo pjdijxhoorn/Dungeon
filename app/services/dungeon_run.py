@@ -1,5 +1,5 @@
-from fastapi import HTTPException
 import random
+from fastapi import HTTPException
 from random import randint
 from sqlalchemy.orm import Session
 
@@ -48,26 +48,33 @@ def get_dungeon_run(training_id, player_id, db: Session):
                 monster = monsterspawner(distance, db)
                 temp_player.story += f"You have encountered a {monster.name} with {monster.health} health."
 
-                temp_player = monster_encounter(temp_player, monster)  # player moet nog temp player worden
+                # player moet nog temp player worden
+                temp_player = monster_encounter(temp_player, monster, player_stats, db)
                 # roep monster gevecht aan
                 monster_chance = 500  # Reset kans na monster encounter
             else:
                 monster_chance = max(1, monster_chance - 1)
 
             if random_number(encounter_chance) == 1:
-                encounter = get_random_encounter(db)  # Fetch a random encounter if it exists
+                encounter = get_random_encounter(db)
                 if encounter:
-                    apply_encounter_effects(temp_player, encounter)  # Apply the effects of the encounter
+                    apply_encounter_effects(temp_player, encounter)
                     temp_player.story += f" Encountered: {encounter.encounter_text}. \n"
-                # roep monster gevecht aan
-                encounter_chance = 3000  # Reset kans na monster encounter
+
+                encounter_chance = 3000
             else:
                 encounter_chance = max(1, encounter_chance - 1)
 
     print(temp_player.xp)
     if temp_player.health > 0:
         temp_player.xp = temp_player.xp + 100
-        temp_player.story += f"You have cleared the dungeon so you have gained a 100 bonus xp, so your total xp is: {temp_player.xp} and your total loot is: {temp_player.loot}."
+        # Call gain_xp before displaying the stats
+        gain_xp(player_stats, temp_player.xp, db)
+        player_stats = db.query(PlayerBaseStats).filter(
+            PlayerBaseStats.player_id == player.player_id).first()
+        temp_player.story += f"""                                                                                                                                                                                                                                                                                                                    
+                                                                                                                                                                                                                                                                                                                      
+        You have cleared the dungeon so you have gained a 100 bonus xp!Here is your final player summary of stats: your total xp is: {player_stats.xp}, your total loot is: {player_stats.loot}, your total strength is: {player_stats.strenght}, your total defence is:{player_stats.defence}, your total speed is:{player_stats.speed}, your total accuracy is: {player_stats.accuracy}, your total health is: {player_stats.health} and your new level is {player_stats.player_level}!"""
         # todo maak de beloning een betere weerspiegeling van de geleverde prestatie
 
     # einde van de dungeon te gaan xp genoeg om te levelen?
@@ -75,7 +82,6 @@ def get_dungeon_run(training_id, player_id, db: Session):
     # bonus voor bereiken einde dungeon zonder dood te gaan
     # titles toekennen aan de speler
     print(temp_player.xp)
-    gain_xp(player_stats, temp_player.xp, db)
     return temp_player.story
 
 
@@ -164,19 +170,25 @@ def monsterspawner(distance, db):
     monsters = db.query(Monster).all()
 
     if distance <= 1000:
-        monsters = [monster for monster in monsters if monster.zone_difficulty == 'easy']
+        monsters = [
+            monster for monster in monsters if monster.zone_difficulty == 'easy']
     elif distance <= 5000:
-        monsters = [monster for monster in monsters if monster.zone_difficulty in ['easy', 'medium']]
+        monsters = [monster for monster in monsters if monster.zone_difficulty in [
+            'easy', 'medium']]
     elif distance <= 10000:
-        monsters = [monster for monster in monsters if monster.zone_difficulty in ['medium', 'hard']]
+        monsters = [monster for monster in monsters if monster.zone_difficulty in [
+            'medium', 'hard']]
     else:
         if randint(1, 10) == 1:
-            monsters = [monster for monster in monsters if monster.zone_difficulty == 'boss']
+            monsters = [
+                monster for monster in monsters if monster.zone_difficulty == 'boss']
         else:
-            monsters = [monster for monster in monsters if monster.zone_difficulty == 'hard']
+            monsters = [
+                monster for monster in monsters if monster.zone_difficulty == 'hard']
 
     if not monsters:
-        raise ValueError("No monsters found for the given distance and difficulty zones")
+        raise ValueError(
+            "No monsters found for the given distance and difficulty zones")
 
     random_index = randint(0, len(monsters) - 1)
     selected_monster = monsters[random_index]
@@ -192,29 +204,25 @@ def switch(player, monster):
     return player, monster
 
 
-def monster_encounter(player, monster):
+def monster_encounter(player, monster, player_stats, db):
     original_health_monster = monster.health
     while player.health >= 0 and monster.health > 0:
-        player, monster = monster_battle(player, monster)
+        player, monster = monster_battle(player, monster, player_stats, db)
         if monster.health > 0:
-            monster, player = monster_battle(monster, player)
+            monster, player = monster_battle(monster, player, player_stats, db)
 
     monster.health = original_health_monster
-
-    # calculate xp and loot
-
-    # add xp and loot to the player
-    # return player with updated loot and xp
 
     return player if isinstance(player, TempPlayer) else monster
 
 
 def xp_calculator(monster):
-    xp = (monster.defence + monster.strenght + monster.health + monster.speed + monster.accuracy) * 2
+    xp = (monster.defence + monster.strenght +
+          monster.health + monster.speed + monster.accuracy) * 2
     return xp
 
 
-def monster_battle(player, monster):
+def monster_battle(player, monster, player_stats, db):
     """ A function to simulate a battle between a player and a monster. """
     xp_gained = xp_calculator(monster)
     loot_gained = calculate_loot(monster)
@@ -259,6 +267,10 @@ def monster_battle(player, monster):
             if monster.health <= 0:
                 if isinstance(monster, TempPlayer):
                     monster.story += f"{monster.name} has been slain."
+                    gain_xp(player_stats, xp_gained, db)
+                    monster.story += f"""                                                                                                                                                                                                                                                                                                                    
+                                                                                                                                                                                                                                                                                                                      
+You have NOT cleared the dungeon. here is your final player summary of stats: your total xp is: {player_stats.xp}, your total loot is: {player_stats.loot}, your total strength is: {player_stats.strenght}, your total defence is:{player_stats.defence}, your total speed is:{player_stats.speed}, your total accuracy is: {player_stats.accuracy}, your total health is: {player_stats.health} and your new level is {player_stats.player_level}!"""
                     return player, monster
                 else:
                     player.story += f"{monster.name} has been slain. You have gained {xp_gained} XP and {loot_gained} loot."
@@ -295,20 +307,19 @@ def gain_xp(base_stats, amount, db):
         base_stats.player_level += 1
         remaining_xp = base_stats.xp - calculate_xp_required(base_stats)
         base_stats.xp = 0 if remaining_xp < 0 else remaining_xp
-        print(f"{base_stats.player_base_stats_id} leveled up to level {base_stats.player_level}!")
+        print(
+            f"{base_stats.player_base_stats_id} leveled up to level {base_stats.player_level}!")
         base_stats.defence = (base_stats.player_level * 3)
         base_stats.speed = (base_stats.player_level * 3)
         base_stats.strenght = (base_stats.player_level * 3)
         base_stats.accuracy = (base_stats.player_level * 3)
         base_stats.health = (100 + (base_stats.player_level * 10))
-    # what zijn mijn stats nu print
-    # loot en xp hier maakt gewzamelijk 1 eindrapport van dungeon run.
     remaining_xp = base_stats.xp - calculate_xp_required(base_stats)
-    base_stats.xp_remaining = (calculate_xp_required(base_stats)) - remaining_xp
+    base_stats.xp_remaining = (
+        calculate_xp_required(base_stats)) - remaining_xp
     db.add(base_stats)
     db.commit()
     db.refresh(base_stats)
-
 
 def calculate_xp_required(base_stats):
     return 150 + base_stats.player_level ** 4
