@@ -133,7 +133,7 @@ VALUES
 INSERT INTO player_base_stats (player_id, strenght, defence, speed, health, accuracy, player_level, xp, loot, xp_remaining)
 VALUES
   (1, 5, 5, 5, 100, 5, 1, 0, 0, 100),
-  (2, 20, 20, 20, 200, 90, 2, 0, 500, 500);
+  (2, 20, 20, 20, 200, 90, 2, 0, 10000, 500);
 
 
 INSERT INTO Fitness_profile (player_id, bmi, weight_in_kg, height_in_m, date_of_birth, max_heart_frequency, rest_heart_frequency, reserve_heart_frequency)

@@ -300,3 +300,64 @@ def test_update_scores_not_found():
     print(response.json())
     assert response.status_code == 404
     assert response.json() == {'detail': 'Not Found'}
+
+
+def test_get_equipment():
+    """ Test the endpoint for Get the personal equipment for a specific user """
+    response = client.get("/player/equipment/user1")
+    assert response.status_code == 200
+    assert response.json() == [{'gear_class': 'common',
+  'gear_id': 0,
+  'gear_name': 'empty',
+  'gear_price': 0,
+  'gear_slot': 'all',
+  'gear_stat': 0,
+  'gear_stat_type': 'none'},
+ {'gear_class': 'common',
+  'gear_id': 0,
+  'gear_name': 'empty',
+  'gear_price': 0,
+  'gear_slot': 'all',
+  'gear_stat': 0,
+  'gear_stat_type': 'none'},
+ {'gear_class': 'common',
+  'gear_id': 0,
+  'gear_name': 'empty',
+  'gear_price': 0,
+  'gear_slot': 'all',
+  'gear_stat': 0,
+  'gear_stat_type': 'none'},
+ {'gear_class': 'common',
+  'gear_id': 0,
+  'gear_name': 'empty',
+  'gear_price': 0,
+  'gear_slot': 'all',
+  'gear_stat': 0,
+  'gear_stat_type': 'none'},
+ {'gear_class': 'common',
+  'gear_id': 0,
+  'gear_name': 'empty',
+  'gear_price': 0,
+  'gear_slot': 'all',
+  'gear_stat': 0,
+  'gear_stat_type': 'none'}]
+
+def test_base_stats():
+    """ Test the endpoint Get the personal base_stats for a specific user. """
+    response = client.get("/player/base_stats/user1")
+    assert response.status_code == 200
+    assert response.json() == {'accuracy': 5,
+ 'defence': 5,
+ 'health': 100,
+ 'loot': 0,
+ 'player_id': 1,
+ 'player_level': 1,
+ 'speed': 5,
+ 'strenght': 5,
+ 'xp': 0}
+
+def test_player_performance_percentage():
+    """ Test the endpoint Calculate and get the average score of a specific player. """
+    response = client.get("/player/1/performance")
+    assert response.status_code == 200
+    assert response.json() == 'You are performing better than 20.00% of players.'

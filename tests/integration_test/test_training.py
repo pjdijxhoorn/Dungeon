@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 from fastapi.testclient import TestClient
 from main import app
 
@@ -156,6 +156,8 @@ def test_get_training_session_not_found():
     }
 
 
+
+
 def test_create_training():
     """ Test the endpoint to create a new training session. """
     training_data = {
@@ -167,15 +169,21 @@ def test_create_training():
     }
     response = client.post("/training", json=training_data)
     assert response.status_code == 201
-    assert response.json() == {'average_speed': 0.0,
- 'base_score': 0,
- 'distance_in_meters': 1000,
- 'time_in_seconds': 3600,
- 'training_date': '2024-02-09',
- 'training_id': 16,
- 'training_name': 'string',
- 'training_type': 'string'}
 
+    # Fixing the training_date to be the current date
+    today_date = datetime.today().strftime('%Y-%m-%d')
+    expected_response = {
+        'average_speed': 0.0,
+        'base_score': 0,
+        'distance_in_meters': 1000,
+        'time_in_seconds': 3600,
+        'training_date': today_date,
+        'training_id': 16,
+        'training_name': 'string',
+        'training_type': 'string'
+    }
+
+    assert response.json() == expected_response
 
 def test_update_training():
     """ Test the endpoint to update an existing training session. """

@@ -128,9 +128,58 @@ def test_get_player_loot():
     assert response.json() == 'Your current balance is: 0'
 
 
+def test_get_player_loot_not_found():
+ """ Test the endpoint for retrieving player loot. """
+
+ response = client.get("/shop/loot/999")
+ assert response.status_code == 404
+ assert response.json() == {'detail': 'No player found'}
+
 def test_buy_and_equip_gear():
  """ Test the endpoint for Buy and equip a piece of gear """
+# head
+ response = client.post("/shop/buy-and-equip/2/1")
+ assert response.status_code == 200
+ assert response.json() == {'message': 'You have bought and equipped Baseball Cap!'}
 
+ # weapon
  response = client.post("/shop/buy-and-equip/2/10")
  assert response.status_code == 200
  assert response.json() == {'message': 'You have bought and equipped Fork!'}
+
+ # armor
+ response = client.post("/shop/buy-and-equip/2/5")
+ assert response.status_code == 200
+ assert response.json() == {'message': 'You have bought and equipped Steel Armor!'}
+
+ # boots
+ response = client.post("/shop/buy-and-equip/2/9")
+ assert response.status_code == 200
+ assert response.json() == {'message': 'You have bought and equipped Pink Boots!'}
+
+
+ # title
+ response = client.post("/shop/buy-and-equip/2/15")
+ assert response.status_code == 200
+ assert response.json() == {'message': 'You have bought and equipped big spender!'}
+
+def test_buy_and_equip_gear_player_not_found():
+ """ Test the endpoint for Buy and equip a piece of gear """
+
+ response = client.post("/shop/buy-and-equip/999/10")
+ assert response.status_code == 404
+ assert response.json() == {'detail': 'No player found'}
+
+def test_buy_and_equip_gear_gear_not_found():
+ """ Test the endpoint for Buy and equip a piece of gear """
+
+ response = client.post("/shop/buy-and-equip/2/999")
+ assert response.status_code == 404
+ assert response.json() == {'detail': 'Gear not found or not buyable'}
+
+def test_buy_and_equip_gear_no_funds():
+ """ Test the endpoint for Buy and equip a piece of gear """
+
+ response = client.post("/shop/buy-and-equip/1/15")
+ assert response.status_code == 400
+ assert response.json() == {'detail': 'Not enough loot to buy the gear'}
