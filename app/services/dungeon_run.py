@@ -74,7 +74,11 @@ def get_dungeon_run(training_id, player_id, db: Session):
             PlayerBaseStats.player_id == player.player_id).first()
         temp_player.story += f"""                                                                                                                                                                                                                                                                                                                    
                                                                                                                                                                                                                                                                                                                       
-        You have cleared the dungeon so you have gained a 100 bonus xp!Here is your final player summary of stats: your total xp is: {player_stats.xp}, your total loot is: {player_stats.loot}, your total strength is: {player_stats.strenght}, your total defence is:{player_stats.defence}, your total speed is:{player_stats.speed}, your total accuracy is: {player_stats.accuracy}, your total health is: {player_stats.health} and your new level is {player_stats.player_level}!"""
+        You have cleared the dungeon so you have gained a 100 bonus xp!Here is your final player summary of stats: 
+        your total xp is: {player_stats.xp}, your total loot is: {player_stats.loot}, your total strength is: 
+        {player_stats.strenght}, your total defence is:{player_stats.defence}, your total speed is:
+        {player_stats.speed}, your total accuracy is: {player_stats.accuracy}, your total health is: 
+        {player_stats.health} and your new level is {player_stats.player_level}!"""
         # todo maak de beloning een betere weerspiegeling van de geleverde prestatie
 
     # einde van de dungeon te gaan xp genoeg om te levelen?

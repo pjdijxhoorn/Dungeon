@@ -5,7 +5,8 @@ client = TestClient(app)
 
 def test_get_dungeon_run():
  """ Test the endpoint for dungeon run """
-
+ for x in range(15):
+  client.get("/dungeon_run/1/1")
  response = client.get("/dungeon_run/1/1")
  assert response.status_code == 200
  assert response.text.strip() != ''
@@ -31,3 +32,9 @@ def test_get_dungeon_run_training_not_found():
  assert response.json() == {
   "detail": "training not found"
  }
+
+def test_get_dungeon_run_training_not_useable():
+ """ Test the endpoint for dungeon run """
+ response = client.get("/dungeon_run/2/1")
+ assert response.status_code == 404
+ assert response.json() == {'detail': 'training already used for a dungeon run'}

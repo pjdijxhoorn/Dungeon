@@ -16,3 +16,12 @@ class Monster(Base):
     speed = Column(Integer)
     accuracy = Column(Integer)
     zone_difficulty = Column(String)
+
+    def __init__(self, name, strength, defence, speed, accuracy, health, zone_difficulty):
+        self.name = name
+        self.strength = strength
+        self.defence = defence
+        self.speed = speed
+        self.accuracy = accuracy
+        self.health = health
+        self.zone_difficulty = zone_difficulty

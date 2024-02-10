@@ -280,7 +280,6 @@ def test_update_fitness_multiplier():
     player = db.query(Player).filter(Player.player_id == player_id).first()
     assert player.fitness_multiplier == fitness_multiplier
 
-
 def test_update_scores():
     """ Test the function for updating player scores. """
     db: Session = next(get_db())
@@ -342,6 +341,12 @@ def test_get_equipment():
   'gear_stat': 0,
   'gear_stat_type': 'none'}]
 
+def test_get_equipment_user_not_found():
+    """ Test the endpoint for Get the personal equipment for a specific user """
+    response = client.get("/player/equipment/wronguser")
+    assert response.status_code == 404
+    assert response.json() == {'detail': 'Player not found'}
+
 def test_base_stats():
     """ Test the endpoint Get the personal base_stats for a specific user. """
     response = client.get("/player/base_stats/user1")
@@ -355,6 +360,12 @@ def test_base_stats():
  'speed': 5,
  'strenght': 5,
  'xp': 0}
+
+def test_base_stats_username_not_found():
+    """ Test the endpoint Get the personal base_stats for a specific user. """
+    response = client.get("/player/base_stats/wronguser")
+    assert response.status_code == 404
+    assert response.json() == {'detail': 'Player not found'}
 
 def test_player_performance_percentage():
     """ Test the endpoint Calculate and get the average score of a specific player. """
