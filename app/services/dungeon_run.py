@@ -65,7 +65,7 @@ def get_dungeon_run(training_id, player_id, db: Session):
             else:
                 encounter_chance = max(1, encounter_chance - 1)
 
-    print(temp_player.xp)
+
     if temp_player.health > 0:
         temp_player.xp = temp_player.xp + 100
         # Call gain_xp before displaying the stats
