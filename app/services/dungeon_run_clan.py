@@ -51,13 +51,13 @@ def get_dungeon_run_clan(player_ids, db: Session):
         
         players_equipment.append(equipment)
         
-        temp_player = get_temporary_player(training, player, base_stats, equipped_gear)
+        temp_player = get_temporary_player(training, player, base_stats, equipment, db)
         temp_players.append(temp_player)
 
-    return players, trainings, players_base_stats, players_equipment
+    return players, trainings, players_base_stats, players_equipment, temp_players
 
 
-def get_temporary_player(training, player, base_stats, equipped_gear):
+def get_temporary_player(training, player, base_stats, equipment, db):
     """ Function to get a temporary player for the dungeon run. """
     temp_player = TempPlayer(
         name=player.name,
@@ -73,18 +73,15 @@ def get_temporary_player(training, player, base_stats, equipped_gear):
     )
 
 
-    equipped_gear = db.query(EquippedGear).filter(
-        EquippedGear.player_id == player.player_id).first()
-
-    if equipped_gear:
+    if equipment:
         head = db.query(Gear).filter(
-            Gear.gear_id == equipped_gear.equipped_slot_head).first()
+            Gear.gear_id == equipment.equipped_slot_head).first()
         weapon = db.query(Gear).filter(
-            Gear.gear_id == equipped_gear.equipped_slot_weapon).first()
+            Gear.gear_id == equipment.equipped_slot_weapon).first()
         armor = db.query(Gear).filter(
-            Gear.gear_id == equipped_gear.equipped_slot_armor).first()
+            Gear.gear_id == equipment.equipped_slot_armor).first()
         boots = db.query(Gear).filter(
-            Gear.gear_id == equipped_gear.equipped_slot_boots).first()
+            Gear.gear_id == equipment.equipped_slot_boots).first()
 
         if head:
             apply_gear_stats(temp_player, head)
