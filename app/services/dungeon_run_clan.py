@@ -8,12 +8,13 @@ from app.models.monster import Monster
 from app.models.player import Player
 from app.models.player_base_stats import PlayerBaseStats
 from app.models.temp_dungeon import TempDungeon
+from app.models.temp_monster import TempMonster
 from app.models.training import Training
 from app.models.equipped_gear import EquippedGear
 # from app.models.clan import Clan
 from app.models.temp_player import TempPlayer
 from app.models.gear import Gear
-from app.services.dungeon_run import random_number, get_temporary_monster
+from app.utilities.common_functions import random_number
 
 
 def post_dungeon_run_clan(player_and_training_ids, db: Session):
@@ -78,13 +79,13 @@ def post_dungeon_run_clan(player_and_training_ids, db: Session):
             ##########
 
             if distance % 1000 == 0:
-                print(f"Distance traveled: {distance} meters.")
+                temp_dungeon.story += f"Distance traveled: {distance} meters."
 
             if random_number(monster_chance) == 1:
-                print("You have encountered monsters")
+                temp_dungeon.story +="You have encountered the following monsters"
                 monster_list = monsterspawner(distance, db)
                 for monster in monster_list:
-                    print(f"Monster Name: {monster.name}")
+                    temp_dungeon.story +=f"{monster.name}"
                 temp_dungeon = monster_encounter(temp_dungeon, monster_list, db)
                 monster_chance = 500  # Reset kans na monster encounter
             else:
@@ -95,13 +96,14 @@ def post_dungeon_run_clan(player_and_training_ids, db: Session):
         db.add(training)
         db.commit()
         db.refresh(training)
-    return temp_players
+    return temp_dungeon.story
 
 
 def monster_encounter(temp_dungeon, monster_list, db):
     while not all_players_are_dead(temp_dungeon.playerlist) and not all_players_are_dead(monster_list):
         print("they are still alive")
     # check who can still attack ?
+
     # who attacks first?
 
     # who attacks who?
@@ -188,7 +190,17 @@ def get_temporary_player(training, player, base_stats, equipment, db):
         temp_player.speed += training.average_speed
 
     return temp_player
-
+def get_temporary_monster(monsters):
+    """ Function to get a temporary monster for the dungeon run. """
+    temp_monster = TempMonster(
+        name=monsters.name,
+        strenght=monsters.strenght,
+        defence=monsters.defence,
+        speed=monsters.speed,
+        accuracy=monsters.accuracy,
+        health=monsters.health,
+        zone_difficulty=monsters.zone_difficulty
+    )
 
 def apply_gear_stats(player, gear):
     if gear.gear_stat_type == 'strenght':
