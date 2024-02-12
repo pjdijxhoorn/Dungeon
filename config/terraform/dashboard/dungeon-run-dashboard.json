@@ -22,7 +22,7 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
   "id": 2,
-  "iteration": 1707397929145,
+  "iteration": 1707729202528,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -867,6 +867,7 @@
           "mode": "single"
         }
       },
+      "pluginVersion": "8.3.5",
       "targets": [
         {
           "datasource": {
@@ -879,6 +880,42 @@
       ],
       "title": "Dungeon-run logs frequency",
       "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "P8E80F9AEF21F6940"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 41
+      },
+      "id": 24,
+      "options": {
+        "dedupStrategy": "none",
+        "enableLogDetails": true,
+        "prettifyLogMessage": false,
+        "showCommonLabels": false,
+        "showLabels": false,
+        "showTime": false,
+        "sortOrder": "Descending",
+        "wrapLogMessage": false
+      },
+      "pluginVersion": "8.3.5",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "P8E80F9AEF21F6940"
+          },
+          "expr": "{app=\"dungeon-run\"}|~ \"(WARNING|ERROR)\"",
+          "refId": "A"
+        }
+      ],
+      "title": "Dungeon-run logs filterd on warnings and errors",
+      "type": "logs"
     }
   ],
   "refresh": "5s",
@@ -889,7 +926,7 @@
     "list": [
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "Prometheus",
           "value": "Prometheus"
         },
@@ -909,7 +946,7 @@
       {
         "current": {
           "isNone": true,
-          "selected": true,
+          "selected": false,
           "text": "None",
           "value": ""
         },
@@ -918,11 +955,6 @@
           "uid": "${Datasource}"
         },
         "definition": "label_values(up{job=\"kubelet\", metrics_path=\"/metrics/cadvisor\"}, cluster)",
-        "error": {
-          "data": {
-            "message": "Unexpected error"
-          }
-        },
         "hide": 0,
         "includeAll": false,
         "multi": false,
@@ -1006,6 +1038,6 @@
   "timezone": "",
   "title": "Dungeon run dashboard",
   "uid": "bHiZ-4hSz",
-  "version": 18,
+  "version": 30,
   "weekStart": ""
 }
