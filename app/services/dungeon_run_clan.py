@@ -23,6 +23,7 @@ def post_dungeon_run_clan(player_and_training_ids, db: Session):
     monster_chance = 500
     random_encounter_chance = 3000
     total_xp = 0 
+    total_loot = 0
 
     players = []
     trainings = []
@@ -95,7 +96,21 @@ def post_dungeon_run_clan(player_and_training_ids, db: Session):
                 random_encounter_chance = 3000
             else:
                 random_encounter_chance = max(1, random_encounter_chance - 1)
-                
+    #Loot
+    for temp_player in temp_dungeon.playerlist:
+        total_loot += temp_player.loot
+    
+    if total_loot > 0:
+        loot_per_player = total_loot // len(temp_players)
+        remaining_loot = total_loot % len(temp_players) 
+        
+        for temp_player in temp_dungeon.playerlist:
+            temp_player.loot += loot_per_player
+   
+        for temp_player in temp_dungeon.playerlist:
+            temp_player.loot += remaining_loot
+       
+    #Xp         
     for temp_player in temp_dungeon.playerlist:
         total_xp += temp_player.xp
         
@@ -149,6 +164,8 @@ def next_attacker(temp_dungeon, monster_list):
     attacker =""
     return attacker
 
+#    xp_gained = xp_calculator(monster)
+#    loot_gained = calculate_loot(monster)
 
 def monster_encounter(temp_dungeon, monster_list, db):
     while not all_creatures_are_dead(temp_dungeon.playerlist) and not all_creatures_are_dead(monster_list):
@@ -283,6 +300,19 @@ def reset_creatures_for_new_round(creatures):
     for creature in creatures:
         creature.attacked = True
         
+def calculate_loot(monster):
+    """ Function to calculate loot based on the difficulty of the monster. """
+    if isinstance(monster, Monster):
+        if monster.zone_difficulty == 'easy':
+            return randint(1, 10)
+        elif monster.zone_difficulty == 'medium':
+            return randint(10, 50)
+        elif monster.zone_difficulty == 'hard':
+            return randint(50, 150)
+        elif monster.zone_difficulty == 'boss':
+            return randint(150, 300)
+    else:
+        return 0
 
 def gain_xp(base_stats, amount, db):
     base_stats.xp += amount
