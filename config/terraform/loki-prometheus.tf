@@ -33,6 +33,14 @@ resource "kubernetes_namespace" "monitoring-logging" {
   depends_on = [digitalocean_kubernetes_cluster.dungeon-run]
 }
 
+resource "helm_release" "metrics_server" {
+  name       = "metrics-server"
+  repository = "https://kubernetes-sigs.github.io/metrics-server"
+  chart      = "metrics-server"
+  namespace  = "kube-system"
+  depends_on = [digitalocean_kubernetes_cluster.dungeon-run]
+}
+
 resource "helm_release" "loki" {
   name       = "loki"
   repository = "https://grafana.github.io/helm-charts"
