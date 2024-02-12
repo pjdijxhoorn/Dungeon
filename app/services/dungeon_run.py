@@ -11,13 +11,13 @@ from app.models.training import Training
 from app.models.player_base_stats import PlayerBaseStats
 from app.models.gear import Gear
 from app.models.equipped_gear import EquippedGear
-from app.models.encounter import Encounter
+from app.models.random_encounter import RandomEncounter
 from app.utilities.common_functions import random_number
 
 
 def get_dungeon_run(training_id, player_id, db: Session):
     monster_chance = 500
-    encounter_chance = 3000
+    random_encounter_chance = 3000
 
     # ophalen van speler
     player = db.query(Player).filter(Player.player_id == player_id).first()
@@ -57,15 +57,15 @@ def get_dungeon_run(training_id, player_id, db: Session):
             else:
                 monster_chance = max(1, monster_chance - 1)
 
-            if random_number(encounter_chance) == 1:
-                encounter = get_random_encounter(db)
-                if encounter:
-                    apply_encounter_effects(temp_player, encounter)
-                    temp_player.story += f" Encountered: {encounter.encounter_text}. \n"
+            if random_number(random_encounter_chance) == 1:
+                random_encounter = get_random_encounter(db)
+                if random_encounter:
+                    apply_encounter_effects(temp_player, random_encounter)
+                    temp_player.story += f" Encountered: {random_encounter.encounter_text}. \n"
 
-                encounter_chance = 3000
+                random_encounter_chance = 3000
             else:
-                encounter_chance = max(1, encounter_chance - 1)
+                random_encounter_chance = max(1, random_encounter_chance - 1)
 
 
     if temp_player.health > 0:
@@ -76,11 +76,7 @@ def get_dungeon_run(training_id, player_id, db: Session):
             PlayerBaseStats.player_id == player.player_id).first()
         temp_player.story += f"""                                                                                                                                                                                                                                                                                                                    
                                                                                                                                                                                                                                                                                                                       
-        You have cleared the dungeon so you have gained a 100 bonus xp!Here is your final player summary of stats: 
-        your total xp is: {player_stats.xp}, your total loot is: {player_stats.loot}, your total strength is: 
-        {player_stats.strenght}, your total defence is:{player_stats.defence}, your total speed is:
-        {player_stats.speed}, your total accuracy is: {player_stats.accuracy}, your total health is: 
-        {player_stats.health} and your new level is {player_stats.player_level}!"""
+You have cleared the dungeon so you have gained a 100 bonus xp! Here is your final player summary of stats: your total xp is: {player_stats.xp}, your total loot is: {player_stats.loot}, your total strength is: {player_stats.strenght}, your total defence is:{player_stats.defence}, your total speed is: {player_stats.speed}, your total accuracy is: {player_stats.accuracy}, your total health is: {player_stats.health} and your new level is {player_stats.player_level}!"""
         # todo maak de beloning een betere weerspiegeling van de geleverde prestatie
 
     # einde van de dungeon te gaan xp genoeg om te levelen?
@@ -162,30 +158,30 @@ def apply_gear_stats(player, gear):
 
 def get_random_encounter(db: Session):
     """Get a random encounter from the database."""
-    encounters = db.query(Encounter).all()
+    random_encounters = db.query(RandomEncounter).all()
     random_encounter = None
 
-    if encounters:
-        random_encounters = random.sample(encounters, len(encounters))
+    if random_encounters:
+        random_encounters = random.sample(random_encounters, len(random_encounters))
         random_encounter = random_encounters[0]
 
     return random_encounter
 
 
-def apply_encounter_effects(temp_player, encounter):
+def apply_encounter_effects(temp_player, random_encounter):
     """Apply encounter effects to the player."""
-    if encounter.encounter_stat_type == 'speed':
-        temp_player.speed += encounter.encounter_stat
-    elif encounter.encounter_stat_type == 'accuracy':
-        temp_player.accuracy += encounter.encounter_stat
-    elif encounter.encounter_stat_type == 'strength':
-        temp_player.strength += encounter.encounter_stat
-    elif encounter.encounter_stat_type == 'health':
-        temp_player.health += encounter.encounter_stat
-    elif encounter.encounter_stat_type == 'defence':
-        temp_player.defence += encounter.encounter_stat
-    elif encounter.encounter_stat_type == 'xp':
-        temp_player.xp += encounter.encounter_stat
+    if random_encounter.encounter_stat_type == 'speed':
+        temp_player.speed += random_encounter.encounter_stat
+    elif random_encounter.encounter_stat_type == 'accuracy':
+        temp_player.accuracy += random_encounter.encounter_stat
+    elif random_encounter.encounter_stat_type == 'strength':
+        temp_player.strength += random_encounter.encounter_stat
+    elif random_encounter.encounter_stat_type == 'health':
+        temp_player.health += random_encounter.encounter_stat
+    elif random_encounter.encounter_stat_type == 'defence':
+        temp_player.defence += random_encounter.encounter_stat
+    elif random_encounter.encounter_stat_type == 'xp':
+        temp_player.xp += random_encounter.encounter_stat
 
 
 def monsterspawner(distance, db):

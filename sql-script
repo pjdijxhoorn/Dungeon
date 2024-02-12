@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS Training, Fitness_profile, player_base_stats, Monsters, Encounters, Gear,equipped_gear, Clan, player;
+DROP TABLE IF EXISTS Training, Fitness_profile, player_base_stats, Monsters, random_encounters, Gear,equipped_gear, Clan, player;
 
 CREATE TABLE player (
     player_id SERIAL PRIMARY KEY,
@@ -66,7 +66,7 @@ CREATE TABLE Monsters (
 );
 
 
-CREATE TABLE Encounters (
+CREATE TABLE Random_encounters (
     encounter_id SERIAL PRIMARY KEY,
     encounter_text VARCHAR(255),
     encounter_stat_type VARCHAR(255),
@@ -234,7 +234,7 @@ VALUES
 ('Siren', 70, 75, 160, 82, 85, 'boss'),
 ('Banshee', 72, 78, 180, 85, 88, 'boss');
 
-INSERT INTO Encounters (encounter_text, encounter_stat_type, encounter_stat)
+INSERT INTO Random_encounters (encounter_text, encounter_stat_type, encounter_stat)
 VALUES
 ('A mischievous squirrel challenges you to a dance-off! Lose 3 speed points, but gain street cred.', 'speed', -3),
 ('You encounter a group of singing mushrooms. Your accuracy improves by 8 points as you join their harmony.', 'accuracy', 8),

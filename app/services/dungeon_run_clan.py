@@ -14,12 +14,13 @@ from app.models.equipped_gear import EquippedGear
 # from app.models.clan import Clan
 from app.models.temp_player import TempPlayer
 from app.models.gear import Gear
+from app.models.random_encounter import RandomEncounter
 from app.utilities.common_functions import random_number
 
 
 def post_dungeon_run_clan(player_and_training_ids, db: Session):
     monster_chance = 500
-    encounter_chance = 3000
+    random_encounter_chance = 3000
 
     players = []
     trainings = []
@@ -86,7 +87,7 @@ def post_dungeon_run_clan(player_and_training_ids, db: Session):
                 monster_list = monsterspawner(distance, db)
                 for monster in monster_list:
                     temp_dungeon.story +=f"{monster.name}"
-                temp_dungeon = monster_encounter(temp_dungeon, monster_list, db)
+#                temp_dungeon = monster_encounter(temp_dungeon, monster_list, db)
                 monster_chance = 500  # Reset kans na monster encounter
             else:
                 monster_chance = max(1, monster_chance - 1)
@@ -201,6 +202,8 @@ def get_temporary_monster(monsters):
         health=monsters.health,
         zone_difficulty=monsters.zone_difficulty
     )
+    
+    return temp_monster
 
 def apply_gear_stats(player, gear):
     if gear.gear_stat_type == 'strenght':
