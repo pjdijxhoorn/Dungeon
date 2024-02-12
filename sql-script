@@ -49,7 +49,7 @@ CREATE TABLE Training (
     base_score INT,
     training_date DATE,
     player_id INT,
-    dungeon_status BOOLEAN,
+    already_used_for_dungeon_run BOOLEAN,
     FOREIGN KEY (player_id) REFERENCES player(player_id)
 );
 
@@ -132,7 +132,7 @@ VALUES
 INSERT INTO player_base_stats (player_id, strenght, defence, speed, health, accuracy, player_level, xp, loot, xp_remaining)
 VALUES
 (1, 5, 5, 5, 100, 5, 1, 0, 0, 100),
-(2, 20, 20, 20, 200, 90, 2, 0, 0, 500),
+(2, 20, 20, 20, 200, 90, 2, 0, 10000, 500),
 (3, 9, 13, 10, 100, 12, 1, 0, 0, 100),
 (4, 11, 9, 13, 100, 11, 1, 0, 0, 100),
 (5, 10, 11, 9, 100, 14, 1, 0, 0, 100),
@@ -165,23 +165,23 @@ VALUES
 (14, 23.2, 69.0, 173, TO_DATE('21-06-1994', 'DD-MM-YYYY'), 177, 59, 118);
 
 
-INSERT INTO Training (training_name, distance_in_meters, time_in_seconds, average_speed, training_type, base_score, training_date, player_id, dungeon_status)
+INSERT INTO Training (training_name, distance_in_meters, time_in_seconds, average_speed, training_type, base_score, training_date, player_id, already_used_for_dungeon_run)
 VALUES
-('Morning run', 8000, 1800, 10, 'Sprint', 75, TO_DATE('16-01-2024', 'DD-MM-YYYY'), 1, TRUE),
+('Morning run', 8000, 1800, 10, 'Sprint', 75, TO_DATE('16-01-2024', 'DD-MM-YYYY'), 1, FALSE),
 ('round the lake', 10000, 2400, 6.25, 'Endurance', 80, TO_DATE('17-01-2024', 'DD-MM-YYYY'), 2, FALSE),
 ('romantic run towards SO', 8000, 1500, 15, 'Sprint', 90, TO_DATE('18-01-2024', 'DD-MM-YYYY'), 3, FALSE),
 ('run after icecream-van', 100, 100, 1, 'Sprint', 85, TO_DATE('19-01-2024', 'DD-MM-YYYY'), 4, FALSE),
 ('ran from scary clown', 6000, 2700, 4.44, 'Sprint', 95, TO_DATE('20-01-2024', 'DD-MM-YYYY'), 4, FALSE),
-('Evening Walk', 3000, 1800, 5, 'Endurance', 60, TO_DATE('21-01-2024', 'DD-MM-YYYY'), 5, TRUE),
+('Evening Walk', 3000, 1800, 5, 'Endurance', 60, TO_DATE('21-01-2024', 'DD-MM-YYYY'), 5, FALSE),
 ('Hill Climb', 4000, 2400, 4, 'Endurance', 65, TO_DATE('22-01-2024', 'DD-MM-YYYY'), 6, FALSE),
-('Speed Run', 5000, 1500, 10, 'Sprint', 70, TO_DATE('23-01-2024', 'DD-MM-YYYY'), 7, TRUE),
-('Trail Run', 6000, 2700, 6.66, 'Endurance', 75, TO_DATE('24-01-2024', 'DD-MM-YYYY'), 8, TRUE),
+('Speed Run', 5000, 1500, 10, 'Sprint', 70, TO_DATE('23-01-2024', 'DD-MM-YYYY'), 7, FALSE),
+('Trail Run', 6000, 2700, 6.66, 'Endurance', 75, TO_DATE('24-01-2024', 'DD-MM-YYYY'), 8, FALSE),
 ('City Jog', 7000, 2100, 7.14, 'Endurance', 80, TO_DATE('25-01-2024', 'DD-MM-YYYY'), 9, FALSE),
 ('Beach Run', 8000, 1600, 12.5, 'Endurance', 85, TO_DATE('26-01-2024', 'DD-MM-YYYY'), 10, FALSE),
-('Forest Hike', 9000, 3600, 5, 'Endurance', 65, TO_DATE('27-01-2024', 'DD-MM-YYYY'), 11, TRUE),
-('Mountain Trek', 10000, 4800, 3.75, 'Endurance', 70, TO_DATE('28-01-2024', 'DD-MM-YYYY'), 12, TRUE),
+('Forest Hike', 9000, 3600, 5, 'Endurance', 65, TO_DATE('27-01-2024', 'DD-MM-YYYY'), 11, FALSE),
+('Mountain Trek', 10000, 4800, 3.75, 'Endurance', 70, TO_DATE('28-01-2024', 'DD-MM-YYYY'), 12, FALSE),
 ('Park Sprint', 2000, 600, 20, 'Sprint', 90, TO_DATE('29-01-2024', 'DD-MM-YYYY'), 13, FALSE),
-('Night Jog', 3500, 1500, 7, 'Endurance', 75, TO_DATE('30-01-2024', 'DD-MM-YYYY'), 14, TRUE);
+('Night Jog', 3500, 1500, 7, 'Endurance', 75, TO_DATE('30-01-2024', 'DD-MM-YYYY'), 14, FALSE);
 
 
 INSERT INTO Monsters (name, defence, strenght, health, speed, accuracy, zone_difficulty)

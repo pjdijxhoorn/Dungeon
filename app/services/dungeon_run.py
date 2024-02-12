@@ -27,7 +27,7 @@ def get_dungeon_run(training_id, player_id, db: Session):
     if training is None:
         raise HTTPException(status_code=404, detail="training not found")
 
-    if not training.dungeon_status:
+    if training.already_used_for_dungeon_run:
         raise HTTPException(
             status_code=404, detail="training already used for a dungeon run")
 
@@ -85,7 +85,10 @@ def get_dungeon_run(training_id, player_id, db: Session):
     # loot erbij
     # bonus voor bereiken einde dungeon zonder dood te gaan
     # titles toekennen aan de speler
-    print(temp_player.xp)
+    training.already_used_for_dungeon_run = True
+    db.add(training)
+    db.commit()
+    db.refresh(training)
     return temp_player.story
 
 
@@ -304,15 +307,14 @@ def calculate_loot(monster):
 
 def gain_xp(base_stats, amount, db):
     base_stats.xp += amount
-    print(f" you gained {amount} XP!")
+
 
     # Check for level up
     while base_stats.xp >= calculate_xp_required(base_stats):
         base_stats.player_level += 1
         remaining_xp = base_stats.xp - calculate_xp_required(base_stats)
         base_stats.xp = 0 if remaining_xp < 0 else remaining_xp
-        print(
-            f"{base_stats.player_base_stats_id} leveled up to level {base_stats.player_level}!")
+
         base_stats.defence = (base_stats.player_level * 3)
         base_stats.speed = (base_stats.player_level * 3)
         base_stats.strenght = (base_stats.player_level * 3)

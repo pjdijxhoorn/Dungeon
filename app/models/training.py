@@ -16,4 +16,4 @@ class Training(Base):
     base_score = Column(Integer)
     training_date = Column(Date)
     player_id = Column(Integer)
-    dungeon_status = Column(Boolean)
+    already_used_for_dungeon_run = Column(Boolean)
