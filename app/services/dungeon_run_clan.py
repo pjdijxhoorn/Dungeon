@@ -22,6 +22,7 @@ from app.utilities.common_functions import random_number
 def post_dungeon_run_clan(player_and_training_ids, db: Session):
     monster_chance = 500
     random_encounter_chance = 3000
+    total_xp = 0 
 
     players = []
     trainings = []
@@ -94,8 +95,16 @@ def post_dungeon_run_clan(player_and_training_ids, db: Session):
                 random_encounter_chance = 3000
             else:
                 random_encounter_chance = max(1, random_encounter_chance - 1)
+                
+    for temp_player in temp_dungeon.playerlist:
+        total_xp += temp_player.xp
+        
+    for temp_player in temp_dungeon.playerlist:
+        temp_player.xp += total_xp
+        player_stats = db.query(PlayerBaseStats).filter(
+            PlayerBaseStats.player_id == player.player_id).first()
+        gain_xp(player_stats, temp_player.xp, db)
 
-    # set xp for all players divide loot among players
     for training in trainings:
         training.already_used_for_dungeon_run = True
         db.add(training)
@@ -157,6 +166,11 @@ def monster_encounter(temp_dungeon, monster_list, db):
         temp_dungeon.story +="All players and monsters have taken their turn. Starting a new round."
         reset_creatures_for_new_round(temp_dungeon.temp_players)
         reset_creatures_for_new_round(monster_list)
+
+def xp_calculator(monster):
+    xp = (monster.defence + monster.strenght +
+          monster.health + monster.speed + monster.accuracy) * 2
+    return xp
 
 def all_creatures_are_dead(creatures):
     for creature in creatures:
@@ -264,13 +278,34 @@ def apply_gear_stats(player, gear):
         player.accuracy += gear.gear_stat
 
 
-
-
-
 def reset_creatures_for_new_round(creatures):
     """Reset `attacked` for all players and monsters for a new round."""
     for creature in creatures:
         creature.attacked = True
+        
+
+def gain_xp(base_stats, amount, db):
+    base_stats.xp += amount
+
+    while base_stats.xp >= calculate_xp_required(base_stats):
+        base_stats.player_level += 1
+        remaining_xp = base_stats.xp - calculate_xp_required(base_stats)
+        base_stats.xp = 0 if remaining_xp < 0 else remaining_xp
+
+        base_stats.defence = (base_stats.player_level * 3)
+        base_stats.speed = (base_stats.player_level * 3)
+        base_stats.strenght = (base_stats.player_level * 3)
+        base_stats.accuracy = (base_stats.player_level * 3)
+        base_stats.health = (100 + (base_stats.player_level * 10))
+    remaining_xp = base_stats.xp - calculate_xp_required(base_stats)
+    base_stats.xp_remaining = (
+        calculate_xp_required(base_stats)) - remaining_xp
+    db.add(base_stats)
+    db.commit()
+    db.refresh(base_stats)
+
+def calculate_xp_required(base_stats):
+    return 150 + base_stats.player_level ** 4
 
     # Append fetched information to the corresponding lists
 
