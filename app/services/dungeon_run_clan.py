@@ -53,6 +53,13 @@ def get_dungeon_run_clan(player_ids, db: Session):
         
         temp_player = get_temporary_player(training, player, base_stats, equipment, db)
         temp_players.append(temp_player)
+        ##########
+        for temp_player in temp_players:
+            take_turn(temp_player)
+
+        if check_all_players_played(temp_players):
+            print("All players have taken their turn. Starting a new round.")
+            reset_players_for_new_round(temp_players)
 
     return players, trainings, players_base_stats, players_equipment, temp_players
 
@@ -69,8 +76,8 @@ def get_temporary_player(training, player, base_stats, equipment, db):
         player_level=base_stats.player_level,
         xp=base_stats.xp,
         loot=base_stats.loot,
-        story=""
-    )
+        story="",
+        play_status=True)
 
 
     if equipment:
@@ -106,6 +113,22 @@ def apply_gear_stats(player, gear):
     elif gear.gear_stat_type == 'accuracy':
         player.accuracy += gear.gear_stat
         
+def take_turn(temp_player: TempPlayer):
+    """Simulate taking a player's turn."""
+    if temp_player.play_status:
+        print(f"{temp_player.name} attacks the monster!")
+        temp_player.play_status = False  
+    else:
+        print(f"{temp_player.name} cannot take a turn now.")
+
+def check_all_players_played(temp_players: List[TempPlayer]) -> bool:
+    """Check if all temp players have taken their turns."""
+    return all(not player.play_status for player in temp_players)
+
+def reset_players_for_new_round(temp_players: List[TempPlayer]):
+    """Reset `play_status` for all temp players for a new round."""
+    for player in temp_players:
+        player.play_status = True
         
     # Append fetched information to the corresponding lists
 
