@@ -1,92 +1,94 @@
-name: commit deployment
+name: Push-to-deploy
 
 on:
     push:
         branches:
             -   main
-            -   CI/CD-Testing
+            -   Dashboard
 
 jobs:
-    test:
-        env:
-            DBHOST: localhost
-            DBPORT: 5432
-            DBPASSWORD: postgres
-            DBNAME: postgres
-            DBUSER: postgres
-        runs-on: ubuntu-latest
-        services:
-            postgres:
-                image: postgres:latest
-                env:
-                    POSTGRES_DB: postgres
-                    POSTGRES_USER: postgres
-                    POSTGRES_PASSWORD: postgres
-                ports:
-                    - 5432:5432
-                options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+    # test:
+    #     env:
+    #         DBHOST: localhost
+    #         DBPORT: 5432
+    #         DBPASSWORD: postgres
+    #         DBNAME: postgres
+    #         DBUSER: postgres
+    #     runs-on: ubuntu-latest
+    #     services:
+    #         postgres:
+    #             image: postgres:latest
+    #             env:
+    #                 POSTGRES_DB: postgres
+    #                 POSTGRES_USER: postgres
+    #                 POSTGRES_PASSWORD: postgres
+    #             ports:
+    #                 - 5432:5432
+    #             options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    #     steps:
+    #         - name: Checkout Repository
+    #           uses: actions/checkout@v2
+
+    #         - name: Setup python
+    #           uses: actions/setup-python@v2
+    #           with:
+    #             python-version: "3.9"
+            
+    #         - name: Install requirements
+    #           run: pip install -r requirements.txt
+            
+    #         - name: Testing with pytest
+    #           run: |
+    #             pip install httpx
+    #             pip install pytest
+    #             python -m pytest
     
-        steps:
-            - name: Checkout Repository
-              uses: actions/checkout@v2
-
-            - name: Setup python
-              uses: actions/setup-python@v2
-              with:
-                python-version: "3.9"
-            
-            - name: Install requirements
-              run: pip install -r requirements.txt
-            
-            - name: Testing with pytest
-              run: |
-                pip install httpx
-                pip install pytest
-                python -m pytest
-
     terraform:
         runs-on: ubuntu-latest
-        needs: test
+        # needs: test
         env:
             TF_VAR_do_token: "${{ secrets.OCEANTOKEN }}"
     
         steps:
-          - name: Checkout code
-            uses: actions/checkout@v2
-    
-          - uses: hashicorp/setup-terraform@v1
-            with:
+            - name: Checkout code
+              uses: actions/checkout@v2
+      
+            - uses: hashicorp/setup-terraform@v1
+              with:
                 terraform_wrapper: false
                 cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-    
-          - name: Run terraform
-            working-directory: ./config/setup
-            run: | 
-              terraform init
-              terraform plan 
-              terraform apply -auto-approve
+                terraform_version: 1.3.0
+     
+            - name: Run terraform
+              working-directory: ./config/terraform
+              run: | 
+                terraform init -upgrade
+                terraform plan 
+                terraform apply -auto-approve
     
     build:
-        runs-on: ubuntu-latest
-        needs: terraform
-        steps:
-            -   name: Checkout files
-                uses: actions/checkout@v2
+      runs-on: ubuntu-latest
+      needs: terraform
+      steps:
+        -   name: Checkout files
+            uses: actions/checkout@v2
 
-            -   name: Install doctl
-                uses: digitalocean/action-doctl@v2
-                with:
-                    token: ${{ secrets.OCEANTOKEN }}
-            
-            -   name: Build container image
-                run: docker build -t ${{ secrets.Registy_digital_OCEAN }}/dungeon-run:$(echo $GITHUB_SHA | head -c7) .
+        -   name: Install doctl
+            uses: digitalocean/action-doctl@v2
+            with:
+                token: ${{ secrets.OCEANTOKEN }}
+        
+        -   name: Build container image
+            run: docker build -t ${{ secrets.Registy_digital_OCEAN }}/dungeon-run:$(echo $GITHUB_SHA | head -c7) .
 
-            -   name: Log in to DigitalOcean Container Registry with short-lived credentials
-                run: doctl registry login --expiry-seconds 1200
-            
-            -   name: Push image to DigitalOcean Container Registry
-                run: docker push ${{ secrets.Registy_digital_OCEAN }}/dungeon-run:$(echo $GITHUB_SHA | head -c7)
-
+        -   name: Log in to DigitalOcean Container Registry with short-lived credentials
+            run: doctl registry login --expiry-seconds 1200
+        
+        -   name: Push image to DigitalOcean Container Registry
+            run: docker push ${{ secrets.Registy_digital_OCEAN }}/dungeon-run:$(echo $GITHUB_SHA | head -c7)      
+    
+    
     deploy:
         runs-on: ubuntu-latest
         needs: build

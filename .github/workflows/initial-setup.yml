@@ -1,0 +1,27 @@
+name: initial setup
+
+on:
+    workflow_dispatch:
+ 
+jobs:
+    terraform:
+            runs-on: ubuntu-latest
+            env:
+             TF_VAR_do_token: "${{ secrets.OCEANTOKEN }}"
+     
+            steps:
+                - name: Checkout code
+                  uses: actions/checkout@v2
+       
+                - uses: hashicorp/setup-terraform@v1
+                  with:
+                    terraform_wrapper: false
+                    cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+                    terraform_version: 1.3.0
+      
+                - name: initial setup terraform
+                  working-directory: ./config/initial-setup
+                  run: | 
+                    terraform init
+                    terraform plan
+                    terraform apply -auto-approve
