@@ -77,7 +77,7 @@ def post_dungeon_run_clan(player_and_training_ids, db: Session):
                 temp_dungeon.story += f"Distance traveled: {distance} meters."
 
             if random_number(monster_chance) == 1:
-                temp_dungeon.story +="You have encountered the following monsters"
+                temp_dungeon.story +="""You have encountered the following monsters """
                 monster_list = monsterspawner(distance, db)
                 for monster in monster_list:
                     temp_dungeon.story +=f"{monster.name} "
