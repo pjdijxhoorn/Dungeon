@@ -4,7 +4,7 @@ from sqlalchemy import Column, Integer, String
 Base = declarative_base()
 
 
-class Encounter(Base):
+class RandomEncounter(Base):
     """ Represents a random encounter in the story line. """
     __tablename__ = "encounters"
     encounter_id = Column(Integer, primary_key=True)
