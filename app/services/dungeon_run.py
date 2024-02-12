@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from app.models.monster import Monster
 from app.models.player import Player
 from app.models.temp_player import TempPlayer
+from app.models.temp_monster import TempMonster
 from app.models.training import Training
 from app.models.player_base_stats import PlayerBaseStats
 from app.models.gear import Gear
@@ -133,6 +134,20 @@ def get_temporary_player(training, player, player_stats, db):
 
     return temp_player
 
+def get_temporary_monster(monsters):
+    """ Function to get a temporary monster for the dungeon run. """
+    temp_monster = TempMonster(
+        name=monsters.name,
+        strenght=monsters.strenght,
+        defence=monsters.defence,
+        speed=monsters.speed,
+        accuracy=monsters.accuracy,
+        health=monsters.health,
+        zone_difficulty=monsters.zone_difficulty,
+        play_status=True 
+    )
+
+    return temp_monster
 
 def apply_gear_stats(player, gear):
     if gear.gear_stat_type == 'strenght':
@@ -199,8 +214,9 @@ def monsterspawner(distance, db):
 
     random_index = randint(0, len(monsters) - 1)
     selected_monster = monsters[random_index]
+    temp_monster = get_temporary_monster(selected_monster)
 
-    return selected_monster
+    return temp_monster
 
 
 def switch(player, monster):
