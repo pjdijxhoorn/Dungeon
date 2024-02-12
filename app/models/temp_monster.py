@@ -1,7 +1,7 @@
 class TempMonster:
     """ A class for the temporary monster. """
 
-    def __init__(self, name, strenght, defence, speed, accuracy, health, zone_difficulty, play_status=True):
+    def __init__(self, name, strenght, defence, speed, accuracy, health, zone_difficulty, attacked=False):
         self.name = name
         self.strenght = strenght
         self.defence = defence
@@ -9,6 +9,6 @@ class TempMonster:
         self.accuracy = accuracy
         self.health = health
         self.zone_difficulty = zone_difficulty
-        self.play_status = play_status
+        self.attacked = attacked
 
 

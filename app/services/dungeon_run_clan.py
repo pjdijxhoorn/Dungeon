@@ -62,20 +62,13 @@ def post_dungeon_run_clan(player_and_training_ids, db: Session):
         temp_players.append(temp_player)
     distance_total = 0
 
-    for temp_player in temp_players:
-        take_turn(temp_player)
-
-    if check_all_players_played(temp_players):
-        print("All players have taken their turn. Starting a new round.")
-        reset_players_for_new_round(temp_players)
-
     temp_dungeon = TempDungeon("", temp_players)
     for training in trainings:
         distance_total += training.distance_in_meters
     average_meters = int(distance_total / len(players))
 
     for distance in range(average_meters):
-        if not all_players_are_dead(temp_players):
+        if not all_creatures_are_dead(temp_players):
             ##########
 
             if distance % 1000 == 0:
@@ -85,8 +78,8 @@ def post_dungeon_run_clan(player_and_training_ids, db: Session):
                 temp_dungeon.story +="You have encountered the following monsters"
                 monster_list = monsterspawner(distance, db)
                 for monster in monster_list:
-                    temp_dungeon.story +=f"{monster.name}"
-                temp_dungeon = monster_encounter(temp_dungeon, monster_list, db)
+                    temp_dungeon.story +=f"{monster.name} "
+                # temp_dungeon = monster_encounter(temp_dungeon, monster_list, db)
                 monster_chance = 500  # Reset kans na monster encounter
             else:
                 monster_chance = max(1, monster_chance - 1)
@@ -99,23 +92,40 @@ def post_dungeon_run_clan(player_and_training_ids, db: Session):
     return temp_dungeon.story
 
 
+def next_attacker(temp_dungeon, monster_list):
+    # calculated chance
+
+    # check if can still attack else next
+
+    attacker =""
+    return attacker
+
+
 def monster_encounter(temp_dungeon, monster_list, db):
-    while not all_players_are_dead(temp_dungeon.playerlist) and not all_players_are_dead(monster_list):
+    while not all_creatures_are_dead(temp_dungeon.playerlist) and not all_creatures_are_dead(monster_list):
         print("they are still alive")
-    # check who can still attack ?
+    # check if somebody can still attack ?
+        while not all_creatures_have_attacked(temp_dungeon.playerlist) and not all_creatures_have_attacked(monster_list):
+            # who attacks first?
+            attacker = next_attacker()
+            # who attacks who?
 
-    # who attacks first?
-
-    # who attacks who?
-
-    # use single player/monster combat logic
-
-    # set already attacked boolean to true
+            # use single player/monster combat logic
 
 
-def all_players_are_dead(temp_players):
-    for player in temp_players:
-        if player.health > 0:
+    if all_creatures_have_attacked(temp_dungeon.playerlist)!= False and all_creatures_have_attacked(monster_list)!= False:
+        temp_dungeon.story +="All players and monsters have taken their turn. Starting a new round."
+        reset_creatures_for_new_round(temp_dungeon.temp_players)
+        reset_creatures_for_new_round(monster_list)
+
+def all_creatures_are_dead(creatures):
+    for creature in creatures:
+        if creature.health > 0:
+            return False
+
+def all_creatures_have_attacked(creatures):
+    for creature in creatures:
+        if not creature.attacked:
             return False
 
 
@@ -166,7 +176,7 @@ def get_temporary_player(training, player, base_stats, equipment, db):
         xp=base_stats.xp,
         loot=base_stats.loot,
         story="",
-        play_status=True)
+        attacked=True)
 
     if equipment:
         head = db.query(Gear).filter(
@@ -201,6 +211,7 @@ def get_temporary_monster(monsters):
         health=monsters.health,
         zone_difficulty=monsters.zone_difficulty
     )
+    return temp_monster
 
 def apply_gear_stats(player, gear):
     if gear.gear_stat_type == 'strenght':
@@ -213,24 +224,13 @@ def apply_gear_stats(player, gear):
         player.accuracy += gear.gear_stat
 
 
-def take_turn(temp_player: TempPlayer):
-    """Simulate taking a player's turn."""
-    if temp_player.play_status:
-        print(f"{temp_player.name} attacks the monster!")
-        temp_player.play_status = False
-    else:
-        print(f"{temp_player.name} cannot take a turn now.")
 
 
-def check_all_players_played(temp_players: List[TempPlayer]) -> bool:
-    """Check if all temp players have taken their turns."""
-    return all(not player.play_status for player in temp_players)
 
-
-def reset_players_for_new_round(temp_players: List[TempPlayer]):
-    """Reset `play_status` for all temp players for a new round."""
-    for player in temp_players:
-        player.play_status = True
+def reset_creatures_for_new_round(creatures):
+    """Reset `attacked` for all players and monsters for a new round."""
+    for creature in creatures:
+        creature.attacked = True
 
     # Append fetched information to the corresponding lists
 
