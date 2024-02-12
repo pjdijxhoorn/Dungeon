@@ -143,8 +143,7 @@ def get_temporary_monster(monsters):
         speed=monsters.speed,
         accuracy=monsters.accuracy,
         health=monsters.health,
-        zone_difficulty=monsters.zone_difficulty,
-        play_status=True 
+        zone_difficulty=monsters.zone_difficulty
     )
 
     return temp_monster
@@ -228,13 +227,10 @@ def switch(player, monster):
 
 
 def monster_encounter(player, monster, player_stats, db):
-    original_health_monster = monster.health
     while player.health >= 0 and monster.health > 0:
         player, monster = monster_battle(player, monster, player_stats, db)
         if monster.health > 0:
             monster, player = monster_battle(monster, player, player_stats, db)
-
-    monster.health = original_health_monster
 
     return player if isinstance(player, TempPlayer) else monster
 
