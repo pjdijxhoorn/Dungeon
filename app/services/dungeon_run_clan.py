@@ -13,7 +13,7 @@ from app.models.gear import Gear
 
 
 
-def get_dungeon_run_clan(player_ids, db: Session):
+def post_dungeon_run_clan(player_and_training_ids, db: Session):
     #story = ""
 
     players = []
@@ -22,7 +22,7 @@ def get_dungeon_run_clan(player_ids, db: Session):
     players_equipment = []
     temp_players = []
 
-    for player_id in player_ids:
+    for player_id in player_and_training_ids.player_ids:
         player = db.query(Player).filter(Player.player_id == player_id).first()
         if player is None:
             raise HTTPException(status_code=404, detail=f"Player with ID {player_id} not found")
@@ -36,25 +36,54 @@ def get_dungeon_run_clan(player_ids, db: Session):
         
         players_base_stats.append(base_stats)
         
-    for player in players:
-        # Retrieve a specific training for each player
-        training = db.query(Training).filter(Training.player_id == player.player_id).first()
+    for training_id in player_and_training_ids.training_ids:
+        training = db.query(Training).filter(Training.training_id == training_id).first()
         if training is None:
             raise HTTPException(status_code=404, detail="training not found")
-        
-        trainings.append(training)
+        for player_id in player_and_training_ids.player_ids: #check if the training is of one of the players
+            if training.player_id == player_id and training.already_used_for_dungeon_run is False:
+                trainings.append(training)
 
     for player, training, base_stats in zip(players, trainings, players_base_stats):
         equipment = db.query(EquippedGear).filter(EquippedGear.player_id == player.player_id).first()
         if equipment is None:
             raise HTTPException(status_code=404, detail="equipped gear not found")
-        
+
         players_equipment.append(equipment)
         
         temp_player = get_temporary_player(training, player, base_stats, equipment, db)
         temp_players.append(temp_player)
+    distance_total= 0
+    for training in trainings:
+        distance_total += training.distance_in_meters
+    average_meters = int(distance_total / len(players))
 
+    for distance in range(average_meters):
+        if not check_if_all_players_are_dead(temp_players):
+
+            if distance % 1000 == 0:
+                print(f"Distance traveled: {distance} meters.")
+
+
+
+
+
+
+
+
+    for training in trainings:
+        training.already_used_for_dungeon_run = True
+        db.add(training)
+        db.commit()
+        db.refresh(training)
     return players, trainings, players_base_stats, players_equipment, temp_players
+
+
+def check_if_all_players_are_dead(temp_players):
+    for player in temp_players:
+        if player.health > 0:
+            return False
+
 
 
 def get_temporary_player(training, player, base_stats, equipment, db):
@@ -110,11 +139,7 @@ def apply_gear_stats(player, gear):
     # Append fetched information to the corresponding lists
 
     # hoe wordt de story geregeld?
-    # invoer van alle
-    # get all trainings
-    # get all base stats
-    # get all equipment
-    # create temp players
+
     # average distance meters
     # distances calculator
     # more monsters or start at higher-- both?
@@ -125,6 +150,8 @@ def apply_gear_stats(player, gear):
     # who attacks first based on what?
     # xp/ loot verdeler over de nog levende spelers
     # print story for combined players
+    # welke training wordt gebruikt voor de dungeon clan run
+    #
 
     #end report
     #xp multiplier
