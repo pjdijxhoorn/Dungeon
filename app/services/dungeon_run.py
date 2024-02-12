@@ -12,6 +12,7 @@ from app.models.player_base_stats import PlayerBaseStats
 from app.models.gear import Gear
 from app.models.equipped_gear import EquippedGear
 from app.models.encounter import Encounter
+from app.utilities.common_functions import random_number
 
 
 def get_dungeon_run(training_id, player_id, db: Session):
@@ -49,7 +50,7 @@ def get_dungeon_run(training_id, player_id, db: Session):
                 monster = monsterspawner(distance, db)
                 temp_player.story += f"You have encountered a {monster.name} with {monster.health} health."
 
-                # player moet nog temp player worden
+
                 temp_player = monster_encounter(temp_player, monster, player_stats, db)
                 # roep monster gevecht aan
                 monster_chance = 500  # Reset kans na monster encounter
@@ -343,5 +344,4 @@ def calculate_xp_required(base_stats):
     return 150 + base_stats.player_level ** 4
 
 
-def random_number(chance):
-    return randint(1, chance)
+
