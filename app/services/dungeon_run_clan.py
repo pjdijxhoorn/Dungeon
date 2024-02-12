@@ -54,12 +54,23 @@ def post_dungeon_run_clan(player_and_training_ids, db: Session):
         temp_player = get_temporary_player(training, player, base_stats, equipment, db)
         temp_players.append(temp_player)
     distance_total= 0
+
+    for temp_player in temp_players:
+        take_turn(temp_player)
+
+    if check_all_players_played(temp_players):
+        print("All players have taken their turn. Starting a new round.")
+        reset_players_for_new_round(temp_players)
+
+
     for training in trainings:
         distance_total += training.distance_in_meters
     average_meters = int(distance_total / len(players))
 
     for distance in range(average_meters):
         if not check_if_all_players_are_dead(temp_players):
+        ##########
+
 
             if distance % 1000 == 0:
                 print(f"Distance traveled: {distance} meters.")
@@ -98,8 +109,8 @@ def get_temporary_player(training, player, base_stats, equipment, db):
         player_level=base_stats.player_level,
         xp=base_stats.xp,
         loot=base_stats.loot,
-        story=""
-    )
+        story="",
+        play_status=True)
 
 
     if equipment:
@@ -135,7 +146,23 @@ def apply_gear_stats(player, gear):
     elif gear.gear_stat_type == 'accuracy':
         player.accuracy += gear.gear_stat
         
-        
+def take_turn(temp_player: TempPlayer):
+    """Simulate taking a player's turn."""
+    if temp_player.play_status:
+        print(f"{temp_player.name} attacks the monster!")
+        temp_player.play_status = False
+    else:
+        print(f"{temp_player.name} cannot take a turn now.")
+
+def check_all_players_played(temp_players: List[TempPlayer]) -> bool:
+    """Check if all temp players have taken their turns."""
+    return all(not player.play_status for player in temp_players)
+
+def reset_players_for_new_round(temp_players: List[TempPlayer]):
+    """Reset `play_status` for all temp players for a new round."""
+    for player in temp_players:
+        player.play_status = True
+
     # Append fetched information to the corresponding lists
 
     # hoe wordt de story geregeld?
@@ -150,8 +177,6 @@ def apply_gear_stats(player, gear):
     # who attacks first based on what?
     # xp/ loot verdeler over de nog levende spelers
     # print story for combined players
-    # welke training wordt gebruikt voor de dungeon clan run
-    #
 
     #end report
     #xp multiplier
