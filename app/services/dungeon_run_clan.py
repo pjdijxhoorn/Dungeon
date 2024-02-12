@@ -1,3 +1,4 @@
+import random
 from random import randint
 from typing import List
 
@@ -91,6 +92,16 @@ def post_dungeon_run_clan(player_and_training_ids, db: Session):
                 monster_chance = 500  # Reset kans na monster encounter
             else:
                 monster_chance = max(1, monster_chance - 1)
+                
+            if random_number(random_encounter_chance) == 1:
+                random_encounter = get_random_encounter(db)
+                if random_encounter:
+                    apply_encounter_effects(temp_dungeon, random_encounter)
+                    temp_dungeon.story += f" Encountered: {random_encounter.encounter_text}. \n"
+                random_encounter_chance = 3000
+            else:
+                random_encounter_chance = max(1, random_encounter_chance - 1)
+                
     # set xp for all players divide loot among players
     for training in trainings:
         training.already_used_for_dungeon_run = True
@@ -99,6 +110,34 @@ def post_dungeon_run_clan(player_and_training_ids, db: Session):
         db.refresh(training)
     return temp_dungeon.story
 
+def get_random_encounter(db: Session):
+    """Get a random encounter from the database."""
+    random_encounters = db.query(RandomEncounter).all()
+    random_encounter = None
+
+    if random_encounters:
+        random_encounters = random.sample(random_encounters, len(random_encounters))
+        random_encounter = random_encounters[0]
+
+    return random_encounter
+
+
+def apply_encounter_effects(temp_dungeon, random_encounter):
+    """Apply encounter effects to all players in the dungeon."""
+    for temp_player in temp_dungeon.playerlist:
+        
+        if random_encounter.encounter_stat_type == 'speed':
+            temp_player.speed += random_encounter.encounter_stat
+        elif random_encounter.encounter_stat_type == 'accuracy':
+            temp_player.accuracy += random_encounter.encounter_stat
+        elif random_encounter.encounter_stat_type == 'strength':
+            temp_player.strength += random_encounter.encounter_stat
+        elif random_encounter.encounter_stat_type == 'health':
+            temp_player.health += random_encounter.encounter_stat
+        elif random_encounter.encounter_stat_type == 'defence':
+            temp_player.defence += random_encounter.encounter_stat
+        elif random_encounter.encounter_stat_type == 'xp':
+            temp_player.xp += random_encounter.encounter_stat
 
 def monster_encounter(temp_dungeon, monster_list, db):
     while not all_players_are_dead(temp_dungeon.playerlist) and not all_players_are_dead(monster_list):
