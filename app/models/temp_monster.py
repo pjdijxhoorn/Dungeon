@@ -10,5 +10,3 @@ class TempMonster:
         self.health = health
         self.zone_difficulty = zone_difficulty
         self.attacked = attacked
-
-

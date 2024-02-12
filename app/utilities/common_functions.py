@@ -37,5 +37,7 @@ def calculate_age(date_of_birth: date):
         (current_date.month, current_date.day) < (date_of_birth.month, date_of_birth.day))
     return age
 
+
 def random_number(chance):
+    """ Generate a random number. """
     return randint(1, chance)

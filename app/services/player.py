@@ -9,7 +9,6 @@ from app.models.player import Player
 from app.models.player_base_stats import PlayerBaseStats
 from app.models.profile import Profile
 from app.models.training import Training
-# from app.services.authentication import verify_password, get_password_hash
 from app.utilities.common_functions import bmi_calculation, calculate_fitness_multiplier, \
     calculate_age, max_heart_frequency_calculation, reserve_heart_frequency_calculation
 
@@ -24,7 +23,8 @@ def get_base_stats(db: Session, username: str):
     player = db.query(Player).filter(Player.username == username).first()
     if player is None:
         raise HTTPException(status_code=404, detail="Player not found")
-    base_stats = db.query(PlayerBaseStats).filter(PlayerBaseStats.player_id == player.player_id).first()
+    base_stats = db.query(PlayerBaseStats).filter(
+        PlayerBaseStats.player_id == player.player_id).first()
     return base_stats
 
 
@@ -33,12 +33,18 @@ def get_equipment(db, username):
     player = db.query(Player).filter(Player.username == username).first()
     if player is None:
         raise HTTPException(status_code=404, detail="Player not found")
-    equipment = db.query(EquippedGear).filter(EquippedGear.player_id == player.player_id).first()
-    head_gear = db.query(Gear).filter(Gear.gear_id == equipment.equipped_slot_head).first()
-    weapon_gear = db.query(Gear).filter(Gear.gear_id == equipment.equipped_slot_weapon).first()
-    armor_gear = db.query(Gear).filter(Gear.gear_id == equipment.equipped_slot_armor).first()
-    boots_gear = db.query(Gear).filter(Gear.gear_id == equipment.equipped_slot_boots).first()
-    title_gear = db.query(Gear).filter(Gear.gear_id == equipment.equipped_slot_title).first()
+    equipment = db.query(EquippedGear).filter(
+        EquippedGear.player_id == player.player_id).first()
+    head_gear = db.query(Gear).filter(
+        Gear.gear_id == equipment.equipped_slot_head).first()
+    weapon_gear = db.query(Gear).filter(
+        Gear.gear_id == equipment.equipped_slot_weapon).first()
+    armor_gear = db.query(Gear).filter(
+        Gear.gear_id == equipment.equipped_slot_armor).first()
+    boots_gear = db.query(Gear).filter(
+        Gear.gear_id == equipment.equipped_slot_boots).first()
+    title_gear = db.query(Gear).filter(
+        Gear.gear_id == equipment.equipped_slot_title).first()
 
     return [head_gear, weapon_gear, armor_gear, boots_gear, title_gear]
 
@@ -114,7 +120,8 @@ def get_player_performance_percentage(db: Session, player_id: int):
     player_main_score = get_player_main_score(db, player_id)
 
     all_players = get_players(db)
-    all_players_scores = [get_player_main_score(db, player.player_id) for player in all_players]
+    all_players_scores = [get_player_main_score(
+        db, player.player_id) for player in all_players]
 
     players_below_count = 0
 
@@ -138,7 +145,8 @@ def get_player_performance_percentage(db: Session, player_id: int):
     if player_main_score == highest_score_found:
         percentage_below = 100.0
     else:
-        percentage_below = calculate_percentage(players_below_count, total_players_count)
+        percentage_below = calculate_percentage(
+            players_below_count, total_players_count)
 
     performance_message = f"You are performing better than {percentage_below:.2f}% of players."
 

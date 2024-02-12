@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Depends
-from app import services
 from app.schemas.training import Training, CreateTraining, UpdateTraining
 import app.services.training as services
 from database import get_db

@@ -3,6 +3,7 @@ from sqlalchemy import Column, Integer
 
 Base = declarative_base()
 
+
 class PlayerBaseStats(Base):
     """ Represents a players base stats used for dungeon run's. """
     __tablename__ = "player_base_stats"
