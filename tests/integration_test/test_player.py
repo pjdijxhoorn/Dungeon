@@ -363,7 +363,7 @@ def test_base_stats():
                                'player_id': 1,
                                'player_level': 1,
                                'speed': 5,
-                               'strenght': 5,
+                               'strength': 5,
                                'xp': 0}
 
 

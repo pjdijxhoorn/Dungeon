@@ -9,7 +9,7 @@ class PlayerBaseStats(Base):
     __tablename__ = "player_base_stats"
     player_base_stats_id = Column(Integer, primary_key=True)
     player_id = Column(Integer)
-    strenght = Column(Integer)
+    strength = Column(Integer)
     defence = Column(Integer)
     speed = Column(Integer)
     health = Column(Integer)

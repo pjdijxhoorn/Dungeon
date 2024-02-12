@@ -185,7 +185,7 @@ def monster_encounter(temp_dungeon, monster_list, db):
         reset_creatures_for_new_round(monster_list)
 
 def xp_calculator(monster):
-    xp = (monster.defence + monster.strenght +
+    xp = (monster.defence + monster.strength +
           monster.health + monster.speed + monster.accuracy) * 2
     return xp
 
@@ -238,7 +238,7 @@ def get_temporary_player(training, player, base_stats, equipment, db):
     """ Function to get a temporary player for the dungeon run. """
     temp_player = TempPlayer(
         name=player.name,
-        strenght=base_stats.strenght,
+        strength=base_stats.strength,
         defence=base_stats.defence,
         speed=base_stats.speed,
         accuracy=base_stats.accuracy,
@@ -275,7 +275,7 @@ def get_temporary_monster(monsters):
     """ Function to get a temporary monster for the dungeon run. """
     temp_monster = TempMonster(
         name=monsters.name,
-        strenght=monsters.strenght,
+        strength=monsters.strength,
         defence=monsters.defence,
         speed=monsters.speed,
         accuracy=monsters.accuracy,
@@ -285,8 +285,8 @@ def get_temporary_monster(monsters):
     return temp_monster
 
 def apply_gear_stats(player, gear):
-    if gear.gear_stat_type == 'strenght':
-        player.strenght += gear.gear_stat
+    if gear.gear_stat_type == 'strength':
+        player.strength += gear.gear_stat
     elif gear.gear_stat_type == 'defence':
         player.defence += gear.gear_stat
     elif gear.gear_stat_type == 'speed':
@@ -324,7 +324,7 @@ def gain_xp(base_stats, amount, db):
 
         base_stats.defence = (base_stats.player_level * 3)
         base_stats.speed = (base_stats.player_level * 3)
-        base_stats.strenght = (base_stats.player_level * 3)
+        base_stats.strength = (base_stats.player_level * 3)
         base_stats.accuracy = (base_stats.player_level * 3)
         base_stats.health = (100 + (base_stats.player_level * 10))
     remaining_xp = base_stats.xp - calculate_xp_required(base_stats)

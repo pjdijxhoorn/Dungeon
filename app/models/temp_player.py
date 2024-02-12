@@ -1,9 +1,9 @@
 class TempPlayer:
     """ A class for the temporary player. """
 
-    def __init__(self, name, strenght, defence, speed, accuracy, health, player_level, xp, loot, story, attacked=False):
+    def __init__(self, name, strength, defence, speed, accuracy, health, player_level, xp, loot, story, attacked=False):
         self.name = name
-        self.strenght = strenght
+        self.strength = strength
         self.defence = defence
         self.speed = speed
         self.accuracy = accuracy

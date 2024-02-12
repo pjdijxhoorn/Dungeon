@@ -13,7 +13,7 @@ CREATE TABLE player (
 CREATE TABLE player_base_stats (
     player_base_stats_id SERIAL PRIMARY KEY,
     player_id INT UNIQUE,
-    strenght INT,
+    strength INT,
     defence INT,
     speed INT,
     health INT,
@@ -58,7 +58,7 @@ CREATE TABLE Monsters (
     monster_id SERIAL PRIMARY KEY,
     name VARCHAR(255),
     defence INT,
-    strenght INT,
+    strength INT,
     health INT,
     speed INT,
     accuracy INT,
@@ -129,7 +129,7 @@ VALUES
   ('user14', '$2a$12$2sNbJyNfNbmhkhHozOnJJ.Ae8LwpqYbmznJRSLfbJBVz095SBJPXC', 'User Fourteen', 675, '{125, 130, 135, 140, 145}', 0.43);
 
 
-INSERT INTO player_base_stats (player_id, strenght, defence, speed, health, accuracy, player_level, xp, loot, xp_remaining)
+INSERT INTO player_base_stats (player_id, strength, defence, speed, health, accuracy, player_level, xp, loot, xp_remaining)
 VALUES
 (1, 5, 5, 5, 100, 5, 1, 0, 0, 100),
 (2, 20, 20, 20, 200, 90, 2, 0, 10000, 500),
@@ -184,7 +184,7 @@ VALUES
 ('Night Jog', 3500, 1500, 7, 'Endurance', 75, TO_DATE('30-01-2024', 'DD-MM-YYYY'), 14, FALSE);
 
 
-INSERT INTO Monsters (name, defence, strenght, health, speed, accuracy, zone_difficulty)
+INSERT INTO Monsters (name, defence, strength, health, speed, accuracy, zone_difficulty)
 VALUES
 ('Rat', 2, 2, 3, 4, 4, 'easy'),
 ('sturdy potted plant', 5, 0, 20, 0, 0, 'easy'),

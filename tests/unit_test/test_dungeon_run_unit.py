@@ -12,7 +12,7 @@ Client = TestClient(app)
 def test_switch():
     """Test the switch function for player and monster swapping."""
     # ARRANGE
-    player = TempPlayer(name="Player1", strenght=50, defence=30, speed=40, accuracy=80, health=150,
+    player = TempPlayer(name="Player1", strength=50, defence=30, speed=40, accuracy=80, health=150,
                         player_level=5, xp=1000, loot="Sword", story="Heroic")
 
     monster = Monster(name="Dragon", strength=60, defence=40,

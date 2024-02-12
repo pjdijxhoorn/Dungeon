@@ -11,7 +11,7 @@ class Monster(Base):
     monster_id = Column(Integer, primary_key=True)
     name = Column(String)
     defence = Column(Integer)
-    strenght = Column(Integer)
+    strength = Column(Integer)
     health = Column(Integer)
     speed = Column(Integer)
     accuracy = Column(Integer)

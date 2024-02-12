@@ -188,7 +188,7 @@ def create_player(player, db):
     db.refresh(db_profile)
 
     db_base_stats = PlayerBaseStats(
-        strenght=5,
+        strength=5,
         defence=5,
         speed=5,
         health=100,

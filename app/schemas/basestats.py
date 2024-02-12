@@ -10,7 +10,7 @@ class Playerstats(BasePlayerstats):
     """ Class for player basestats with additional attributes. """
     player_id: int
     defence: int
-    strenght: int
+    strength: int
     speed: int
     accuracy: int
     health: int
