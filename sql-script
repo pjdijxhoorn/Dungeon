@@ -181,13 +181,12 @@ VALUES
 ('Forest Hike', 9000, 3600, 5, 'Endurance', 65, TO_DATE('27-01-2024', 'DD-MM-YYYY'), 11, FALSE),
 ('Mountain Trek', 10000, 4800, 3.75, 'Endurance', 70, TO_DATE('28-01-2024', 'DD-MM-YYYY'), 12, FALSE),
 ('Park Sprint', 2000, 600, 20, 'Sprint', 90, TO_DATE('29-01-2024', 'DD-MM-YYYY'), 13, FALSE),
-('Night Jog', 3500, 1500, 7, 'Endurance', 75, TO_DATE('30-01-2024', 'DD-MM-YYYY'), 14, FALSE);
+('Night Jog', 3500, 1500, 7, 'Endurance', 75, TO_DATE('30-01-2024', 'DD-MM-YYYY'), 14, TRUE);
 
 
 INSERT INTO Monsters (name, defence, strength, health, speed, accuracy, zone_difficulty)
 VALUES
 ('Rat', 2, 2, 3, 4, 4, 'easy'),
-('sturdy potted plant', 5, 0, 20, 0, 0, 'easy'),
 ('Slime', 1, 1, 2, 3, 3, 'easy'),
 ('Gnome', 3, 4, 4, 5, 6, 'easy'),
 ('Spider', 2, 3, 3, 4, 4, 'easy'),
