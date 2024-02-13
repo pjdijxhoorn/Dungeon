@@ -12,7 +12,7 @@ from app.models.player_base_stats import PlayerBaseStats
 from app.models.gear import Gear
 from app.models.equipped_gear import EquippedGear
 from app.models.random_encounter import RandomEncounter
-from app.utilities.common_functions import random_number
+from app.utilities.common_functions import random_number, calculate_loot, xp_calculator
 
 
 def get_dungeon_run(training_id, player_id, db: Session):
@@ -232,12 +232,6 @@ def monster_encounter(player, monster, player_stats, db):
     return player if isinstance(player, TempPlayer) else monster
 
 
-def xp_calculator(monster):
-    xp = (monster.defence + monster.strenght +
-          monster.health + monster.speed + monster.accuracy) * 2
-    return xp
-
-
 def monster_battle(player, monster, player_stats, db):
     """ A function to simulate a battle between a player and a monster. """
     xp_gained = xp_calculator(monster)
@@ -297,21 +291,6 @@ You have NOT cleared the dungeon. here is your final player summary of stats: yo
             else:
                 return player, monster
     return player, monster
-
-
-def calculate_loot(monster):
-    """ Function to calculate loot based on the difficulty of the monster. """
-    if isinstance(monster, Monster):
-        if monster.zone_difficulty == 'easy':
-            return randint(1, 10)
-        elif monster.zone_difficulty == 'medium':
-            return randint(10, 50)
-        elif monster.zone_difficulty == 'hard':
-            return randint(50, 150)
-        elif monster.zone_difficulty == 'boss':
-            return randint(150, 300)
-    else:
-        return 0
 
 
 def gain_xp(base_stats, amount, db):

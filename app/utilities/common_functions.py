@@ -2,6 +2,8 @@ import math
 from datetime import date
 from random import randint
 
+from app.models.monster import Monster
+
 
 def bmi_calculation(height_in_m, weight_in_kg):
     """ calculate the bmi by dividing the weight with the lengt sqaured. """
@@ -39,3 +41,22 @@ def calculate_age(date_of_birth: date):
 
 def random_number(chance):
     return randint(1, chance)
+
+def calculate_loot(monster):
+    """ Function to calculate loot based on the difficulty of the monster. """
+    if isinstance(monster, Monster):
+        if monster.zone_difficulty == 'easy':
+            return randint(1, 10)
+        elif monster.zone_difficulty == 'medium':
+            return randint(10, 50)
+        elif monster.zone_difficulty == 'hard':
+            return randint(50, 150)
+        elif monster.zone_difficulty == 'boss':
+            return randint(150, 300)
+    else:
+        return 0
+
+def xp_calculator(monster):
+    xp = (monster.defence + monster.strenght +
+          monster.health + monster.speed + monster.accuracy) * 2
+    return xp
