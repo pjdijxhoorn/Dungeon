@@ -1,5 +1,7 @@
 from datetime import datetime
 from fastapi.testclient import TestClient
+
+from database import reset_database
 from main import app
 
 client = TestClient(app)
@@ -7,6 +9,7 @@ client = TestClient(app)
 
 def test_get_training_sessions():
     """ Test the endpoint to retrieve all training sessions. """
+    reset_database()
     response = client.get("/training")
     assert response.status_code == 200
     assert response.json() == [{'average_speed': 10.0,
@@ -189,16 +192,16 @@ def test_update_training():
     training_data = {"training_name": "fly you fools"}
     response = client.put("training/2", json=training_data)
     assert response.status_code == 200
-    assert response.json() == {'average_speed': 6.25,
-                               'base_score': 80,
-                               'distance_in_meters': 10000,
-                               'dungeon_status': False,
-                               'player_id': 2,
-                               'time_in_seconds': 2400,
-                               'training_date': '2024-01-17',
-                               'training_id': 2,
-                               'training_name': 'fly you fools',
-                               'training_type': 'Endurance'}
+    assert response.json() == {'already_used_for_dungeon_run': False,
+ 'average_speed': 6.25,
+ 'base_score': 80,
+ 'distance_in_meters': 10000,
+ 'player_id': 2,
+ 'time_in_seconds': 2400,
+ 'training_date': '2024-01-17',
+ 'training_id': 2,
+ 'training_name': 'fly you fools',
+ 'training_type': 'Endurance'}
 
 
 def test_update_training_not_found():
