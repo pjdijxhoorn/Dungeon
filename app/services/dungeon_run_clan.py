@@ -20,10 +20,12 @@ from app.models.random_encounter import RandomEncounter
 from app.utilities.common_functions import random_number, calculate_loot, xp_calculator
 
 
+
+
 def post_dungeon_run_clan(player_and_training_ids, db: Session):
     monster_chance = 500
     random_encounter_chance = 3000
-    total_xp = 0 
+    total_xp = 0
     total_loot = 0
 
     players = []
@@ -45,6 +47,7 @@ def post_dungeon_run_clan(player_and_training_ids, db: Session):
             raise HTTPException(status_code=404, detail="base_stat not found")
 
         players_base_stats.append(base_stats)
+
 
     for training_id in player_and_training_ids.training_ids:
         training = db.query(Training).filter(Training.training_id == training_id).first()
@@ -81,7 +84,7 @@ def post_dungeon_run_clan(player_and_training_ids, db: Session):
                 temp_dungeon.story += f"Distance traveled: {distance} meters."
 
             if random_number(monster_chance) == 1:
-                print("""You have encountered the following monsters """)
+                temp_dungeon.story += """You have encountered the following monsters """
                 monster_list = monsterspawner(distance, db)
                 temp_dungeon.temp_monsters = monster_list
                 for monster in monster_list:
@@ -100,24 +103,24 @@ def post_dungeon_run_clan(player_and_training_ids, db: Session):
             else:
                 random_encounter_chance = max(1, random_encounter_chance - 1)
     #Loot
-    for temp_player in temp_dungeon.playerlist:
+    for temp_player in temp_dungeon.temp_players:
         total_loot += temp_player.loot
 
     if total_loot > 0:
         loot_per_player = total_loot // len(temp_players)
         remaining_loot = total_loot % len(temp_players)
 
-        for temp_player in temp_dungeon.playerlist:
+        for temp_player in temp_dungeon.temp_players:
             temp_player.loot += loot_per_player
 
-        for temp_player in temp_dungeon.playerlist:
+        for temp_player in temp_dungeon.temp_players:
             temp_player.loot += remaining_loot
 
     #Xp
-    for temp_player in temp_dungeon.playerlist:
+    for temp_player in temp_dungeon.temp_players:
         total_xp += temp_player.xp
 
-    for temp_player in temp_dungeon.playerlist:
+    for temp_player in temp_dungeon.temp_players:
         temp_player.xp += total_xp
         player_stats = db.query(PlayerBaseStats).filter(
             PlayerBaseStats.player_id == player.player_id).first()
@@ -177,7 +180,7 @@ def calculate_attack_chance(temp_dungeon):
 
 
 def monster_battle(temp_dungeon):
-    print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    temp_dungeon.story +="+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
     if max([player.first_strike_score for player in temp_dungeon.temp_players]) > max(
             [monster.first_strike_score for monster in temp_dungeon.temp_monsters]):
         player = max(temp_dungeon.temp_players, key=lambda player: player.first_strike_score)
@@ -187,54 +190,55 @@ def monster_battle(temp_dungeon):
         monster = random.choice(alive_monsters)
         xp_gained = xp_calculator(monster)
         loot_gained = calculate_loot(monster)
-        print( f"{player.name} attacks {monster.name}")
+        temp_dungeon.story += f"{player.name} attacks {monster.name}"
         dodged = False
         dodge_chance = min(100, max(1, player.speed - monster.speed))
         if random_number(100) <= dodge_chance:
             dodged = True
-            print( f"{monster.name} succesfully evaded {player.name}'s attack.")
+            temp_dungeon.story +=f"{monster.name} succesfully evaded {player.name}'s attack."
         if dodged is not True:
-            damage = player.strenght
+            damage = player.strength
             if random_number(100) <= player.accuracy:
                 damage = damage * 2
             actual_damage = max(0, damage - (monster.defence * 0.5))
             if actual_damage <= 0:
-                print( f"{player.name} his damage wasn't high enough to penetrate {monster.name}'s defence.")
+                temp_dungeon.story += f"{player.name} his damage wasn't high enough to penetrate {monster.name}'s defence."
             else:
                 monster.health = int(monster.health - actual_damage)
-                print( f"{player.name} does {actual_damage} damage to {monster.name}'s health {monster.name} has {monster.health} health left.")
+                temp_dungeon.story += f"{player.name} does {actual_damage} damage to {monster.name}'s health {monster.name} has {monster.health} health left."
                 if monster.health <= 0:
-                    print( f"{monster.name} has been slain.")
+                    temp_dungeon.story += f"{monster.name} has been slain."
                     player.xp += xp_gained
                     player.loot += loot_gained
-        print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+                    monster.attacked = True
+        temp_dungeon.story +="+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
     else:
         monster = max(temp_dungeon.temp_monsters, key=lambda monster: monster.first_strike_score)
         monster.attacked = True
         alive_players = [player for player in temp_dungeon.temp_players if player.health > 0]
 
         player = random.choice(alive_players)
-        print(f"{monster.name} attacks {player.name}")
+        temp_dungeon.story +=f"{monster.name} attacks {player.name}"
         dodged = False
         dodge_chance = min(100, max(1, monster.speed - player.speed))
         if random_number(100) <= dodge_chance:
             dodged = True
-            print(f"{player.name} succesfully evaded {monster.name}'s attack.")
+            temp_dungeon.story +=f"{player.name} succesfully evaded {monster.name}'s attack."
         if dodged is not True:
-            damage = monster.strenght
+            damage = monster.strength
             if random_number(100) <= monster.accuracy:
                 damage = damage * 2
             actual_damage = max(0, damage - (player.defence * 0.5))
             if actual_damage <= 0:
-                print(f"{monster.name} his damage wasn't high enough to penetrate {player.name}'s defence.")
+                temp_dungeon.story +=f"{monster.name} his damage wasn't high enough to penetrate {player.name}'s defence."
             else:
                 player.health = int(player.health - actual_damage)
-                print(
-                    f"{monster.name} does {actual_damage} damage to {player.name}'s health {player.name} has {player.health} health left.")
+                temp_dungeon.story += f"{monster.name} does {actual_damage} damage to {player.name}'s health {player.name} has {player.health} health left."
                 if player.health <= 0:
-                    print(f"{player.name} has been slain.")
+                    temp_dungeon.story +=f"{player.name} has been slain."
+                    player.attacked =True
 
-        print("================================================================")
+        temp_dungeon.story +="================================================================"
 
 
 
@@ -242,42 +246,43 @@ def monster_battle(temp_dungeon):
 
 
 def monster_encounter(temp_dungeon, db):
-    while all_creatures_are_dead(temp_dungeon.temp_players) is not True and all_creatures_are_dead(
-            temp_dungeon.temp_monsters) is not True:
-        temp_dungeon.story +="they are still alive"
-        # check if somebody can still attack ?
-        while not all_creatures_have_attacked(temp_dungeon.temp_players) and not all_creatures_have_attacked(
-                temp_dungeon.temp_monsters):
+    x = 0
+    keep_going = True
+    while keep_going:
+        temp_dungeon = calculate_attack_chance(temp_dungeon)
+        temp_dungeon = monster_battle(temp_dungeon)
 
-            temp_dungeon = calculate_attack_chance(temp_dungeon)
-            temp_dungeon = monster_battle(temp_dungeon)
+        if all_creatures_are_dead(temp_dungeon.temp_players):
+            temp_dungeon.story +="All players have died in battle."
+            keep_going =False
 
-            if all_creatures_are_dead(temp_dungeon.temp_players) is True:
-                print("all players have died in battle")
-                break
-            if all_creatures_are_dead(temp_dungeon.temp_monsters) is True:
+        if all_creatures_are_dead(temp_dungeon.temp_monsters):
+            reset_creatures_for_new_round(temp_dungeon.temp_players)
+            temp_dungeon.story +="You have slain all the encountered monsters."
+            keep_going =False
+
+        if all_creatures_have_attacked(temp_dungeon.temp_players):
+            if all_creatures_have_attacked(temp_dungeon.temp_monsters):
+                temp_dungeon.story +="All players and monsters have attacked. Starting a new round."
                 reset_creatures_for_new_round(temp_dungeon.temp_players)
-                print("you have slain all the encountered monsters")
-                break
-            if all_creatures_have_attacked(temp_dungeon.temp_players) is True and all_creatures_have_attacked(
-                    temp_dungeon.temp_monsters) is True:
-                print("All players and monsters have taken their turn. Starting a new round.")
-                reset_creatures_for_new_round(temp_dungeon.temp_players)
-                reset_creatures_for_new_round(temp_dungeon.monster_list)
-        if all_creatures_have_attacked(temp_dungeon.temp_players) is True and all_creatures_have_attacked(
-                temp_dungeon.temp_monsters) is True:
-            break
+                reset_creatures_for_new_round(temp_dungeon.temp_monsters)
+
     return temp_dungeon
 
 
 def all_creatures_are_dead(creatures):
+    if not creatures:
+        return True
+
     for creature in creatures:
         if creature.health > 0:
             return False
     return True
 
-
 def all_creatures_have_attacked(creatures):
+    if not creatures:
+        return True
+
     for creature in creatures:
         if not creature.attacked:
             return False
@@ -412,20 +417,4 @@ def gain_xp(base_stats, amount, db):
 def calculate_xp_required(base_stats):
     return 150 + base_stats.player_level ** 4
 
-    # Append fetched information to the corresponding lists
 
-    # hoe wordt de story geregeld?
-
-    # average distance meters
-    # distances calculator
-    # more monsters or start at higher-- both?
-    # random encounters how for whom
-    # ! geldt niet voor wie dood is?
-    # battle
-    # volgorde van attacks
-    # who attacks first based on what?
-    # xp/ loot verdeler over de nog levende spelers
-    # print story for combined players
-
-    # end report
-    # xp multiplier

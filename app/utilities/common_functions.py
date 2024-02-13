@@ -60,7 +60,7 @@ def calculate_loot(monster):
 
 
 def xp_calculator(monster):
-    xp = (monster.defence + monster.strenght +
+    xp = (monster.defence + monster.strength +
           monster.health + monster.speed + monster.accuracy) * 2
     return xp
 
