@@ -64,3 +64,7 @@ def xp_calculator(monster):
           monster.health + monster.speed + monster.accuracy) * 2
     return xp
 
+def pad_string(input_string):
+    spaces_needed = max(0, 140 - len(input_string))
+    padded_string = input_string + ' ' * spaces_needed
+    return padded_string
