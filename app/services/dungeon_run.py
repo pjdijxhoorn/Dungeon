@@ -102,7 +102,8 @@ def get_temporary_player(training, player, player_stats, db):
         player_level=player_stats.player_level,
         xp=player_stats.xp,
         loot=player_stats.loot,
-        story=""
+        story="",
+        first_strike_score=0
     )
 
     equipped_gear = db.query(EquippedGear).filter(
@@ -140,7 +141,8 @@ def get_temporary_monster(monsters):
         speed=monsters.speed,
         accuracy=monsters.accuracy,
         health=monsters.health,
-        zone_difficulty=monsters.zone_difficulty
+        zone_difficulty=monsters.zone_difficulty,
+        first_strike_score=0
     )
 
     return temp_monster
