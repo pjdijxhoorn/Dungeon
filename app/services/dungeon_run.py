@@ -76,7 +76,7 @@ def get_dungeon_run(training_id, player_id, db: Session):
             PlayerBaseStats.player_id == player.player_id).first()
         temp_player.story += f"""                                                                                                                                                                                                                                                                                                                    
                                                                                                                                                                                                                                                                                                                       
-You have cleared the dungeon so you have gained a 100 bonus xp! Here is your final player summary of stats: your total xp is: {player_stats.xp}, your total loot is: {player_stats.loot}, your total strength is: {player_stats.strenght}, your total defence is:{player_stats.defence}, your total speed is: {player_stats.speed}, your total accuracy is: {player_stats.accuracy}, your total health is: {player_stats.health} and your new level is {player_stats.player_level}!"""
+You have cleared the dungeon so you have gained a 100 bonus xp! Here is your final player summary of stats: your total xp is: {player_stats.xp}, your total loot is: {player_stats.loot}, your total strength is: {player_stats.strength}, your total defence is:{player_stats.defence}, your total speed is: {player_stats.speed}, your total accuracy is: {player_stats.accuracy}, your total health is: {player_stats.health} and your new level is {player_stats.player_level}!"""
         # todo maak de beloning een betere weerspiegeling van de geleverde prestatie
 
     # einde van de dungeon te gaan xp genoeg om te levelen?
@@ -94,7 +94,7 @@ def get_temporary_player(training, player, player_stats, db):
     """ Function to get a temporary player for the dungeon run. """
     temp_player = TempPlayer(
         name=player.name,
-        strenght=player_stats.strenght,
+        strength=player_stats.strength,
         defence=player_stats.defence,
         speed=player_stats.speed,
         accuracy=player_stats.accuracy,
@@ -135,7 +135,7 @@ def get_temporary_monster(monsters):
     """ Function to get a temporary monster for the dungeon run. """
     temp_monster = TempMonster(
         name=monsters.name,
-        strenght=monsters.strenght,
+        strength=monsters.strength,
         defence=monsters.defence,
         speed=monsters.speed,
         accuracy=monsters.accuracy,
@@ -146,8 +146,8 @@ def get_temporary_monster(monsters):
     return temp_monster
 
 def apply_gear_stats(player, gear):
-    if gear.gear_stat_type == 'strenght':
-        player.strenght += gear.gear_stat
+    if gear.gear_stat_type == 'strength':
+        player.strength += gear.gear_stat
     elif gear.gear_stat_type == 'defence':
         player.defence += gear.gear_stat
     elif gear.gear_stat_type == 'speed':
@@ -232,6 +232,9 @@ def monster_encounter(player, monster, player_stats, db):
     return player if isinstance(player, TempPlayer) else monster
 
 
+
+
+
 def monster_battle(player, monster, player_stats, db):
     """ A function to simulate a battle between a player and a monster. """
     xp_gained = xp_calculator(monster)
@@ -252,9 +255,9 @@ def monster_battle(player, monster, player_stats, db):
         else:
             monster.story += f"{monster.name} succesfully evaded {player.name}'s attack."
 
-        # calculate attack damage based on strenght (base- damage) and accuracy(multiplier) where the multiplier give a chance to extra or even double damage
+        # calculate attack damage based on strength (base- damage) and accuracy(multiplier) where the multiplier give a chance to extra or even double damage
     if dodged is not True:
-        damage = player.strenght
+        damage = player.strength
         if random_number(100) <= player.accuracy:
             damage = damage * 2
 
@@ -280,7 +283,7 @@ def monster_battle(player, monster, player_stats, db):
                     gain_xp(player_stats, xp_gained, db)
                     monster.story += f"""                                                                                                                                                                                                                                                                                                                    
                                                                                                                                                                                                                                                                                                                       
-You have NOT cleared the dungeon. here is your final player summary of stats: your total xp is: {player_stats.xp}, your total loot is: {player_stats.loot}, your total strength is: {player_stats.strenght}, your total defence is:{player_stats.defence}, your total speed is:{player_stats.speed}, your total accuracy is: {player_stats.accuracy}, your total health is: {player_stats.health} and your new level is {player_stats.player_level}!"""
+You have NOT cleared the dungeon. here is your final player summary of stats: your total xp is: {player_stats.xp}, your total loot is: {player_stats.loot}, your total strength is: {player_stats.strength}, your total defence is:{player_stats.defence}, your total speed is:{player_stats.speed}, your total accuracy is: {player_stats.accuracy}, your total health is: {player_stats.health} and your new level is {player_stats.player_level}!"""
                     return player, monster
                 else:
                     player.story += f"{monster.name} has been slain. You have gained {xp_gained} XP and {loot_gained} loot."
@@ -305,7 +308,7 @@ def gain_xp(base_stats, amount, db):
 
         base_stats.defence = (base_stats.player_level * 3)
         base_stats.speed = (base_stats.player_level * 3)
-        base_stats.strenght = (base_stats.player_level * 3)
+        base_stats.strength = (base_stats.player_level * 3)
         base_stats.accuracy = (base_stats.player_level * 3)
         base_stats.health = (100 + (base_stats.player_level * 10))
     remaining_xp = base_stats.xp - calculate_xp_required(base_stats)

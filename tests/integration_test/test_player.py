@@ -14,80 +14,80 @@ def test_get_players():
     response = client.get("/player")
     assert response.status_code == 200
     assert response.json() == [{'main_score': 430,
-  'name': 'User One',
-  'player_id': 1,
-  'training_score': [80, 95, 75, 85, 95],
-  'username': 'user1'},
- {'main_score': 425,
-  'name': 'User Two',
-  'player_id': 2,
-  'training_score': [80, 90, 75, 85, 95],
-  'username': 'user2'},
- {'main_score': 435,
-  'name': 'User Three',
-  'player_id': 3,
-  'training_score': [85, 95, 75, 85, 95],
-  'username': 'user3'},
- {'main_score': 445,
-  'name': 'User Four',
-  'player_id': 4,
-  'training_score': [80, 90, 95, 85, 95],
-  'username': 'user4'},
- {'main_score': 450,
-  'name': 'User Five',
-  'player_id': 5,
-  'training_score': [80, 85, 90, 95, 100],
-  'username': 'user5'},
- {'main_score': 475,
-  'name': 'User Six',
-  'player_id': 6,
-  'training_score': [85, 90, 95, 100, 105],
-  'username': 'user6'},
- {'main_score': 500,
-  'name': 'User Seven',
-  'player_id': 7,
-  'training_score': [90, 95, 100, 105, 110],
-  'username': 'user7'},
- {'main_score': 525,
-  'name': 'User Eight',
-  'player_id': 8,
-  'training_score': [95, 100, 105, 110, 115],
-  'username': 'user8'},
- {'main_score': 550,
-  'name': 'User Nine',
-  'player_id': 9,
-  'training_score': [100, 105, 110, 115, 120],
-  'username': 'user9'},
- {'main_score': 575,
-  'name': 'User Ten',
-  'player_id': 10,
-  'training_score': [105, 110, 115, 120, 125],
-  'username': 'user10'},
- {'main_score': 600,
-  'name': 'User Eleven',
-  'player_id': 11,
-  'training_score': [110, 115, 120, 125, 130],
-  'username': 'user11'},
- {'main_score': 625,
-  'name': 'User Twelve',
-  'player_id': 12,
-  'training_score': [115, 120, 125, 130, 135],
-  'username': 'user12'},
- {'main_score': 650,
-  'name': 'User Thirteen',
-  'player_id': 13,
-  'training_score': [120, 125, 130, 135, 140],
-  'username': 'user13'},
- {'main_score': 675,
-  'name': 'User Fourteen',
-  'player_id': 14,
-  'training_score': [125, 130, 135, 140, 145],
-  'username': 'user14'},
- {'main_score': 675,
-  'name': 'player for delete',
-  'player_id': 15,
-  'training_score': [125, 130, 135, 140, 145],
-  'username': 'delete'}]
+                                'name': 'User One',
+                                'player_id': 1,
+                                'training_score': [80, 95, 75, 85, 95],
+                                'username': 'user1'},
+                               {'main_score': 425,
+                                'name': 'User Two',
+                                'player_id': 2,
+                                'training_score': [80, 90, 75, 85, 95],
+                                'username': 'user2'},
+                               {'main_score': 435,
+                                'name': 'User Three',
+                                'player_id': 3,
+                                'training_score': [85, 95, 75, 85, 95],
+                                'username': 'user3'},
+                               {'main_score': 445,
+                                'name': 'User Four',
+                                'player_id': 4,
+                                'training_score': [80, 90, 95, 85, 95],
+                                'username': 'user4'},
+                               {'main_score': 450,
+                                'name': 'User Five',
+                                'player_id': 5,
+                                'training_score': [80, 85, 90, 95, 100],
+                                'username': 'user5'},
+                               {'main_score': 475,
+                                'name': 'User Six',
+                                'player_id': 6,
+                                'training_score': [85, 90, 95, 100, 105],
+                                'username': 'user6'},
+                               {'main_score': 500,
+                                'name': 'User Seven',
+                                'player_id': 7,
+                                'training_score': [90, 95, 100, 105, 110],
+                                'username': 'user7'},
+                               {'main_score': 525,
+                                'name': 'User Eight',
+                                'player_id': 8,
+                                'training_score': [95, 100, 105, 110, 115],
+                                'username': 'user8'},
+                               {'main_score': 550,
+                                'name': 'User Nine',
+                                'player_id': 9,
+                                'training_score': [100, 105, 110, 115, 120],
+                                'username': 'user9'},
+                               {'main_score': 575,
+                                'name': 'User Ten',
+                                'player_id': 10,
+                                'training_score': [105, 110, 115, 120, 125],
+                                'username': 'user10'},
+                               {'main_score': 600,
+                                'name': 'User Eleven',
+                                'player_id': 11,
+                                'training_score': [110, 115, 120, 125, 130],
+                                'username': 'user11'},
+                               {'main_score': 625,
+                                'name': 'User Twelve',
+                                'player_id': 12,
+                                'training_score': [115, 120, 125, 130, 135],
+                                'username': 'user12'},
+                               {'main_score': 650,
+                                'name': 'User Thirteen',
+                                'player_id': 13,
+                                'training_score': [120, 125, 130, 135, 140],
+                                'username': 'user13'},
+                               {'main_score': 675,
+                                'name': 'User Fourteen',
+                                'player_id': 14,
+                                'training_score': [125, 130, 135, 140, 145],
+                                'username': 'user14'},
+                               {'main_score': 675,
+                                'name': 'player for delete',
+                                'player_id': 15,
+                                'training_score': [125, 130, 135, 140, 145],
+                                'username': 'delete'}]
 
 
 def test_get_leaderboard():
@@ -95,20 +95,21 @@ def test_get_leaderboard():
     response = client.get("/player/leaderboard")
     assert response.status_code == 200
     assert response.json() == [{'main_score': 675, 'username': 'user14'},
- {'main_score': 675, 'username': 'delete'},
- {'main_score': 650, 'username': 'user13'},
- {'main_score': 625, 'username': 'user12'},
- {'main_score': 600, 'username': 'user11'},
- {'main_score': 575, 'username': 'user10'},
- {'main_score': 550, 'username': 'user9'},
- {'main_score': 525, 'username': 'user8'},
- {'main_score': 500, 'username': 'user7'},
- {'main_score': 475, 'username': 'user6'},
- {'main_score': 450, 'username': 'user5'},
- {'main_score': 445, 'username': 'user4'},
- {'main_score': 435, 'username': 'user3'},
- {'main_score': 430, 'username': 'user1'},
- {'main_score': 425, 'username': 'user2'}]
+                               {'main_score': 675, 'username': 'delete'},
+                               {'main_score': 650, 'username': 'user13'},
+                               {'main_score': 625, 'username': 'user12'},
+                               {'main_score': 600, 'username': 'user11'},
+                               {'main_score': 575, 'username': 'user10'},
+                               {'main_score': 550, 'username': 'user9'},
+                               {'main_score': 525, 'username': 'user8'},
+                               {'main_score': 500, 'username': 'user7'},
+                               {'main_score': 475, 'username': 'user6'},
+                               {'main_score': 450, 'username': 'user5'},
+                               {'main_score': 445, 'username': 'user4'},
+                               {'main_score': 435, 'username': 'user3'},
+                               {'main_score': 430, 'username': 'user1'},
+                               {'main_score': 425, 'username': 'user2'}]
+
 
 def test_get_personal_leaderboard():
     """ Test the endpoint for retrieving a personal leaderboard, 
@@ -116,13 +117,13 @@ def test_get_personal_leaderboard():
     response = client.get("/player/personal_leaderboard/user3")
     assert response.status_code == 200
     assert response.json() == [{'main_score': 525, 'username': 'user8'},
- {'main_score': 500, 'username': 'user7'},
- {'main_score': 475, 'username': 'user6'},
- {'main_score': 450, 'username': 'user5'},
- {'main_score': 445, 'username': 'user4'},
- {'main_score': 435, 'username': 'user3'},
- {'main_score': 430, 'username': 'user1'},
- {'main_score': 425, 'username': 'user2'}]
+                               {'main_score': 500, 'username': 'user7'},
+                               {'main_score': 475, 'username': 'user6'},
+                               {'main_score': 450, 'username': 'user5'},
+                               {'main_score': 445, 'username': 'user4'},
+                               {'main_score': 435, 'username': 'user3'},
+                               {'main_score': 430, 'username': 'user1'},
+                               {'main_score': 425, 'username': 'user2'}]
 
 
 def test_get_personal_leaderboard_not_found():
@@ -137,10 +138,10 @@ def test_get_player():
     response = client.get("/player/1")
     assert response.status_code == 200
     assert response.json() == {'main_score': 430,
- 'name': 'User One',
- 'player_id': 1,
- 'training_score': [80, 95, 75, 85, 95],
- 'username': 'user1'}
+                               'name': 'User One',
+                               'player_id': 1,
+                               'training_score': [80, 95, 75, 85, 95],
+                               'username': 'user1'}
 
 
 def test_get_player_not_found():
@@ -156,7 +157,8 @@ def test_get_player_training_scores():
     """ Test the endpoint for retrieving player training scores. """
     response = client.get("/player/5/training-scores")
     assert response.status_code == 200
-    assert response.json() ==[{'score': 80, 'training_name': 'Evening Walk'}]
+    assert response.json() == [{'score': 80, 'training_name': 'Evening Walk'}]
+
 
 def test_get_player_training_scores_player_not_found():
     """ Test the endpoint for retrieving training scores of a non-existent player. """
@@ -172,7 +174,6 @@ def test_get_player_main_score():
     response = client.get("/player/1/average-score")
     assert response.status_code == 200
     assert response.json() == 430
-
 
 
 def test_get_player_main_score_not_found():
@@ -198,10 +199,10 @@ def test_create_player():
     response = client.post("/player", json=player_data)
     assert response.status_code == 201
     assert response.json() == {'main_score': 0,
- 'name': 'string',
- 'player_id': 16,
- 'training_score': [],
- 'username': 'string'}
+                               'name': 'string',
+                               'player_id': 16,
+                               'training_score': [],
+                               'username': 'string'}
 
 
 def test_create_player_wrong_date():
@@ -242,12 +243,13 @@ def test_update_player():
     response = client.put("/player/2", json=player_data)
     assert response.status_code == 200
     assert response.json() == {'fitness_multiplier': 0.28,
- 'main_score': 425,
- 'name': 'string',
- 'password': '$2a$12$cuv50PlaZY8gpwa.NgKQCemAkQCeSbKA7GWrjS2Imp7lE4Hd1AZ7W',
- 'player_id': 2,
- 'training_score': [80, 90, 75, 85, 95],
- 'username': 'user2'}
+                               'main_score': 425,
+                               'name': 'string',
+                               'password': '$2a$12$cuv50PlaZY8gpwa.NgKQCemAkQCeSbKA7GWrjS2Imp7lE4Hd1AZ7W',
+                               'player_id': 2,
+                               'training_score': [80, 90, 75, 85, 95],
+                               'username': 'user2'}
+
 
 def test_update_player_not_found():
     """ Test the endpoint for updating information of a non-existent player. """
@@ -280,6 +282,7 @@ def test_update_fitness_multiplier():
     player = db.query(Player).filter(Player.player_id == player_id).first()
     assert player.fitness_multiplier == fitness_multiplier
 
+
 def test_update_scores():
     """ Test the function for updating player scores. """
     db: Session = next(get_db())
@@ -306,40 +309,41 @@ def test_get_equipment():
     response = client.get("/player/equipment/user1")
     assert response.status_code == 200
     assert response.json() == [{'gear_class': 'common',
-  'gear_id': 0,
-  'gear_name': 'empty',
-  'gear_price': 0,
-  'gear_slot': 'all',
-  'gear_stat': 0,
-  'gear_stat_type': 'none'},
- {'gear_class': 'common',
-  'gear_id': 0,
-  'gear_name': 'empty',
-  'gear_price': 0,
-  'gear_slot': 'all',
-  'gear_stat': 0,
-  'gear_stat_type': 'none'},
- {'gear_class': 'common',
-  'gear_id': 0,
-  'gear_name': 'empty',
-  'gear_price': 0,
-  'gear_slot': 'all',
-  'gear_stat': 0,
-  'gear_stat_type': 'none'},
- {'gear_class': 'common',
-  'gear_id': 0,
-  'gear_name': 'empty',
-  'gear_price': 0,
-  'gear_slot': 'all',
-  'gear_stat': 0,
-  'gear_stat_type': 'none'},
- {'gear_class': 'common',
-  'gear_id': 0,
-  'gear_name': 'empty',
-  'gear_price': 0,
-  'gear_slot': 'all',
-  'gear_stat': 0,
-  'gear_stat_type': 'none'}]
+                                'gear_id': 0,
+                                'gear_name': 'empty',
+                                'gear_price': 0,
+                                'gear_slot': 'all',
+                                'gear_stat': 0,
+                                'gear_stat_type': 'none'},
+                               {'gear_class': 'common',
+                                'gear_id': 0,
+                                'gear_name': 'empty',
+                                'gear_price': 0,
+                                'gear_slot': 'all',
+                                'gear_stat': 0,
+                                'gear_stat_type': 'none'},
+                               {'gear_class': 'common',
+                                'gear_id': 0,
+                                'gear_name': 'empty',
+                                'gear_price': 0,
+                                'gear_slot': 'all',
+                                'gear_stat': 0,
+                                'gear_stat_type': 'none'},
+                               {'gear_class': 'common',
+                                'gear_id': 0,
+                                'gear_name': 'empty',
+                                'gear_price': 0,
+                                'gear_slot': 'all',
+                                'gear_stat': 0,
+                                'gear_stat_type': 'none'},
+                               {'gear_class': 'common',
+                                'gear_id': 0,
+                                'gear_name': 'empty',
+                                'gear_price': 0,
+                                'gear_slot': 'all',
+                                'gear_stat': 0,
+                                'gear_stat_type': 'none'}]
+
 
 def test_get_equipment_user_not_found():
     """ Test the endpoint for Get the personal equipment for a specific user """
@@ -347,25 +351,28 @@ def test_get_equipment_user_not_found():
     assert response.status_code == 404
     assert response.json() == {'detail': 'Player not found'}
 
+
 def test_base_stats():
     """ Test the endpoint Get the personal base_stats for a specific user. """
     response = client.get("/player/base_stats/user1")
     assert response.status_code == 200
     assert response.json() == {'accuracy': 5,
- 'defence': 5,
- 'health': 100,
- 'loot': 0,
- 'player_id': 1,
- 'player_level': 1,
- 'speed': 5,
- 'strenght': 5,
- 'xp': 0}
+                               'defence': 5,
+                               'health': 100,
+                               'loot': 0,
+                               'player_id': 1,
+                               'player_level': 1,
+                               'speed': 5,
+                               'strength': 5,
+                               'xp': 0}
+
 
 def test_base_stats_username_not_found():
     """ Test the endpoint Get the personal base_stats for a specific user. """
     response = client.get("/player/base_stats/wronguser")
     assert response.status_code == 404
     assert response.json() == {'detail': 'Player not found'}
+
 
 def test_player_performance_percentage():
     """ Test the endpoint Calculate and get the average score of a specific player. """

@@ -12,10 +12,11 @@ Client = TestClient(app)
 def test_switch():
     """Test the switch function for player and monster swapping."""
     # ARRANGE
-    player = TempPlayer(name="Player1", strenght=50, defence=30, speed=40, accuracy=80, health=150,
+    player = TempPlayer(name="Player1", strength=50, defence=30, speed=40, accuracy=80, health=150,
                         player_level=5, xp=1000, loot="Sword", story="Heroic")
 
-    monster = Monster(name="Dragon", strength=60, defence=40, speed=30, accuracy=70, health=120, zone_difficulty="Hard")
+    monster = Monster(name="Dragon", strength=60, defence=40,
+                      speed=30, accuracy=70, health=120, zone_difficulty="Hard")
     # ACT
     switched_player, switched_monster = switch(player, monster)
     # ASSERT
@@ -48,4 +49,3 @@ def test_calculate_loot():
     assert 10 <= response_medium <= 50
     assert 50 <= response_hard <= 150
     assert 150 <= response_boss <= 300
-

@@ -39,7 +39,9 @@ def calculate_age(date_of_birth: date):
         (current_date.month, current_date.day) < (date_of_birth.month, date_of_birth.day))
     return age
 
+
 def random_number(chance):
+    """ Generate a random number. """
     return randint(1, chance)
 
 def calculate_loot(monster):
@@ -56,7 +58,9 @@ def calculate_loot(monster):
     else:
         return 0
 
+
 def xp_calculator(monster):
     xp = (monster.defence + monster.strenght +
           monster.health + monster.speed + monster.accuracy) * 2
     return xp
+

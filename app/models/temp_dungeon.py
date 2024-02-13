@@ -5,4 +5,3 @@ class TempDungeon:
         self.story = story
         self.temp_players = temp_players
         self.temp_monsters = temp_monsters
-

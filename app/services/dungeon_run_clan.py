@@ -23,6 +23,8 @@ from app.utilities.common_functions import random_number, calculate_loot, xp_cal
 def post_dungeon_run_clan(player_and_training_ids, db: Session):
     monster_chance = 500
     random_encounter_chance = 3000
+    total_xp = 0 
+    total_loot = 0
 
     players = []
     trainings = []
@@ -79,7 +81,7 @@ def post_dungeon_run_clan(player_and_training_ids, db: Session):
                 temp_dungeon.story += f"Distance traveled: {distance} meters."
 
             if random_number(monster_chance) == 1:
-                print("You have encountered the following monsters")
+                print("""You have encountered the following monsters """)
                 monster_list = monsterspawner(distance, db)
                 temp_dungeon.temp_monsters = monster_list
                 for monster in monster_list:
@@ -97,6 +99,29 @@ def post_dungeon_run_clan(player_and_training_ids, db: Session):
                 random_encounter_chance = 3000
             else:
                 random_encounter_chance = max(1, random_encounter_chance - 1)
+    #Loot
+    for temp_player in temp_dungeon.playerlist:
+        total_loot += temp_player.loot
+
+    if total_loot > 0:
+        loot_per_player = total_loot // len(temp_players)
+        remaining_loot = total_loot % len(temp_players)
+
+        for temp_player in temp_dungeon.playerlist:
+            temp_player.loot += loot_per_player
+
+        for temp_player in temp_dungeon.playerlist:
+            temp_player.loot += remaining_loot
+
+    #Xp
+    for temp_player in temp_dungeon.playerlist:
+        total_xp += temp_player.xp
+
+    for temp_player in temp_dungeon.playerlist:
+        temp_player.xp += total_xp
+        player_stats = db.query(PlayerBaseStats).filter(
+            PlayerBaseStats.player_id == player.player_id).first()
+        gain_xp(player_stats, temp_player.xp, db)
 
     # set xp for all players divide loot among players
     for training in trainings:
@@ -297,7 +322,7 @@ def get_temporary_player(training, player, base_stats, equipment, first_strike_s
     """ Function to get a temporary player for the dungeon run. """
     temp_player = TempPlayer(
         name=player.name,
-        strenght=base_stats.strenght,
+        strength=base_stats.strength,
         defence=base_stats.defence,
         speed=base_stats.speed,
         accuracy=base_stats.accuracy,
@@ -337,7 +362,7 @@ def get_temporary_monster(monsters):
     """ Function to get a temporary monster for the dungeon run. """
     temp_monster = TempMonster(
         name=monsters.name,
-        strenght=monsters.strenght,
+        strength=monsters.strength,
         defence=monsters.defence,
         speed=monsters.speed,
         accuracy=monsters.accuracy,
@@ -349,8 +374,8 @@ def get_temporary_monster(monsters):
 
 
 def apply_gear_stats(player, gear):
-    if gear.gear_stat_type == 'strenght':
-        player.strenght += gear.gear_stat
+    if gear.gear_stat_type == 'strength':
+        player.strength += gear.gear_stat
     elif gear.gear_stat_type == 'defence':
         player.defence += gear.gear_stat
     elif gear.gear_stat_type == 'speed':
@@ -363,6 +388,29 @@ def reset_creatures_for_new_round(creatures):
     """Reset `attacked` for all players and monsters for a new round."""
     for creature in creatures:
         creature.attacked = False
+
+def gain_xp(base_stats, amount, db):
+    base_stats.xp += amount
+
+    while base_stats.xp >= calculate_xp_required(base_stats):
+        base_stats.player_level += 1
+        remaining_xp = base_stats.xp - calculate_xp_required(base_stats)
+        base_stats.xp = 0 if remaining_xp < 0 else remaining_xp
+
+        base_stats.defence = (base_stats.player_level * 3)
+        base_stats.speed = (base_stats.player_level * 3)
+        base_stats.strength = (base_stats.player_level * 3)
+        base_stats.accuracy = (base_stats.player_level * 3)
+        base_stats.health = (100 + (base_stats.player_level * 10))
+    remaining_xp = base_stats.xp - calculate_xp_required(base_stats)
+    base_stats.xp_remaining = (
+        calculate_xp_required(base_stats)) - remaining_xp
+    db.add(base_stats)
+    db.commit()
+    db.refresh(base_stats)
+
+def calculate_xp_required(base_stats):
+    return 150 + base_stats.player_level ** 4
 
     # Append fetched information to the corresponding lists
 

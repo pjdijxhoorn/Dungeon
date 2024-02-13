@@ -3,7 +3,6 @@ from fastapi import APIRouter, Depends
 
 import app.services.player as services
 from app.schemas.basestats import Playerstats
-from app.schemas.equipment import Equipment
 from app.schemas.gear import Gear
 from app.schemas.player import CreatePlayer, Player, UpdatePlayer
 from database import get_db
