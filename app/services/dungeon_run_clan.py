@@ -1,11 +1,9 @@
 import random
 from random import randint
-from typing import List
 
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
-from app.models import temp_player
 from app.models.monster import Monster
 from app.models.player import Player
 from app.models.player_base_stats import PlayerBaseStats
@@ -13,13 +11,10 @@ from app.models.temp_dungeon import TempDungeon
 from app.models.temp_monster import TempMonster
 from app.models.training import Training
 from app.models.equipped_gear import EquippedGear
-# from app.models.clan import Clan
 from app.models.temp_player import TempPlayer
 from app.models.gear import Gear
 from app.models.random_encounter import RandomEncounter
-from app.utilities.common_functions import random_number, calculate_loot, xp_calculator
-
-
+from app.utilities.common_functions import random_number, calculate_loot, xp_calculator, pad_string
 
 
 def post_dungeon_run_clan(player_and_training_ids, db: Session):
@@ -81,14 +76,16 @@ def post_dungeon_run_clan(player_and_training_ids, db: Session):
             ##########
 
             if distance % 1000 == 0:
-                temp_dungeon.story += f"Distance traveled: {distance} meters."
+                temp_dungeon.story += pad_string(f"""Distance traveled: {distance} meters.""")
 
             if random_number(monster_chance) == 1:
-                temp_dungeon.story += """You have encountered the following monsters """
+                temp_dungeon.story += pad_string(
+                    """#########################--MONSTER ENCOUNTER--#########################""")
+                temp_dungeon.story += pad_string("""You have encountered the following monsters """)
                 monster_list = monsterspawner(distance, db)
                 temp_dungeon.temp_monsters = monster_list
                 for monster in monster_list:
-                    temp_dungeon.story += f"{monster.name} "
+                    temp_dungeon.story += pad_string(f"""{monster.name} """)
                 temp_dungeon = monster_encounter(temp_dungeon, db)
                 monster_chance = 500  # Reset kans na monster encounter
             else:
@@ -98,7 +95,7 @@ def post_dungeon_run_clan(player_and_training_ids, db: Session):
                 random_encounter = get_random_encounter(db)
                 if random_encounter:
                     apply_encounter_effects(temp_dungeon, random_encounter)
-                    temp_dungeon.story += f" Encountered: {random_encounter.encounter_text}. \n"
+                    temp_dungeon.story += pad_string(f"""Encountered: {random_encounter.encounter_text}. """)
                 random_encounter_chance = 3000
             else:
                 random_encounter_chance = max(1, random_encounter_chance - 1)
@@ -167,20 +164,23 @@ def apply_encounter_effects(temp_dungeon, random_encounter):
 
 def calculate_attack_chance(temp_dungeon):
     for monster in temp_dungeon.temp_monsters:
-        if monster.health > 0 and monster.attacked == False:
-            monster.first_strike_score = monster.speed * random_number(10)
-        else:
+        if monster.attacked == True:
             monster.first_strike_score = 0
-    for player in temp_dungeon.temp_players:
-        if player.health > 0 and player.attacked == False:
-            player.first_strike_score = player.speed * random_number(10)
+        if monster.health <= 0:
+            monster.first_strike_score = 0
         else:
+            monster.first_strike_score = monster.speed * random_number(10)
+    for player in temp_dungeon.temp_players:
+        if player.attacked == True:
             player.first_strike_score = 0
+        if player.health <= 0:
+            player.first_strike_score = 0
+        else:
+            player.first_strike_score = player.speed * random_number(10)
     return temp_dungeon
 
 
 def monster_battle(temp_dungeon):
-    temp_dungeon.story +="+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
     if max([player.first_strike_score for player in temp_dungeon.temp_players]) > max(
             [monster.first_strike_score for monster in temp_dungeon.temp_monsters]):
         player = max(temp_dungeon.temp_players, key=lambda player: player.first_strike_score)
@@ -190,55 +190,53 @@ def monster_battle(temp_dungeon):
         monster = random.choice(alive_monsters)
         xp_gained = xp_calculator(monster)
         loot_gained = calculate_loot(monster)
-        temp_dungeon.story += f"{player.name} attacks {monster.name}"
+        temp_dungeon.story += pad_string(f"""{player.name} attacks {monster.name}""")
         dodged = False
         dodge_chance = min(100, max(1, player.speed - monster.speed))
         if random_number(100) <= dodge_chance:
             dodged = True
-            temp_dungeon.story +=f"{monster.name} succesfully evaded {player.name}'s attack."
+            temp_dungeon.story +=pad_string(f"""{monster.name} succesfully evaded {player.name}'s attack.""")
         if dodged is not True:
             damage = player.strength
             if random_number(100) <= player.accuracy:
                 damage = damage * 2
             actual_damage = max(0, damage - (monster.defence * 0.5))
             if actual_damage <= 0:
-                temp_dungeon.story += f"{player.name} his damage wasn't high enough to penetrate {monster.name}'s defence."
+                temp_dungeon.story += pad_string(f"""{player.name} his damage wasn't high enough to penetrate {monster.name}'s defence.""")
             else:
                 monster.health = int(monster.health - actual_damage)
-                temp_dungeon.story += f"{player.name} does {actual_damage} damage to {monster.name}'s health {monster.name} has {monster.health} health left."
+                temp_dungeon.story += pad_string(f"""{player.name} does {actual_damage} damage to {monster.name}'s health {monster.name} has {monster.health} health left.""")
                 if monster.health <= 0:
-                    temp_dungeon.story += f"{monster.name} has been slain."
+                    temp_dungeon.story += pad_string(f"""{monster.name} has been slain.""")
                     player.xp += xp_gained
                     player.loot += loot_gained
                     monster.attacked = True
-        temp_dungeon.story +="+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
     else:
         monster = max(temp_dungeon.temp_monsters, key=lambda monster: monster.first_strike_score)
         monster.attacked = True
         alive_players = [player for player in temp_dungeon.temp_players if player.health > 0]
 
         player = random.choice(alive_players)
-        temp_dungeon.story +=f"{monster.name} attacks {player.name}"
+        temp_dungeon.story +=pad_string(f"""{monster.name} attacks {player.name}""")
         dodged = False
         dodge_chance = min(100, max(1, monster.speed - player.speed))
         if random_number(100) <= dodge_chance:
             dodged = True
-            temp_dungeon.story +=f"{player.name} succesfully evaded {monster.name}'s attack."
+            temp_dungeon.story +=pad_string(f"""{player.name} succesfully evaded {monster.name}'s attack.""")
         if dodged is not True:
             damage = monster.strength
             if random_number(100) <= monster.accuracy:
                 damage = damage * 2
             actual_damage = max(0, damage - (player.defence * 0.5))
             if actual_damage <= 0:
-                temp_dungeon.story +=f"{monster.name} his damage wasn't high enough to penetrate {player.name}'s defence."
+                temp_dungeon.story +=pad_string(f"""{monster.name} his damage wasn't high enough to penetrate {player.name}'s defence.""")
             else:
                 player.health = int(player.health - actual_damage)
-                temp_dungeon.story += f"{monster.name} does {actual_damage} damage to {player.name}'s health {player.name} has {player.health} health left."
+                temp_dungeon.story += pad_string(f"""{monster.name} does {actual_damage} damage to {player.name}'s health {player.name} has {player.health} health left.""")
                 if player.health <= 0:
-                    temp_dungeon.story +=f"{player.name} has been slain."
+                    temp_dungeon.story += pad_string(f"""{player.name} has been slain.""")
                     player.attacked =True
 
-        temp_dungeon.story +="================================================================"
 
 
 
@@ -246,27 +244,37 @@ def monster_battle(temp_dungeon):
 
 
 def monster_encounter(temp_dungeon, db):
+
     x = 0
     keep_going = True
     while keep_going:
+        temp_dungeon.story += pad_string(
+            """|----------BATTLE----------|""")
+
         temp_dungeon = calculate_attack_chance(temp_dungeon)
         temp_dungeon = monster_battle(temp_dungeon)
 
         if all_creatures_are_dead(temp_dungeon.temp_players):
-            temp_dungeon.story +="All players have died in battle."
+            temp_dungeon.story +=pad_string("""All players have died in battle.""")
             keep_going =False
 
         if all_creatures_are_dead(temp_dungeon.temp_monsters):
             reset_creatures_for_new_round(temp_dungeon.temp_players)
-            temp_dungeon.story +="You have slain all the encountered monsters."
+            temp_dungeon.story +=pad_string("""You have slain all the encountered monsters.""")
             keep_going =False
 
         if all_creatures_have_attacked(temp_dungeon.temp_players):
             if all_creatures_have_attacked(temp_dungeon.temp_monsters):
-                temp_dungeon.story +="All players and monsters have attacked. Starting a new round."
+                temp_dungeon.story +=pad_string("""All players and monsters have attacked. Starting a new round.""")
                 reset_creatures_for_new_round(temp_dungeon.temp_players)
                 reset_creatures_for_new_round(temp_dungeon.temp_monsters)
 
+        # code to protect against a infinite loop where players are to weak to damage monsters
+        # and monsters are to weak to damage monsters
+        x+= 1
+        if x == 200:
+            keep_going = False
+            print("################")
     return temp_dungeon
 
 
