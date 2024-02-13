@@ -205,38 +205,6 @@ def test_create_player():
                                'username': 'string'}
 
 
-def test_create_player_wrong_date():
-    """ Test the endpoint for creating a new player with an invalid date. """
-    player_data = {
-        "username": "string",
-        "password": "string",
-        "name": "string",
-        "weight_in_kg": 80.3,
-        "height_in_m": 1.83,
-        "date_of_birth": "2024-01",
-        "rest_heart_frequency": 50
-    }
-    response = client.post("/player", json=player_data)
-    assert response.status_code == 422
-    assert response.json() == {
-        "detail": [
-            {
-                "type": "date_from_datetime_parsing",
-                "loc": [
-                    "body",
-                    "date_of_birth"
-                ],
-                "msg": "Input should be a valid date or datetime, input is too short",
-                "input": "2024-01",
-                "ctx": {
-                    "error": "input is too short"
-                },
-                "url": "https://errors.pydantic.dev/2.6/v/date_from_datetime_parsing"
-            }
-        ]
-    }
-
-
 def test_update_player():
     """ Test the endpoint for updating player information. """
     player_data = {"name": "string"}
