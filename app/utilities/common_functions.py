@@ -60,11 +60,13 @@ def calculate_loot(monster):
 
 
 def xp_calculator(monster):
+    """calculates the xp gained from slaying a monster"""
     xp = (monster.defence + monster.strength +
           monster.health + monster.speed + monster.accuracy) * 2
     return xp
 
 def pad_string(input_string):
+    """adds white space after each string to fit screen"""
     spaces_needed = max(0, 140 - len(input_string))
     padded_string = input_string + ' ' * spaces_needed
     return padded_string
