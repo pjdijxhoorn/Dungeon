@@ -1,6 +1,5 @@
 from typing import List
 from fastapi import APIRouter, Depends
-
 import app.services.player as services
 from app.schemas.basestats import Playerstats
 from app.schemas.gear import Gear

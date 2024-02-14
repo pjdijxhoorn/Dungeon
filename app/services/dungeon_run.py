@@ -2,7 +2,6 @@ import random
 from fastapi import HTTPException
 from random import randint
 from sqlalchemy.orm import Session
-
 from app.models.monster import Monster
 from app.models.player import Player
 from app.models.temp_player import TempPlayer
@@ -12,10 +11,14 @@ from app.models.player_base_stats import PlayerBaseStats
 from app.models.gear import Gear
 from app.models.equipped_gear import EquippedGear
 from app.models.random_encounter import RandomEncounter
-from app.utilities.common_functions import random_number, calculate_loot, xp_calculator
+from app.utilities.common_functions import random_number, calculate_loot, xp_calculator, pad_string
 
 
 def get_dungeon_run(training_id, player_id, db: Session):
+    """
+     This function takes in a training, player, basestats and equipment and makes it into a textbased adventure,
+    where the player can gain loot, xp and stats.
+    """
     monster_chance = 500
     random_encounter_chance = 3000
 
@@ -44,12 +47,12 @@ def get_dungeon_run(training_id, player_id, db: Session):
     for distance in range(training.distance_in_meters):
         if temp_player.health >= 0:
             if distance % 1000 == 0:
-                temp_player.story += f"Distance traveled: {distance} meters."
+                temp_player.story += pad_string(f"Distance traveled: {distance} meters.")
 
             if random_number(monster_chance) == 1:
                 monster = monsterspawner(distance, db)
-                temp_player.story += f"You have encountered a {monster.name} with {monster.health} health."
-
+                temp_player.story += pad_string(f"You have encountered a "
+                                                f"{monster.name} with {monster.health} health.")
 
                 temp_player = monster_encounter(temp_player, monster, player_stats, db)
                 # roep monster gevecht aan
@@ -61,12 +64,11 @@ def get_dungeon_run(training_id, player_id, db: Session):
                 random_encounter = get_random_encounter(db)
                 if random_encounter:
                     apply_encounter_effects(temp_player, random_encounter)
-                    temp_player.story += f" Encountered: {random_encounter.encounter_text}. \n"
+                    temp_player.story += pad_string(f" Encountered: {random_encounter.encounter_text}.")
 
                 random_encounter_chance = 3000
             else:
                 random_encounter_chance = max(1, random_encounter_chance - 1)
-
 
     if temp_player.health > 0:
         temp_player.xp = temp_player.xp + 100
@@ -74,15 +76,13 @@ def get_dungeon_run(training_id, player_id, db: Session):
         gain_xp(player_stats, temp_player.xp, db)
         player_stats = db.query(PlayerBaseStats).filter(
             PlayerBaseStats.player_id == player.player_id).first()
-        temp_player.story += f"""                                                                                                                                                                                                                                                                                                                    
-                                                                                                                                                                                                                                                                                                                      
-You have cleared the dungeon so you have gained a 100 bonus xp! Here is your final player summary of stats: your total xp is: {player_stats.xp}, your total loot is: {player_stats.loot}, your total strength is: {player_stats.strength}, your total defence is:{player_stats.defence}, your total speed is: {player_stats.speed}, your total accuracy is: {player_stats.accuracy}, your total health is: {player_stats.health} and your new level is {player_stats.player_level}!"""
-        # todo maak de beloning een betere weerspiegeling van de geleverde prestatie
-
-    # einde van de dungeon te gaan xp genoeg om te levelen?
-    # loot erbij
-    # bonus voor bereiken einde dungeon zonder dood te gaan
-    # titles toekennen aan de speler
+        temp_player.story += pad_string(f"""                                                                                                                                                                                                                                                                                                                    
+            You have cleared the dungeon so you have gained a 100 bonus xp! 
+            Here is your final player summary of stats: 
+            your total xp is: {player_stats.xp}, your total loot is: {player_stats.loot}, 
+            your total strength is: {player_stats.strength}, your total defence is:{player_stats.defence}, 
+            your total speed is: {player_stats.speed}, your total accuracy is: {player_stats.accuracy}, 
+            your total health is: {player_stats.health} and your new level is {player_stats.player_level}!""")
     training.already_used_for_dungeon_run = True
     db.add(training)
     db.commit()
@@ -132,6 +132,7 @@ def get_temporary_player(training, player, player_stats, db):
 
     return temp_player
 
+
 def get_temporary_monster(monsters):
     """ Function to get a temporary monster for the dungeon run. """
     temp_monster = TempMonster(
@@ -147,7 +148,9 @@ def get_temporary_monster(monsters):
 
     return temp_monster
 
+
 def apply_gear_stats(player, gear):
+    """applies gearstatus to the temp player"""
     if gear.gear_stat_type == 'strength':
         player.strength += gear.gear_stat
     elif gear.gear_stat_type == 'defence':
@@ -187,6 +190,7 @@ def apply_encounter_effects(temp_player, random_encounter):
 
 
 def monsterspawner(distance, db):
+    """ gets the right level monster out of the database for the monster encounter"""
     monsters = db.query(Monster).all()
 
     if distance <= 1000:
@@ -218,6 +222,7 @@ def monsterspawner(distance, db):
 
 
 def switch(player, monster):
+    """ switches the player and monster after a turn"""
     print(player.health)
     switchplayer = player
     player = monster
@@ -226,6 +231,7 @@ def switch(player, monster):
 
 
 def monster_encounter(player, monster, player_stats, db):
+    """ this handles the monster encounter"""
     while player.health >= 0 and monster.health > 0:
         player, monster = monster_battle(player, monster, player_stats, db)
         if monster.health > 0:
@@ -234,18 +240,15 @@ def monster_encounter(player, monster, player_stats, db):
     return player if isinstance(player, TempPlayer) else monster
 
 
-
-
-
 def monster_battle(player, monster, player_stats, db):
     """ A function to simulate a battle between a player and a monster. """
     xp_gained = xp_calculator(monster)
     loot_gained = calculate_loot(monster)
 
     if isinstance(player, TempPlayer):
-        player.story += f"{player.name} attacks."
+        player.story +=pad_string( f"{player.name} attacks.")
     else:
-        monster.story += f"{player.name} attacks."
+        monster.story += pad_string(f"{player.name} attacks.")
 
     # calculated chance of successful dodge
     dodged = False
@@ -253,45 +256,54 @@ def monster_battle(player, monster, player_stats, db):
     if random_number(100) <= player_dodge_chance:
         dodged = True
         if isinstance(player, TempPlayer):
-            player.story += f"{monster.name} succesfully evaded {player.name}'s attack."
+            player.story += pad_string(f"{monster.name} succesfully evaded {player.name}'s attack.")
         else:
-            monster.story += f"{monster.name} succesfully evaded {player.name}'s attack."
+            monster.story += pad_string(f"{monster.name} succesfully evaded {player.name}'s attack.")
 
-        # calculate attack damage based on strength (base- damage) and accuracy(multiplier) where the multiplier give a chance to extra or even double damage
     if dodged is not True:
         damage = player.strength
         if random_number(100) <= player.accuracy:
             damage = damage * 2
 
-        # calculate reduction of attack damage based of defence
-        # every point of defence catches a half point of damage
+
         actual_damage = max(0, damage - (monster.defence * 0.5))
         if actual_damage <= 0:
             if isinstance(player, TempPlayer):
-                player.story += f"{player.name} his damage wasn't high enough to penetrate {monster.name}'s defence."
+                player.story += pad_string(
+                    f"{player.name} his damage wasn't high enough to penetrate {monster.name}'s defence.")
             else:
-                monster.story += f"{player.name} his damage wasn't high enough to penetrate {monster.name}'s defence."
+                monster.story += pad_string(
+                    f"{player.name} his damage wasn't high enough to penetrate {monster.name}'s defence.")
             return player, monster
         else:
             monster.health = int(monster.health - actual_damage)
             if isinstance(player, TempPlayer):
-                player.story += f"{player.name} does {actual_damage} damage to {monster.name}'s health {monster.name} has {monster.health} health left."
+                player.story += pad_string(
+                    f"{player.name} does {actual_damage} damage to {monster.name}'s health {monster.name} has {monster.health} health left.")
             else:
-                monster.story += f"{player.name} does {actual_damage} damage to {monster.name}'s health {monster.name} has {monster.health} health left."
+                monster.story += pad_string(f"{player.name} does {actual_damage} damage to {monster.name}'s health {monster.name} has {monster.health} health left.")
             # do the damage (update health in player or monster)
             if monster.health <= 0:
                 if isinstance(monster, TempPlayer):
-                    monster.story += f"{monster.name} has been slain."
+                    monster.story += pad_string(f"{monster.name} has been slain.")
                     gain_xp(player_stats, xp_gained, db)
-                    monster.story += f"""                                                                                                                                                                                                                                                                                                                    
-                                                                                                                                                                                                                                                                                                                      
-You have NOT cleared the dungeon. here is your final player summary of stats: your total xp is: {player_stats.xp}, your total loot is: {player_stats.loot}, your total strength is: {player_stats.strength}, your total defence is:{player_stats.defence}, your total speed is:{player_stats.speed}, your total accuracy is: {player_stats.accuracy}, your total health is: {player_stats.health} and your new level is {player_stats.player_level}!"""
+                    monster.story += pad_string(f"""                                                                                                                                                                                                                                                                                                                    
+                        You have NOT cleared the dungeon. here is your final player summary of stats: 
+                        your total xp is: {player_stats.xp}, 
+                        your total loot is: {player_stats.loot}, 
+                        your total strength is: {player_stats.strength}, 
+                        your total defence is:{player_stats.defence}, 
+                        your total speed is:{player_stats.speed}, 
+                        your total accuracy is: {player_stats.accuracy}, 
+                        your total health is: {player_stats.health} 
+                        and your new level is {player_stats.player_level}!""")
                     return player, monster
                 else:
-                    player.story += f"{monster.name} has been slain. You have gained {xp_gained} XP and {loot_gained} loot."
+                    player.story +=pad_string(
+                        f"{monster.name} has been slain. You have gained {xp_gained} XP and {loot_gained} loot.")
                     player.loot += loot_gained
                     player.xp += xp_gained
-                    player.story += f"{player.name} has {player.health} health left."
+                    player.story += pad_string(f"{player.name} has {player.health} health left.")
                     return player, monster
             else:
                 return player, monster
@@ -299,8 +311,8 @@ You have NOT cleared the dungeon. here is your final player summary of stats: yo
 
 
 def gain_xp(base_stats, amount, db):
+    """ this handles the gaining of xp"""
     base_stats.xp += amount
-
 
     # Check for level up
     while base_stats.xp >= calculate_xp_required(base_stats):
@@ -315,13 +327,12 @@ def gain_xp(base_stats, amount, db):
         base_stats.health = (100 + (base_stats.player_level * 10))
     remaining_xp = base_stats.xp - calculate_xp_required(base_stats)
     base_stats.xp_remaining = (
-        calculate_xp_required(base_stats)) - remaining_xp
+                                  calculate_xp_required(base_stats)) - remaining_xp
     db.add(base_stats)
     db.commit()
     db.refresh(base_stats)
 
+
 def calculate_xp_required(base_stats):
+    """ this calculates how much xp is needed to level-up"""
     return 150 + base_stats.player_level ** 4
-
-
-
