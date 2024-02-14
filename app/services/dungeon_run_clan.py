@@ -1,9 +1,7 @@
 import random
 from random import randint
-
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
-
 from app.models.monster import Monster
 from app.models.player import Player
 from app.models.player_base_stats import PlayerBaseStats
@@ -18,6 +16,10 @@ from app.utilities.common_functions import random_number, calculate_loot, xp_cal
 
 
 def post_dungeon_run_clan(player_and_training_ids, db: Session):
+    """
+    this function uses a training and player with basestats and equipment to create a dungeon-run(story)
+     within this story players can gain loot xp and stats.
+     """
     monster_chance = 500
     random_encounter_chance = 3000
     total_xp = 0
@@ -42,7 +44,6 @@ def post_dungeon_run_clan(player_and_training_ids, db: Session):
             raise HTTPException(status_code=404, detail="base_stat not found")
 
         players_base_stats.append(base_stats)
-
 
     for training_id in player_and_training_ids.training_ids:
         training = db.query(Training).filter(Training.training_id == training_id).first()
@@ -99,7 +100,7 @@ def post_dungeon_run_clan(player_and_training_ids, db: Session):
                 random_encounter_chance = 3000
             else:
                 random_encounter_chance = max(1, random_encounter_chance - 1)
-    #Loot
+    # Loot
     for temp_player in temp_dungeon.temp_players:
         total_loot += temp_player.loot
 
@@ -113,7 +114,7 @@ def post_dungeon_run_clan(player_and_training_ids, db: Session):
         for temp_player in temp_dungeon.temp_players:
             temp_player.loot += remaining_loot
 
-    #Xp
+    # Xp
     for temp_player in temp_dungeon.temp_players:
         total_xp += temp_player.xp
 
@@ -163,15 +164,16 @@ def apply_encounter_effects(temp_dungeon, random_encounter):
 
 
 def calculate_attack_chance(temp_dungeon):
+    """ this calculates which player has the highest first strike chance which is used to determine who attacks first"""
     for monster in temp_dungeon.temp_monsters:
-        if monster.attacked == True:
+        if monster.attacked:
             monster.first_strike_score = 0
         if monster.health <= 0:
             monster.first_strike_score = 0
         else:
             monster.first_strike_score = monster.speed * random_number(10)
     for player in temp_dungeon.temp_players:
-        if player.attacked == True:
+        if player.attacked:
             player.first_strike_score = 0
         if player.health <= 0:
             player.first_strike_score = 0
@@ -181,6 +183,7 @@ def calculate_attack_chance(temp_dungeon):
 
 
 def monster_battle(temp_dungeon):
+    """ This function determines which creature may attack first and handles that attack"""
     if max([player.first_strike_score for player in temp_dungeon.temp_players]) > max(
             [monster.first_strike_score for monster in temp_dungeon.temp_monsters]):
         player = max(temp_dungeon.temp_players, key=lambda player: player.first_strike_score)
@@ -195,17 +198,20 @@ def monster_battle(temp_dungeon):
         dodge_chance = min(100, max(1, player.speed - monster.speed))
         if random_number(100) <= dodge_chance:
             dodged = True
-            temp_dungeon.story +=pad_string(f"""{monster.name} succesfully evaded {player.name}'s attack.""")
+            temp_dungeon.story += pad_string(f"""{monster.name} successfully evaded {player.name}'s attack.""")
         if dodged is not True:
             damage = player.strength
             if random_number(100) <= player.accuracy:
                 damage = damage * 2
             actual_damage = max(0, damage - (monster.defence * 0.5))
             if actual_damage <= 0:
-                temp_dungeon.story += pad_string(f"""{player.name} his damage wasn't high enough to penetrate {monster.name}'s defence.""")
+                temp_dungeon.story += pad_string(
+                    f"""{player.name} his damage wasn't high enough to penetrate {monster.name}'s defence.""")
             else:
                 monster.health = int(monster.health - actual_damage)
-                temp_dungeon.story += pad_string(f"""{player.name} does {actual_damage} damage to {monster.name}'s health {monster.name} has {monster.health} health left.""")
+                temp_dungeon.story += pad_string(
+                    f"""{player.name} does {actual_damage} damage to {monster.name}'s health
+                     {monster.name} has {monster.health} health left.""")
                 if monster.health <= 0:
                     temp_dungeon.story += pad_string(f"""{monster.name} has been slain.""")
                     player.xp += xp_gained
@@ -217,34 +223,34 @@ def monster_battle(temp_dungeon):
         alive_players = [player for player in temp_dungeon.temp_players if player.health > 0]
 
         player = random.choice(alive_players)
-        temp_dungeon.story +=pad_string(f"""{monster.name} attacks {player.name}""")
+        temp_dungeon.story += pad_string(f"""{monster.name} attacks {player.name}""")
         dodged = False
         dodge_chance = min(100, max(1, monster.speed - player.speed))
         if random_number(100) <= dodge_chance:
             dodged = True
-            temp_dungeon.story +=pad_string(f"""{player.name} succesfully evaded {monster.name}'s attack.""")
+            temp_dungeon.story += pad_string(f"""{player.name} successfully evaded {monster.name}'s attack.""")
         if dodged is not True:
             damage = monster.strength
             if random_number(100) <= monster.accuracy:
                 damage = damage * 2
             actual_damage = max(0, damage - (player.defence * 0.5))
             if actual_damage <= 0:
-                temp_dungeon.story +=pad_string(f"""{monster.name} his damage wasn't high enough to penetrate {player.name}'s defence.""")
+                temp_dungeon.story += pad_string(
+                    f"""{monster.name} his damage wasn't high enough to penetrate {player.name}'s defence.""")
             else:
                 player.health = int(player.health - actual_damage)
-                temp_dungeon.story += pad_string(f"""{monster.name} does {actual_damage} damage to {player.name}'s health {player.name} has {player.health} health left.""")
+                temp_dungeon.story += pad_string(
+                    f"""{monster.name} does {actual_damage} damage to 
+                    {player.name}'s health {player.name} has {player.health} health left.""")
                 if player.health <= 0:
                     temp_dungeon.story += pad_string(f"""{player.name} has been slain.""")
-                    player.attacked =True
-
-
-
+                    player.attacked = True
 
     return temp_dungeon
 
 
-def monster_encounter(temp_dungeon, db):
-
+def monster_encounter(temp_dungeon):
+    """ this function handles the monster encounter"""
     x = 0
     keep_going = True
     while keep_going:
@@ -255,23 +261,23 @@ def monster_encounter(temp_dungeon, db):
         temp_dungeon = monster_battle(temp_dungeon)
 
         if all_creatures_are_dead(temp_dungeon.temp_players):
-            temp_dungeon.story +=pad_string("""All players have died in battle.""")
-            keep_going =False
+            temp_dungeon.story += pad_string("""All players have died in battle.""")
+            keep_going = False
 
         if all_creatures_are_dead(temp_dungeon.temp_monsters):
             reset_creatures_for_new_round(temp_dungeon.temp_players)
-            temp_dungeon.story +=pad_string("""You have slain all the encountered monsters.""")
-            keep_going =False
+            temp_dungeon.story += pad_string("""You have slain all the encountered monsters.""")
+            keep_going = False
 
         if all_creatures_have_attacked(temp_dungeon.temp_players):
             if all_creatures_have_attacked(temp_dungeon.temp_monsters):
-                temp_dungeon.story +=pad_string("""All players and monsters have attacked. Starting a new round.""")
+                temp_dungeon.story += pad_string("""All players and monsters have attacked. Starting a new round.""")
                 reset_creatures_for_new_round(temp_dungeon.temp_players)
                 reset_creatures_for_new_round(temp_dungeon.temp_monsters)
 
         # code to protect against a infinite loop where players are to weak to damage monsters
         # and monsters are to weak to damage monsters
-        x+= 1
+        x += 1
         if x == 200:
             keep_going = False
             print("################")
@@ -279,6 +285,7 @@ def monster_encounter(temp_dungeon, db):
 
 
 def all_creatures_are_dead(creatures):
+    """ this function checks if the creature-list put into it for if all creatures are still alive"""
     if not creatures:
         return True
 
@@ -287,7 +294,10 @@ def all_creatures_are_dead(creatures):
             return False
     return True
 
+
 def all_creatures_have_attacked(creatures):
+    """ this function checks if the creature-list put into it for if all creatures have attacked already this round"""
+
     if not creatures:
         return True
 
@@ -298,6 +308,7 @@ def all_creatures_have_attacked(creatures):
 
 
 def monsterspawner(distance, db):
+    """ this function retrieves a monster or monsters from the database for use in the monster encounter"""
     temp_monsters = []
     for x in range(random_number(5)):
         monsters = db.query(Monster).all()
@@ -387,6 +398,7 @@ def get_temporary_monster(monsters):
 
 
 def apply_gear_stats(player, gear):
+    """ this code applies the gear stats to the temporary player"""
     if gear.gear_stat_type == 'strength':
         player.strength += gear.gear_stat
     elif gear.gear_stat_type == 'defence':
@@ -402,7 +414,9 @@ def reset_creatures_for_new_round(creatures):
     for creature in creatures:
         creature.attacked = False
 
+
 def gain_xp(base_stats, amount, db):
+    """ handles the gaining of xp """
     base_stats.xp += amount
 
     while base_stats.xp >= calculate_xp_required(base_stats):
@@ -417,12 +431,12 @@ def gain_xp(base_stats, amount, db):
         base_stats.health = (100 + (base_stats.player_level * 10))
     remaining_xp = base_stats.xp - calculate_xp_required(base_stats)
     base_stats.xp_remaining = (
-        calculate_xp_required(base_stats)) - remaining_xp
+                                  calculate_xp_required(base_stats)) - remaining_xp
     db.add(base_stats)
     db.commit()
     db.refresh(base_stats)
 
+
 def calculate_xp_required(base_stats):
+    """this checks the required amount of xp needed to level up"""
     return 150 + base_stats.player_level ** 4
-
-
