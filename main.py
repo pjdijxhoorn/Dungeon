@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.routers import player, profile, training, dungeon_run, shop  # , authentication
+from app.routers import player, profile, training, dungeon_run, shop
 app = FastAPI()
 
 app.include_router(player.router, prefix="/player")
