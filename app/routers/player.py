@@ -10,7 +10,7 @@ router = APIRouter()
 
 
 @router.get("", status_code=200, tags=["Player"])
-def get_players(db=Depends(get_db)) -> list[Player]:
+def get_players(db=Depends(get_db())) -> list[Player]:
     """ Get a list of all players. """
     return services.get_players(db)
 
