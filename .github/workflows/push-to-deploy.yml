@@ -111,6 +111,7 @@ jobs:
                   sed -i "s|<DBHOST>|$(doctl db conn $(doctl db list --format ID --no-header) --format Host --no-header)|" $GITHUB_WORKSPACE/config/deployment/deployment.yml
                   sed -i "s|<DBPORT>|$(doctl db conn $(doctl db list --format ID --no-header) --format Port --no-header)|" $GITHUB_WORKSPACE/config/deployment/deployment.yml
                   sed -i "s|<DBDATABASE>|$(doctl db conn $(doctl db list --format ID --no-header) --format Database --no-header)|" $GITHUB_WORKSPACE/config/deployment/deployment.yml
+                  sed -i "s|<URI>|$(doctl db conn $(doctl db list --format ID --no-header) --format URI --no-header)|" $GITHUB_WORKSPACE/config/deployment/deployment.yml
 
             -   name: Save DigitalOcean kubeconfig with short-lived credentials
                 run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 dungeon-run-cluster
