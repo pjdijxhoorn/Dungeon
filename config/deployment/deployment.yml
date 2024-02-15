@@ -35,8 +35,6 @@ spec:
             value: "<DBPORT>"
           - name: DBNAME
             value: "<DBDATABASE>"
-          - name: URI
-            value: "<URI>"
 ---
 apiVersion: v1
 kind: Service
