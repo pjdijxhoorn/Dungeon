@@ -6,7 +6,10 @@ client = TestClient(app)
 
 def test_get_profiles():
     """ Test the endpoint for retrieving multiple profiles. """
+    # ARRANGE
+    # ACT
     response = client.get("/profile")
+    # ASSERT
     assert response.status_code == 200
     assert response.json() == [{'bmi': 25.5,
                                 'date_of_birth': '1990-01-15',
@@ -132,7 +135,11 @@ def test_get_profiles():
 
 def test_get_profile():
     """ Test the endpoint for retrieving a single profile. """
-    response = client.get("/profile/2")
+    # ARRANGE
+    profile_id = 2
+    # ACT
+    response = client.get(f"/profile/{profile_id}")
+    # ASSERT
     assert response.status_code == 200
     assert response.json() == {
         "weight_in_kg": 65.2,
@@ -148,7 +155,11 @@ def test_get_profile():
 
 def test_get_profile_not_found():
     """ Test the endpoint for retrieving a non-existing profile. """
-    response = client.get("/profile/9999")
+    # ARRANGE
+    profile_id = 9999
+    # ACT
+    response = client.get(f"/profile/{profile_id}")
+    # ASSERT
     assert response.status_code == 404
     assert response.json() == {
         "detail": "profile not found"
@@ -157,12 +168,16 @@ def test_get_profile_not_found():
 
 def test_update_profile():
     """ Test the endpoint for updating a profile. """
+    # ARRANGE
+    profile_id = 3
     profile_data = {
         "weight_in_kg": 80.3,
         "height_in_m": 1.83,
         "rest_heart_frequency": 50
     }
-    response = client.put("/profile/3", json=profile_data)
+    # ACT
+    response = client.put(f"/profile/{profile_id}", json=profile_data)
+    # ASSERT
     assert response.status_code == 200
     assert response.json() == {
         "weight_in_kg": 80.3,
@@ -179,12 +194,16 @@ def test_update_profile():
 
 def test_update_profile_not_found():
     """ Test the endpoint for updating a non-existing profile. """
+    # ARRANGE
+    profile_id = 9999
     profile_data = {
         "weight_in_kg": 80.3,
         "height_in_m": 1.83,
         "rest_heart_frequency": 50
     }
-    response = client.put("/profile/999", json=profile_data)
+    # ACT
+    response = client.put(f"/profile/{profile_id}", json=profile_data)
+    # ASSERT
     assert response.status_code == 404
     assert response.json() == {
         "detail": "Profile not found"
