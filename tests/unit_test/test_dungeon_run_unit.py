@@ -1,5 +1,6 @@
 from fastapi.testclient import TestClient
 from app.models.monster import Monster
+from app.models.temp_monster import TempMonster
 from app.models.temp_player import TempPlayer
 
 from app.services.dungeon_run import switch, calculate_loot
@@ -27,18 +28,18 @@ def test_switch():
 def test_calculate_loot():
     """Test the switch function for player and monster swapping."""
     # ARRANGE
-    monster_easy = Monster(
+    monster_easy = TempMonster(
         name="Dragon", strength=60, defence=40,
-        speed=30, accuracy=70, health=120, zone_difficulty="easy")
-    monster_medium = Monster(
+        speed=30, accuracy=70, health=120, zone_difficulty="easy", first_strike_score=0)
+    monster_medium = TempMonster(
         name="Dragon", strength=60, defence=40,
-        speed=30, accuracy=70, health=120, zone_difficulty="medium")
-    monster_hard = Monster(
+        speed=30, accuracy=70, health=120, zone_difficulty="medium", first_strike_score=0)
+    monster_hard = TempMonster(
         name="Dragon", strength=60, defence=40,
-        speed=30, accuracy=70, health=120, zone_difficulty="hard")
-    monster_boss = Monster(
+        speed=30, accuracy=70, health=120, zone_difficulty="hard", first_strike_score=0)
+    monster_boss = TempMonster(
         name="Dragon", strength=60, defence=40,
-        speed=30, accuracy=70, health=120, zone_difficulty="boss")
+        speed=30, accuracy=70, health=120, zone_difficulty="boss", first_strike_score=0)
     # ACT
     response_easy = calculate_loot(monster_easy)
     response_medium = calculate_loot(monster_medium)
