@@ -77,16 +77,16 @@ def get_dungeon_run(training_id, player_id, db: Session):
         """#########################--END-REPORT--#########################""")
     if temp_player.health > 0:
         temp_player.xp = temp_player.xp + 100
-        temp_player.story += pad_string(f""" You have cleared the dungeon so you have gained a 100 bonus xp!""")
+        temp_player.story += pad_string(""" You have cleared the dungeon so you have gained a 100 bonus xp!""")
         # Call gain_xp before displaying the stats
     else:
-        temp_player.story += pad_string(f"""                                                                                                                                                                                                                                                                                                                    
+        temp_player.story += pad_string("""                                                                                                                                                                                                                                                                                                                    
                                You have NOT cleared the dungeon. here is your final player summary of stats: """)
     gain_xp(player_stats, temp_player.xp, db)
     player_stats.loot += temp_player.loot
 
 
-    temp_player.story += pad_string(f"""Here is your final player summary of stats:""")
+    temp_player.story += pad_string("""Here is your final player summary of stats:""")
     temp_player.story += pad_string(f"""    your total xp is: {player_stats.xp}, your total loot gained is: {temp_player.loot},""")
     temp_player.story += pad_string(f"""    your total strength is: {player_stats.strength}, your total defence is:{player_stats.defence}, """)
     temp_player.story += pad_string(f"""    your total speed is: {player_stats.speed}, your total accuracy is: {player_stats.accuracy},""")
