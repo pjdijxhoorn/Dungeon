@@ -25,3 +25,6 @@ jobs:
                     terraform init
                     terraform plan
                     terraform apply -auto-approve
+
+                - name: seed database
+                  run: psql $(doctl database conn $(doctl database list --format ID --no-header) --format URI --no-header) -f sql-script.sql
