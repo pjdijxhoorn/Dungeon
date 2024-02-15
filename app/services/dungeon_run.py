@@ -51,6 +51,8 @@ def get_dungeon_run(training_id, player_id, db: Session):
 
             if random_number(monster_chance) == 1:
                 monster = monsterspawner(distance, db)
+                temp_player.story += pad_string(
+                    """#########################--MONSTER ENCOUNTER--#########################""")
                 temp_player.story += pad_string(f"You have encountered a "
                                                 f"{monster.name} with {monster.health} health.")
 
@@ -70,25 +72,30 @@ def get_dungeon_run(training_id, player_id, db: Session):
             else:
                 random_encounter_chance = max(1, random_encounter_chance - 1)
 
+
+    temp_player.story += pad_string(
+        """#########################--END-REPORT--#########################""")
     if temp_player.health > 0:
         temp_player.xp = temp_player.xp + 100
+        temp_player.story += pad_string(f""" You have cleared the dungeon so you have gained a 100 bonus xp!""")
         # Call gain_xp before displaying the stats
-        gain_xp(player_stats, temp_player.xp, db)
-        player_stats = db.query(PlayerBaseStats).filter(
-            PlayerBaseStats.player_id == player.player_id).first()
+    else:
         temp_player.story += pad_string(f"""                                                                                                                                                                                                                                                                                                                    
-            You have cleared the dungeon so you have gained a 100 bonus xp! 
-            Here is your final player summary of stats: 
-            your total xp is: {player_stats.xp}, your total loot is: {player_stats.loot}, 
-            your total strength is: {player_stats.strength}, your total defence is:{player_stats.defence}, 
-            your total speed is: {player_stats.speed}, your total accuracy is: {player_stats.accuracy}, 
-            your total health is: {player_stats.health} and your new level is {player_stats.player_level}!""")
+                               You have NOT cleared the dungeon. here is your final player summary of stats: """)
+    gain_xp(player_stats, temp_player.xp, db)
+    player_stats.loot += temp_player.loot
+
+
+    temp_player.story += pad_string(f"""Here is your final player summary of stats:""")
+    temp_player.story += pad_string(f"""    your total xp is: {player_stats.xp}, your total loot gained is: {temp_player.loot},""")
+    temp_player.story += pad_string(f"""    your total strength is: {player_stats.strength}, your total defence is:{player_stats.defence}, """)
+    temp_player.story += pad_string(f"""    your total speed is: {player_stats.speed}, your total accuracy is: {player_stats.accuracy},""")
+    temp_player.story += pad_string(f"""    your total health is: {player_stats.health} and your new level is {player_stats.player_level}!""")
     training.already_used_for_dungeon_run = True
     db.add(training)
     db.commit()
     db.refresh(training)
     return temp_player.story
-
 
 def get_temporary_player(training, player, player_stats, db):
     """ Function to get a temporary player for the dungeon run. """
@@ -246,6 +253,8 @@ def monster_battle(player, monster, player_stats, db):
     loot_gained = calculate_loot(monster)
 
     if isinstance(player, TempPlayer):
+        player.story += pad_string(
+            """|----------BATTLE----------|""")
         player.story +=pad_string( f"{player.name} attacks.")
     else:
         monster.story += pad_string(f"{player.name} attacks.")
@@ -286,20 +295,9 @@ def monster_battle(player, monster, player_stats, db):
             if monster.health <= 0:
                 if isinstance(monster, TempPlayer):
                     monster.story += pad_string(f"{monster.name} has been slain.")
-                    gain_xp(player_stats, xp_gained, db)
-                    monster.story += pad_string(f"""                                                                                                                                                                                                                                                                                                                    
-                        You have NOT cleared the dungeon. here is your final player summary of stats: 
-                        your total xp is: {player_stats.xp}, 
-                        your total loot is: {player_stats.loot}, 
-                        your total strength is: {player_stats.strength}, 
-                        your total defence is:{player_stats.defence}, 
-                        your total speed is:{player_stats.speed}, 
-                        your total accuracy is: {player_stats.accuracy}, 
-                        your total health is: {player_stats.health} 
-                        and your new level is {player_stats.player_level}!""")
                     return player, monster
                 else:
-                    player.story +=pad_string(
+                    player.story += pad_string(
                         f"{monster.name} has been slain. You have gained {xp_gained} XP and {loot_gained} loot.")
                     player.loot += loot_gained
                     player.xp += xp_gained

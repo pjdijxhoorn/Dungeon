@@ -3,6 +3,7 @@ from datetime import date
 from random import randint
 
 from app.models.monster import Monster
+from app.models.temp_monster import TempMonster
 
 
 def bmi_calculation(height_in_m, weight_in_kg):
@@ -46,7 +47,7 @@ def random_number(chance):
 
 def calculate_loot(monster):
     """ Function to calculate loot based on the difficulty of the monster. """
-    if isinstance(monster, Monster):
+    if isinstance(monster, TempMonster):
         if monster.zone_difficulty == 'easy':
             return randint(1, 10)
         elif monster.zone_difficulty == 'medium':

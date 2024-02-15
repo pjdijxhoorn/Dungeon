@@ -87,7 +87,7 @@ def post_dungeon_run_clan(player_and_training_ids, db: Session):
                 temp_dungeon.temp_monsters = monster_list
                 for monster in monster_list:
                     temp_dungeon.story += pad_string(f"""{monster.name} """)
-                temp_dungeon = monster_encounter(temp_dungeon, db)
+                temp_dungeon = monster_encounter(temp_dungeon)
                 monster_chance = 500  # Reset kans na monster encounter
             else:
                 monster_chance = max(1, monster_chance - 1)
