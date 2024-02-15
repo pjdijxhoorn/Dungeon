@@ -1,4 +1,5 @@
 import random
+import math
 from random import randint
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
@@ -23,7 +24,7 @@ def post_dungeon_run_clan(player_and_training_ids, db: Session):
     monster_chance = 500
     random_encounter_chance = 3000
     total_xp = 0
-    #total_loot = 0
+    total_loot = 0
 
     players = []
     trainings = []
@@ -100,7 +101,13 @@ def post_dungeon_run_clan(player_and_training_ids, db: Session):
                 random_encounter_chance = 3000
             else:
                 random_encounter_chance = max(1, random_encounter_chance - 1)
+        
+    for temp_player in temp_players:
+        total_loot += temp_player.loot
     
+    loot_per_player = total_loot / len(temp_players) if len(temp_players) > 0 else 0
+    loot_per_player = math.ceil(loot_per_player)
+
     for temp_player in temp_players:
         total_xp += temp_player.xp
         
@@ -114,12 +121,12 @@ def post_dungeon_run_clan(player_and_training_ids, db: Session):
 
             gain_xp(base_stats, temp_player.xp, db)
             base_stats.xp += total_xp
-            base_stats.loot += temp_player.loot
+            base_stats.loot += loot_per_player
         else:
             temp_dungeon.story += pad_string(f"""{temp_player.name}, you have NOT cleared the dungeon. here is your final player summary of stats: """)
     
         temp_dungeon.story += pad_string("""Here is your final player summary of stats:""")
-        temp_dungeon.story += pad_string(f"""    your total gained xp is:{total_xp}, your total xp is: {base_stats.xp}, your total loot gained is: {temp_player.loot}, so your total loot is:{base_stats.loot}""")
+        temp_dungeon.story += pad_string(f"""    your total gained xp is:{total_xp}, your total xp is: {base_stats.xp}, your total loot gained is: {loot_per_player}, so your total loot is:{base_stats.loot}""")
         temp_dungeon.story += pad_string(f"""    your total strength is: {base_stats.strength}, your total defence is:{base_stats.defence}, """)
         temp_dungeon.story += pad_string(f"""    your total speed is: {base_stats.speed}, your total accuracy is: {base_stats.accuracy},""")
         temp_dungeon.story += pad_string(f"""    your total health is: {base_stats.health} and your new level is {base_stats.player_level}!""")
