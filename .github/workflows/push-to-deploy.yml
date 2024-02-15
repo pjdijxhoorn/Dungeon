@@ -3,8 +3,7 @@ name: Push-to-deploy
 on:
     push:
         branches:
-            # -   main
-            -   develop
+            -   main
 
 jobs:
     test:
