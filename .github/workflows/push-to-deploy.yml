@@ -4,49 +4,48 @@ on:
     push:
         branches:
             -   main
-            -   Dashboard
 
 jobs:
-    # test:
-    #     env:
-    #         DBHOST: localhost
-    #         DBPORT: 5432
-    #         DBPASSWORD: postgres
-    #         DBNAME: postgres
-    #         DBUSER: postgres
-    #     runs-on: ubuntu-latest
-    #     services:
-    #         postgres:
-    #             image: postgres:latest
-    #             env:
-    #                 POSTGRES_DB: postgres
-    #                 POSTGRES_USER: postgres
-    #                 POSTGRES_PASSWORD: postgres
-    #             ports:
-    #                 - 5432:5432
-    #             options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+    test:
+        env:
+            DBHOST: localhost
+            DBPORT: 5432
+            DBPASSWORD: postgres
+            DBNAME: postgres
+            DBUSER: postgres
+        runs-on: ubuntu-latest
+        services:
+            postgres:
+                image: postgres:latest
+                env:
+                    POSTGRES_DB: postgres
+                    POSTGRES_USER: postgres
+                    POSTGRES_PASSWORD: postgres
+                ports:
+                    - 5432:5432
+                options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
-    #     steps:
-    #         - name: Checkout Repository
-    #           uses: actions/checkout@v2
+        steps:
+            - name: Checkout Repository
+              uses: actions/checkout@v2
 
-    #         - name: Setup python
-    #           uses: actions/setup-python@v2
-    #           with:
-    #             python-version: "3.9"
+            - name: Setup python
+              uses: actions/setup-python@v2
+              with:
+                python-version: "3.9"
             
-    #         - name: Install requirements
-    #           run: pip install -r requirements.txt
+            - name: Install requirements
+              run: pip install -r requirements.txt
             
-    #         - name: Testing with pytest
-    #           run: |
-    #             pip install httpx
-    #             pip install pytest
-    #             python -m pytest
+            - name: Testing with pytest
+              run: |
+                pip install httpx
+                pip install pytest
+                python -m pytest
     
     terraform:
         runs-on: ubuntu-latest
-        # needs: test
+        needs: test
         env:
             TF_VAR_do_token: "${{ secrets.OCEANTOKEN }}"
     
