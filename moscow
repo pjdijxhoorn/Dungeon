@@ -1,0 +1,54 @@
+NICE TO HAVE solo dungeon run
+- earn titles
+- randomize damage a bit
+- randomize who attacks first
+- format string
+- make bonus equal to effort
+- gear drops ook unbuyable
+- uitbreiding aan gearslots
+- authorization log in beveiliging
+- frontend
+- scores gebasseerd op dungeon run ipv training voor leaderboard
+- clan fights
+- encounter monsters slain monsters
+- direct training verbinden aan dungeon run
+- bonus voor bereiken einde dungeon zonder dood te gaan
+- titles toekennen aan de speler
+
+MUST HAVE solo
+- print level
+-
+
+
+NICE TO HAVE CLAN
+-  xp multiplier for more players
+-  choice difficulty of dungeon
+- beste player krijgt kleine bonus
+- verschillende rollen mage, ranger, tank, healer etc
+
+MUST HAVE CLAN
+- maken van een clan
+- bekijken van een clan
+- add clan member
+- meer monsters of start hogere monsters?
+
+STAPPEN CLAN RUN
+# invoer van alle x
+# get all players x
+# get all trainings x
+# get all base stats x
+# get all equipment x
+# create temp players x
+# average distance meters x
+# distances calculator x
+# more monsters or start at higher
+# random encounters how for who x
+# ! geldt niet voor wie dood is?
+# battle
+    #volgorde van attacks
+    # who attacks first based on what?
+    # xp/ loot verdeler over de nog levende spelers
+# print story for combined players
+
+
+

@@ -3,10 +3,12 @@ from sqlalchemy.orm import Session
 from sqlalchemy.orm.attributes import flag_modified
 from sqlalchemy import desc
 
+from app.models.equipped_gear import EquippedGear
+from app.models.gear import Gear
 from app.models.player import Player
+from app.models.player_base_stats import PlayerBaseStats
 from app.models.profile import Profile
 from app.models.training import Training
-# from app.services.authentication import verify_password, get_password_hash
 from app.utilities.common_functions import bmi_calculation, calculate_fitness_multiplier, \
     calculate_age, max_heart_frequency_calculation, reserve_heart_frequency_calculation
 
@@ -14,6 +16,37 @@ from app.utilities.common_functions import bmi_calculation, calculate_fitness_mu
 def get_players(db: Session):
     """ Get all players from the database. """
     return db.query(Player).all()
+
+
+def get_base_stats(db: Session, username: str):
+    """ Get the personal base_stats for a specific player. """
+    player = db.query(Player).filter(Player.username == username).first()
+    if player is None:
+        raise HTTPException(status_code=404, detail="Player not found")
+    base_stats = db.query(PlayerBaseStats).filter(
+        PlayerBaseStats.player_id == player.player_id).first()
+    return base_stats
+
+
+def get_equipment(db, username):
+    """ Get the personal equipment for a specific user. """
+    player = db.query(Player).filter(Player.username == username).first()
+    if player is None:
+        raise HTTPException(status_code=404, detail="Player not found")
+    equipment = db.query(EquippedGear).filter(
+        EquippedGear.player_id == player.player_id).first()
+    head_gear = db.query(Gear).filter(
+        Gear.gear_id == equipment.equipped_slot_head).first()
+    weapon_gear = db.query(Gear).filter(
+        Gear.gear_id == equipment.equipped_slot_weapon).first()
+    armor_gear = db.query(Gear).filter(
+        Gear.gear_id == equipment.equipped_slot_armor).first()
+    boots_gear = db.query(Gear).filter(
+        Gear.gear_id == equipment.equipped_slot_boots).first()
+    title_gear = db.query(Gear).filter(
+        Gear.gear_id == equipment.equipped_slot_title).first()
+
+    return [head_gear, weapon_gear, armor_gear, boots_gear, title_gear]
 
 
 def get_personal_leaderboard(db: Session, username: str):
@@ -81,12 +114,14 @@ def get_player_main_score(db: Session, player_id: int):
     main_score = player.main_score
     return main_score
 
+
 def get_player_performance_percentage(db: Session, player_id: int):
     """ Get the player's performance percentage compared to other players. """
     player_main_score = get_player_main_score(db, player_id)
 
     all_players = get_players(db)
-    all_players_scores = [get_player_main_score(db, player.player_id) for player in all_players]
+    all_players_scores = [get_player_main_score(
+        db, player.player_id) for player in all_players]
 
     players_below_count = 0
 
@@ -110,11 +145,13 @@ def get_player_performance_percentage(db: Session, player_id: int):
     if player_main_score == highest_score_found:
         percentage_below = 100.0
     else:
-        percentage_below = calculate_percentage(players_below_count, total_players_count)
+        percentage_below = calculate_percentage(
+            players_below_count, total_players_count)
 
     performance_message = f"You are performing better than {percentage_below:.2f}% of players."
 
     return performance_message
+
 
 def create_player(player, db):
     """ Create a new player and associated profile in the database. """
@@ -125,11 +162,12 @@ def create_player(player, db):
         max_heart_frequency, player.rest_heart_frequency)
     fitness_multplier = calculate_fitness_multiplier(
         bmi, reserve_heart_frequency)
-    db_player = Player(username=player.username,
-                       name=player.name,
-                       main_score=0,
-                       training_score=[],
-                       fitness_multiplier=fitness_multplier)
+    db_player = Player(
+        username=player.username,
+        name=player.name,
+        main_score=0,
+        training_score=[],
+        fitness_multiplier=fitness_multplier)
     # password=get_password_hash(player.password
     db.add(db_player)
     db.commit()
@@ -145,11 +183,37 @@ def create_player(player, db):
         reserve_heart_frequency=reserve_heart_frequency,
         player_id=db_player.player_id
     )
-
     db.add(db_profile)
     db.commit()
     db.refresh(db_profile)
 
+    db_base_stats = PlayerBaseStats(
+        strength=5,
+        defence=5,
+        speed=5,
+        health=100,
+        accuracy=5,
+        player_level=1,
+        xp=0,
+        loot=0,
+        xp_remaining=100,
+        player_id=db_player.player_id
+    )
+    db.add(db_base_stats)
+    db.commit()
+    db.refresh(db_base_stats)
+
+    db_EquippedGear = EquippedGear(
+        equipped_slot_head=0,
+        equipped_slot_weapon=0,
+        equipped_slot_armor=0,
+        equipped_slot_boots=0,
+        equipped_slot_title=0,
+        player_id=db_player.player_id
+    )
+    db.add(db_EquippedGear)
+    db.commit()
+    db.refresh(db_EquippedGear)
     return db_player
 
 
@@ -190,9 +254,11 @@ def update_fitness_multiplier(player_id, db, fitness_multiplier):
     db.commit()
     db.refresh(player)
 
+
 def calculate_percentage(count: int, total: int):
     """ Calculate the how many players a player outpreforms """
     return (count / total) * 100 if total != 0 else 0
+
 
 def calculate_training_score(base_score, fitness_multiplier):
     """ Calculate the training score based on a base score and fitness multiplier. """

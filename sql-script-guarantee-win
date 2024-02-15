@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS Training, Fitness_profile, player_base_stats, Monsters, Encounters, Gear,equipped_gear, Clan, player;
+DROP TABLE IF EXISTS Training, Fitness_profile, player_base_stats, Monsters, random_encounters, Gear,equipped_gear, Clan, player;
 
 CREATE TABLE player (
     player_id SERIAL PRIMARY KEY,
@@ -66,7 +66,7 @@ CREATE TABLE Monsters (
 );
 
 
-CREATE TABLE Encounters (
+CREATE TABLE Random_encounters (
     encounter_id SERIAL PRIMARY KEY,
     encounter_text VARCHAR(255),
     encounter_stat_type VARCHAR(255),
@@ -126,8 +126,7 @@ VALUES
   ('user11', '$2a$12$U/HFoeSNxaeGi21KqWmjiOlmftlLKgN06J/UEIpIOaEz8omKPYLnS', 'User Eleven', 600, '{110, 115, 120, 125, 130}', 0.40),
   ('user12', '$2a$12$A4tI7jPDWDzxZeM0QFaSiO132KuN.zCjgrB5vMSkcXra56KVKYxmi', 'User Twelve', 625, '{115, 120, 125, 130, 135}', 0.41),
   ('user13', '$2a$12$EKvqvV1hAcLGY425NnUYZO/7iZImsATZfBqASRoR7lMUE0deh0vL6', 'User Thirteen', 650, '{120, 125, 130, 135, 140}', 0.42),
-  ('user14', '$2a$12$2sNbJyNfNbmhkhHozOnJJ.Ae8LwpqYbmznJRSLfbJBVz095SBJPXC', 'User Fourteen', 675, '{125, 130, 135, 140, 145}', 0.43),
-  ('delete', '$2a$12$2sNbJyNfNbmhkhHozOnJJ.Ae8LwpqYbmznJRSLfbJBVz095SBJPXC', 'player for delete', 675, '{125, 130, 135, 140, 145}', 0.43);
+  ('user14', '$2a$12$2sNbJyNfNbmhkhHozOnJJ.Ae8LwpqYbmznJRSLfbJBVz095SBJPXC', 'User Fourteen', 675, '{125, 130, 135, 140, 145}', 0.43);
 
 
 INSERT INTO player_base_stats (player_id, strength, defence, speed, health, accuracy, player_level, xp, loot, xp_remaining)
@@ -146,6 +145,7 @@ VALUES
 (12, 7, 8, 15, 100, 14, 1, 0, 0, 100),
 (13, 15, 11, 10, 100, 8, 1, 0, 0, 100),
 (14, 9, 15, 13, 100, 9, 1, 0, 0, 100);
+
 
 INSERT INTO Fitness_profile (player_id, bmi, weight_in_kg, height_in_m, date_of_birth, max_heart_frequency, rest_heart_frequency, reserve_heart_frequency)
 VALUES
@@ -187,7 +187,6 @@ VALUES
 INSERT INTO Monsters (name, defence, strength, health, speed, accuracy, zone_difficulty)
 VALUES
 ('Rat', 2, 2, 3, 4, 4, 'easy'),
-('sturdy potted plant', 5, 0, 20, 0, 0, 'easy'),
 ('Slime', 1, 1, 2, 3, 3, 'easy'),
 ('Gnome', 3, 4, 4, 5, 6, 'easy'),
 ('Spider', 2, 3, 3, 4, 4, 'easy'),
@@ -196,45 +195,45 @@ VALUES
 ('Kobold', 2, 3, 3, 4, 4, 'easy'),
 ('Skeleton', 3, 4, 4, 5, 6, 'easy'),
 ('Zombie', 5, 5, 6, 7, 8, 'easy'),
-('Orc', 20, 22, 25, 23, 24, 'medium'),
-('Goblin', 18, 20, 22, 20, 21, 'medium'),
-('Troll', 22, 24, 26, 24, 25, 'medium'),
-('stoned golem', 22, 24, 26, 24, 25, 'medium'),
-('ghost', 22, 24, 26, 24, 25, 'medium'),
-('mummy', 22, 24, 26, 24, 25, 'medium'),
-('Ghoul', 23, 25, 27, 25, 26, 'medium'),
-('Specter', 24, 26, 28, 26, 27, 'medium'),
-('Wraith', 25, 27, 29, 27, 28, 'medium'),
-('Lizardman', 24, 26, 28, 27, 28, 'medium'),
-('Centaur', 25, 27, 29, 28, 29, 'medium'),
-('vampire', 22, 24, 26, 24, 25, 'medium'),
-('harpy', 22, 24, 26, 24, 25, 'medium'),
-('Yeti', 40, 42, 45, 43, 44, 'hard'),
-('Cyclops', 35, 38, 40, 38, 39, 'hard'),
-('Manticore', 50, 52, 55, 50, 51, 'hard'),
-('Necromancer', 38, 40, 42, 40, 41, 'hard'),
-('Werewolf', 25, 28, 30, 28, 29, 'hard'),
-('demon', 25, 28, 30, 28, 29, 'hard'),
-('minotaur', 25, 28, 30, 28, 29, 'hard'),
-('banshee', 25, 28, 30, 28, 29, 'hard'),
-('Chimera', 40, 42, 45, 43, 44, 'hard'),
-('Gorgon', 38, 40, 42, 40, 41, 'hard'),
-('Jinn', 48, 50, 52, 50, 51, 'hard'),
-('Giant', 42, 45, 48, 45, 46, 'hard'),
-('Basilisk', 30, 35, 38, 35, 36, 'hard'),
-('Cerberus', 48, 50, 52, 50, 51, 'hard'),
-('suing lawyers', 48, 50, 52, 50, 51, 'hard'),
-('5,389 orcs', 48, 50, 52, 50, 51, 'hard'),
-('Mother in law', 80, 90, 150, 96, 98, 'boss'),
-('Dragon', 75, 80, 130, 88, 90, 'boss'),
-('lich-king', 75, 80, 120, 88, 90, 'boss'),
-('hydra', 75, 80, 180, 88, 90, 'boss'),
-('kraken', 75, 80, 200, 88, 90, 'boss'),
-('Phoenix', 85, 88, 250, 92, 95, 'boss'),
-('Siren', 70, 75, 160, 82, 85, 'boss'),
-('Banshee', 72, 78, 180, 85, 88, 'boss');
+('Orc', 5, 5, 6, 7, 8, 'medium'),
+('Goblin', 5, 5, 6, 7, 8, 'medium'),
+('Troll', 5, 5, 6, 7, 8, 'medium'),
+('stoned golem', 5, 5, 6, 7, 8, 'medium'),
+('ghost', 5, 5, 6, 7, 8, 'medium'),
+('mummy', 5, 5, 6, 7, 8, 'medium'),
+('Ghoul', 5, 5, 6, 7, 8, 'medium'),
+('Specter', 5, 5, 6, 7, 8, 'medium'),
+('Wraith', 5, 5, 6, 7, 8, 'medium'),
+('Lizardman', 5, 5, 6, 7, 8, 'medium'),
+('Centaur', 5, 5, 6, 7, 8, 'medium'),
+('vampire', 5, 5, 6, 7, 8, 'medium'),
+('harpy', 5, 5, 6, 7, 8, 'medium'),
+('Yeti', 5, 5, 6, 7, 8, 'hard'),
+('Cyclops', 5, 5, 6, 7, 8, 'hard'),
+('Manticore', 5, 5, 6, 7, 8, 'hard'),
+('Necromancer', 5, 5, 6, 7, 8, 'hard'),
+('Werewolf', 5, 5, 6, 7, 8, 'hard'),
+('demon', 5, 5, 6, 7, 8, 'hard'),
+('minotaur', 5, 5, 6, 7, 8, 'hard'),
+('banshee', 5, 5, 6, 7, 8, 'hard'),
+('Chimera', 5, 5, 6, 7, 8, 'hard'),
+('Gorgon', 5, 5, 6, 7, 8, 'hard'),
+('Jinn', 5, 5, 6, 7, 8, 'hard'),
+('Giant', 5, 5, 6, 7, 8, 'hard'),
+('Basilisk', 5, 5, 6, 7, 8, 'hard'),
+('Cerberus', 5, 5, 6, 7, 8, 'hard'),
+('suing lawyers', 5, 5, 6, 7, 8, 'hard'),
+('5,389 orcs', 5, 5, 6, 7, 8, 'hard'),
+('Mother in law', 5, 5, 6, 7, 8, 'boss'),
+('Dragon', 5, 5, 6, 7, 8, 'boss'),
+('lich-king', 5, 5, 6, 7, 8, 'boss'),
+('hydra', 5, 5, 6, 7, 8, 'boss'),
+('kraken', 5, 5, 6, 7, 8, 'boss'),
+('Phoenix', 5, 5, 6, 7, 8, 'boss'),
+('Siren', 5, 5, 6, 7, 8, 'boss'),
+('Banshee', 5, 5, 6, 7, 8, 'boss');
 
-INSERT INTO Encounters (encounter_text, encounter_stat_type, encounter_stat)
+INSERT INTO Random_encounters (encounter_text, encounter_stat_type, encounter_stat)
 VALUES
 ('A mischievous squirrel challenges you to a dance-off! Lose 3 speed points, but gain street cred.', 'speed', -3),
 ('You encounter a group of singing mushrooms. Your accuracy improves by 8 points as you join their harmony.', 'accuracy', 8),

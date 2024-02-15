@@ -1,5 +1,9 @@
 import math
 from datetime import date
+from random import randint
+
+from app.models.monster import Monster
+from app.models.temp_monster import TempMonster
 
 
 def bmi_calculation(height_in_m, weight_in_kg):
@@ -35,3 +39,35 @@ def calculate_age(date_of_birth: date):
     age = current_date.year - date_of_birth.year - (
         (current_date.month, current_date.day) < (date_of_birth.month, date_of_birth.day))
     return age
+
+
+def random_number(chance):
+    """ Generate a random number. """
+    return randint(1, chance)
+
+def calculate_loot(monster):
+    """ Function to calculate loot based on the difficulty of the monster. """
+    if isinstance(monster, TempMonster):
+        if monster.zone_difficulty == 'easy':
+            return randint(1, 10)
+        elif monster.zone_difficulty == 'medium':
+            return randint(10, 50)
+        elif monster.zone_difficulty == 'hard':
+            return randint(50, 150)
+        elif monster.zone_difficulty == 'boss':
+            return randint(150, 300)
+    else:
+        return 0
+
+
+def xp_calculator(monster):
+    """calculates the xp gained from slaying a monster"""
+    xp = (monster.defence + monster.strength +
+          monster.health + monster.speed + monster.accuracy) * 2
+    return xp
+
+def pad_string(input_string):
+    """adds white space after each string to fit screen"""
+    spaces_needed = max(0, 140 - len(input_string))
+    padded_string = input_string + ' ' * spaces_needed
+    return padded_string
