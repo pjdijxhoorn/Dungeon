@@ -7,24 +7,24 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-try:
-    db_connection = psycopg2.connect(
-        database=os.environ["DBNAME"],
-        user=os.environ["DBUSER"],
-        password=os.environ["DBPASSWORD"],
-        host=os.environ["DBHOST"],
-        port=os.environ["DBPORT"]
-    )
+# try:
+    # db_connection = psycopg2.connect(
+    #     database=os.environ["DBNAME"],
+    #     user=os.environ["DBUSER"],
+    #     password=os.environ["DBPASSWORD"],
+    #     host=os.environ["DBHOST"],
+    #     port=os.environ["DBPORT"]
+    # )
 
-    database=os.environ["DBNAME"]
-    user=os.environ["DBUSER"]
-    password=os.environ["DBPASSWORD"]
-    host=os.environ["DBHOST"]
-    port=os.environ["DBPORT"]
-    SQLALCHEMY_DATABASE_URL = "postgresql+psycopg2://" + user + ":" + password + "@" + host + "/" + database
+database=os.environ["DBNAME"]
+user=os.environ["DBUSER"]
+password=os.environ["DBPASSWORD"]
+host=os.environ["DBHOST"]
+port=os.environ["DBPORT"]
+SQLALCHEMY_DATABASE_URL = "postgresql+psycopg2://" + user + ":" + password + "@" + host + "/" + database
 
-except:
-    SQLALCHEMY_DATABASE_URL = os.getenv("SQLALCHEMY_DATABASE_URL")
+# except:
+#     SQLALCHEMY_DATABASE_URL = os.getenv("SQLALCHEMY_DATABASE_URL")
     
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
