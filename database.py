@@ -21,7 +21,7 @@ user=os.environ["DBUSER"]
 password=os.environ["DBPASSWORD"]
 host=os.environ["DBHOST"]
 port=os.environ["DBPORT"]
-SQLALCHEMY_DATABASE_URL = "postgresql+psycopg2://" + user + ":" + password + "@" + host + "/" + database
+SQLALCHEMY_DATABASE_URL = "postgresql://" + user + ":" + password + "@" + host + "/" + database
 
 # except:
 #     SQLALCHEMY_DATABASE_URL = os.getenv("SQLALCHEMY_DATABASE_URL")
