@@ -6,7 +6,7 @@ Base = declarative_base()
 
 class RandomEncounter(Base):
     """ Represents a random encounter in the story line. """
-    __tablename__ = "encounters"
+    __tablename__ = "random_encounters"
     encounter_id = Column(Integer, primary_key=True)
     encounter_text = Column(String)
     encounter_stat_type = Column(String)
