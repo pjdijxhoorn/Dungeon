@@ -1,4 +1,5 @@
 import random
+import math
 from random import randint
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
@@ -100,31 +101,40 @@ def post_dungeon_run_clan(player_and_training_ids, db: Session):
                 random_encounter_chance = 3000
             else:
                 random_encounter_chance = max(1, random_encounter_chance - 1)
-    # Loot
-    for temp_player in temp_dungeon.temp_players:
+        
+    for temp_player in temp_players:
         total_loot += temp_player.loot
+    
+    loot_per_player = total_loot / len(temp_players) if len(temp_players) > 0 else 0
+    loot_per_player = math.ceil(loot_per_player)
 
-    if total_loot > 0:
-        loot_per_player = total_loot // len(temp_players)
-        remaining_loot = total_loot % len(temp_players)
-
-        for temp_player in temp_dungeon.temp_players:
-            temp_player.loot += loot_per_player
-
-        for temp_player in temp_dungeon.temp_players:
-            temp_player.loot += remaining_loot
-
-    # Xp
-    for temp_player in temp_dungeon.temp_players:
+    for temp_player in temp_players:
         total_xp += temp_player.xp
+        
+    for temp_player, base_stats in zip(temp_players, players_base_stats):          
+        temp_dungeon.story += pad_string(
+            """#########################--END-REPORT--#########################""")
+        if temp_player.health > 0:
+            temp_player.xp = temp_player.xp + 100
+    
+            temp_dungeon.story += pad_string(f""" {temp_player.name}! You have cleared the dungeon so you have gained a 100 bonus xp!""")
 
-    for temp_player in temp_dungeon.temp_players:
-        temp_player.xp += total_xp
-        player_stats = db.query(PlayerBaseStats).filter(
-            PlayerBaseStats.player_id == player.player_id).first()
-        gain_xp(player_stats, temp_player.xp, db)
+            gain_xp(base_stats, temp_player.xp, db)
+            base_stats.xp += total_xp
+            base_stats.loot += loot_per_player
+        else:
+            temp_dungeon.story += pad_string(f"""{temp_player.name}, you have NOT cleared the dungeon. here is your final player summary of stats: """)
+            gain_xp(base_stats, temp_player.xp, db)
+            base_stats.xp += total_xp
+            base_stats.loot += loot_per_player
+    
+        temp_dungeon.story += pad_string("""Here is your final player summary of stats:""")
+        temp_dungeon.story += pad_string(f"""    your total gained xp is:{total_xp}, so your total xp is: {base_stats.xp},""")
+        temp_dungeon.story += pad_string(f"""     your total loot gained is: {loot_per_player}, so your total loot is:{base_stats.loot}, """)
+        temp_dungeon.story += pad_string(f"""    your total strength is: {base_stats.strength}, your total defence is:{base_stats.defence}, """)
+        temp_dungeon.story += pad_string(f"""    your total speed is: {base_stats.speed}, your total accuracy is: {base_stats.accuracy},""")
+        temp_dungeon.story += pad_string(f"""    your total health is: {base_stats.health} and your new level is {base_stats.player_level}!""")
 
-    # set xp for all players divide loot among players
     for training in trainings:
         training.already_used_for_dungeon_run = True
         db.add(training)
