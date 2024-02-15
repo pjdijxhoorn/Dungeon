@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dungeon-run
+  labels:
+    app: dungeon-run
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: dungeon-run
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: dungeon-run
+    spec:
+      containers:
+      - name: dungeon-run
+        image: <IMAGE>
+        ports:
+        - containerPort: 80
+        env:
+          - name: DBUSER
+            value: "<DBUSERNAME>"
+          - name: DBPASSWORD
+            value: "<DBPASSWORD>"
+          - name: DBHOST
+            value: "<DBHOST>"
+          - name: DBPORT
+            value: "<DBPORT>"
+          - name: DBNAME
+            value: "<DBDATABASE>"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dungeon-run-service
+spec:
+  type: LoadBalancer
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 80
+  selector:
+    app: dungeon-run
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: dungeron-run-autoscaler
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: dungeon-run
+  minReplicas: 4
+  maxReplicas: 20
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 80

@@ -1,0 +1,11 @@
+uvicorn main:app --reload
+-- start de app
+
+pip install -r requirements.txt
+-- instaleer alles van de requirements.txt file
+
+pip freeze > requirements.txt
+-- zet alle huidige packages naar requirements.txt
+
+test alle code en geeft een report
+pytest --cov --cov report term-missing
