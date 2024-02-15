@@ -8,11 +8,16 @@ client = TestClient(app)
 
 def test_get_dungeon_run():
     """ Test the endpoint for dungeon run """
+    # ARRANGE
     reset_database()
-    response = client.get("/dungeon_run/1/1")
+    training_id = 1
+    player_id = 1
+    # ACT
+    response = client.get(f"/dungeon_run/{training_id}/{player_id}")
+    response_text = response.text.lower()
+    # ASSERT
     assert response.status_code == 200
     assert response.text.strip() != ''
-    response_text = response.text.lower()
     assert 'xp' in response_text
     assert 'loot' in response_text
     assert 'encountered' in response_text
@@ -20,7 +25,12 @@ def test_get_dungeon_run():
 
 def test_get_dungeon_run_player_not_found():
     """ Test the endpoint for dungeon run """
-    response = client.get("/dungeon_run/1/999")
+    # ARRANGE
+    training_id = 1
+    player_id = 999
+    # ACT
+    response = client.get(f"/dungeon_run/{training_id}/{player_id}")
+    # ASSERT
     assert response.status_code == 404
     assert response.json() == {
         "detail": "Player not found"
@@ -29,7 +39,12 @@ def test_get_dungeon_run_player_not_found():
 
 def test_get_dungeon_run_training_not_found():
     """ Test the endpoint for dungeon run """
-    response = client.get("/dungeon_run/999/1")
+    # ARRANGE
+    training_id = 999
+    player_id = 1
+    # ACT
+    response = client.get(f"/dungeon_run/{training_id}/{player_id}")
+    # ASSERT
     assert response.status_code == 404
     assert response.json() == {
         "detail": "training not found"
@@ -38,7 +53,12 @@ def test_get_dungeon_run_training_not_found():
 
 def test_get_dungeon_run_training_not_useable():
     """ Test the endpoint for dungeon run """
-    response = client.get("/dungeon_run/15/14")
+    # ARRANGE
+    training_id = 15
+    player_id = 14
+    # ACT
+    response = client.get(f"/dungeon_run/{training_id}/{player_id}")
+    # ASSERT
     assert response.status_code == 404
     assert response.json() == {
         'detail': 'training already used for a dungeon run'}

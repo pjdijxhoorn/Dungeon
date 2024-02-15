@@ -6,7 +6,10 @@ client = TestClient(app)
 
 def test_get_shop_inventory():
     """ Test the endpoint for retrieving shop inventory. """
+    # ARRANGE
+    # ACT
     response = client.get("/shop")
+    # ASSERT
     assert response.status_code == 200
     assert response.json() == [{'gear_class': 'common',
                                 'gear_id': 1,
@@ -124,23 +127,28 @@ def test_get_shop_inventory():
 
 def test_get_player_loot():
     """ Test the endpoint for retrieving player loot. """
-
-    response = client.get("/shop/loot/1")
+    # ARRANGE
+    player_id=1
+    # ACT
+    response = client.get(f"/shop/loot/{player_id}")
+    # ASSERT
     assert response.status_code == 200
     assert response.json() == 'Your current balance is: 0'
 
 
 def test_get_player_loot_not_found():
     """ Test the endpoint for retrieving player loot. """
-
-    response = client.get("/shop/loot/999")
+    # ARRANGE
+    player_id = 999
+    # ACT
+    response = client.get(f"/shop/loot/{player_id}")
     assert response.status_code == 404
     assert response.json() == {'detail': 'No player found'}
 
 
 def test_buy_and_equip_gear():
     """ Test the endpoint for Buy and equip a piece of gear """
-# head
+    # head
     response = client.post("/shop/buy-and-equip/2/1")
     assert response.status_code == 200
     assert response.json() == {
@@ -172,23 +180,35 @@ def test_buy_and_equip_gear():
 
 def test_buy_and_equip_gear_player_not_found():
     """ Test the endpoint for Buy and equip a piece of gear """
-
-    response = client.post("/shop/buy-and-equip/999/10")
+    # ARRANGE
+    player_id = 999
+    equipment_id = 10
+    # ACT
+    response = client.post(f"/shop/buy-and-equip/{player_id}/{equipment_id}")
+    # ASSERT
     assert response.status_code == 404
     assert response.json() == {'detail': 'No player found'}
 
 
 def test_buy_and_equip_gear_gear_not_found():
     """ Test the endpoint for Buy and equip a piece of gear """
-
-    response = client.post("/shop/buy-and-equip/2/999")
+    # ARRANGE
+    player_id = 2
+    equipment_id = 999
+    # ACT
+    response = client.post(f"/shop/buy-and-equip/{player_id}/{equipment_id}")
+    # ASSERT
     assert response.status_code == 404
     assert response.json() == {'detail': 'Gear not found or not buyable'}
 
 
 def test_buy_and_equip_gear_no_funds():
     """ Test the endpoint for Buy and equip a piece of gear """
-
-    response = client.post("/shop/buy-and-equip/1/15")
+    # ARRANGE
+    player_id = 1
+    equipment_id = 15
+    # ACT
+    response = client.post(f"/shop/buy-and-equip/{player_id}/{equipment_id}")
+    # ASSERT
     assert response.status_code == 400
     assert response.json() == {'detail': 'Not enough loot to buy the gear'}
