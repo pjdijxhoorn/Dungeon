@@ -124,9 +124,13 @@ def post_dungeon_run_clan(player_and_training_ids, db: Session):
             base_stats.loot += loot_per_player
         else:
             temp_dungeon.story += pad_string(f"""{temp_player.name}, you have NOT cleared the dungeon. here is your final player summary of stats: """)
+            gain_xp(base_stats, temp_player.xp, db)
+            base_stats.xp += total_xp
+            base_stats.loot += loot_per_player
     
         temp_dungeon.story += pad_string("""Here is your final player summary of stats:""")
-        temp_dungeon.story += pad_string(f"""    your total gained xp is:{total_xp}, your total xp is: {base_stats.xp}, your total loot gained is: {loot_per_player}, so your total loot is:{base_stats.loot}""")
+        temp_dungeon.story += pad_string(f"""    your total gained xp is:{total_xp}, so your total xp is: {base_stats.xp},""")
+        temp_dungeon.story += pad_string(f"""     your total loot gained is: {loot_per_player}, so your total loot is:{base_stats.loot}, """)
         temp_dungeon.story += pad_string(f"""    your total strength is: {base_stats.strength}, your total defence is:{base_stats.defence}, """)
         temp_dungeon.story += pad_string(f"""    your total speed is: {base_stats.speed}, your total accuracy is: {base_stats.accuracy},""")
         temp_dungeon.story += pad_string(f"""    your total health is: {base_stats.health} and your new level is {base_stats.player_level}!""")
