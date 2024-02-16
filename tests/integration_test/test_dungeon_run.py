@@ -47,7 +47,7 @@ def test_put_dungeon_run_training_not_found():
     training_id = 999
     player_id = 1
     # ACT
-     response = client.put(f"/dungeon_run/{training_id}/{player_id}")
+    response = client.put(f"/dungeon_run/{training_id}/{player_id}")
     # ASSERT
     assert response.status_code == 404
     assert response.json() == {
@@ -62,7 +62,7 @@ def test_put_dungeon_run_training_not_useable():
     training_id = 15
     player_id = 14
     # ACT
-     response = client.put(f"/dungeon_run/{training_id}/{player_id}")
+    response = client.put(f"/dungeon_run/{training_id}/{player_id}")
     # ASSERT
 
     assert response.status_code == 404
