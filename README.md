@@ -19,5 +19,5 @@ CICD Pipeline: Implementatie van een Continuous Integration en Continuous Deploy
 ## disclaimer
 -   This website is created for educational purpose only.
 
-## Contact
+## als laatst
 Dank je wel voor het bekijken van Dungeon-run! We hopen dat je er plezier aan zult beleven en kijken uit naar eventuele feedback en bijdragen.
