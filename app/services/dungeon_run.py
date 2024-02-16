@@ -14,7 +14,7 @@ from app.models.random_encounter import RandomEncounter
 from app.utilities.common_functions import random_number, calculate_loot, xp_calculator, pad_string
 
 
-def get_dungeon_run(training_id, player_id, db: Session):
+def put_dungeon_run(training_id, player_id, db: Session):
     """
      This function takes in a training, player, basestats and equipment and makes it into a textbased adventure,
     where the player can gain loot, xp and stats.

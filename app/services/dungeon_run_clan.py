@@ -16,7 +16,7 @@ from app.models.random_encounter import RandomEncounter
 from app.utilities.common_functions import random_number, calculate_loot, xp_calculator, pad_string
 
 
-def post_dungeon_run_clan(player_and_training_ids, db: Session):
+def put_dungeon_run_clan(player_and_training_ids, db: Session):
     """
     this function uses a training and player with basestats and equipment to create a dungeon-run(story)
      within this story players can gain loot xp and stats.
@@ -94,6 +94,8 @@ def post_dungeon_run_clan(player_and_training_ids, db: Session):
                 monster_chance = max(1, monster_chance - 1)
 
             if random_number(random_encounter_chance) == 1:
+                temp_dungeon.story += pad_string(
+                    """#########################--RANDOM ENCOUNTER--#########################""")
                 random_encounter = get_random_encounter(db)
                 if random_encounter:
                     apply_encounter_effects(temp_dungeon, random_encounter)
