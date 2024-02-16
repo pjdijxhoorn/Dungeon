@@ -16,8 +16,8 @@ CICD Pipeline: Implementatie van een Continuous Integration en Continuous Deploy
 ## Dank aan
 - Arjen onze docent voor al zijn geduld, expertise en zijn inzet om ons te laten groeien.
 
-## disclaimer
+## Disclaimer
 -   This website is created for educational purpose only.
 
-## als laatst
+## Als laatst
 Dank je wel voor het bekijken van Dungeon-run! We hopen dat je er plezier aan zult beleven en kijken uit naar eventuele feedback en bijdragen.
