@@ -10,8 +10,11 @@ client = TestClient(app)
 
 def test_get_players():
     """ Test the endpoint for retrieving player information. """
+    # ARRANGE
     reset_database()
+    # ACT
     response = client.get("/player")
+    # ASSERT
     assert response.status_code == 200
     assert response.json() == [{'main_score': 430,
                                 'name': 'User One',
@@ -92,7 +95,9 @@ def test_get_players():
 
 def test_get_leaderboard():
     """ Test the endpoint for retrieving a leaderboard from all players. """
+    # ACT
     response = client.get("/player/leaderboard")
+    # ASSERT
     assert response.status_code == 200
     assert response.json() == [{'main_score': 675, 'username': 'user14'},
                                {'main_score': 675, 'username': 'delete'},
@@ -114,7 +119,11 @@ def test_get_leaderboard():
 def test_get_personal_leaderboard():
     """ Test the endpoint for retrieving a personal leaderboard, 
     showing the five users above and under player. """
-    response = client.get("/player/personal_leaderboard/user3")
+    # ARRANGE
+    username = "user3"
+    # ACT
+    response = client.get(f"/player/personal_leaderboard/{username}")
+    # ASSERT
     assert response.status_code == 200
     assert response.json() == [{'main_score': 525, 'username': 'user8'},
                                {'main_score': 500, 'username': 'user7'},
@@ -128,14 +137,22 @@ def test_get_personal_leaderboard():
 
 def test_get_personal_leaderboard_not_found():
     """ Test the endpoint for retrieving a non-existent leaderboard. """
-    response = client.get("/player/personal_leaderboard/waldo")
+    # ARRANGE
+    username = "waldo"
+    # ACT
+    response = client.get(f"/player/personal_leaderboard/{username}")
+    # ASSERT
     assert response.status_code == 404
     assert response.json() == {'detail': 'Player not found'}
 
 
 def test_get_player():
     """ Test the endpoint for retrieving individual player details. """
-    response = client.get("/player/1")
+    # ARRANGE
+    player_id = 1
+    # ACT
+    response = client.get(f"/player/{player_id}")
+    # ASSERT
     assert response.status_code == 200
     assert response.json() == {'main_score': 430,
                                'name': 'User One',
@@ -146,7 +163,11 @@ def test_get_player():
 
 def test_get_player_not_found():
     """ Test the endpoint for retrieving a non-existent player. """
-    response = client.get("/player/999")
+    # ARRANGE
+    player_id = 999
+    # ACT
+    response = client.get(f"/player/{player_id}")
+    # ASSERT
     assert response.status_code == 404
     assert response.json() == {
         "detail": "Player not found"
@@ -155,14 +176,22 @@ def test_get_player_not_found():
 
 def test_get_player_training_scores():
     """ Test the endpoint for retrieving player training scores. """
-    response = client.get("/player/5/training-scores")
+    # ARRANGE
+    player_id = 5
+    # ACT
+    response = client.get(f"/player/{player_id}/training-scores")
+    # ASSERT
     assert response.status_code == 200
     assert response.json() == [{'score': 80, 'training_name': 'Evening Walk'}]
 
 
 def test_get_player_training_scores_player_not_found():
     """ Test the endpoint for retrieving training scores of a non-existent player. """
-    response = client.get("/player/999/training-scores")
+    # ARRANGE
+    player_id = 999
+    # ACT
+    response = client.get(f"/player/{player_id}/training-scores")
+    # ASSERT
     assert response.status_code == 404
     assert response.json() == {
         "detail": "Player not found"
@@ -171,14 +200,22 @@ def test_get_player_training_scores_player_not_found():
 
 def test_get_player_main_score():
     """ Test the endpoint for retrieving the average score of a player. """
-    response = client.get("/player/1/average-score")
+    # ARRANGE
+    player_id = 1
+    # ACT
+    response = client.get(f"/player/{player_id}/average-score")
+    # ASSERT
     assert response.status_code == 200
     assert response.json() == 430
 
 
 def test_get_player_main_score_not_found():
     """ Test the endpoint for retrieving the average score of a non-existent player. """
-    response = client.get("/player/999/average-score")
+    # ARRANGE
+    player_id = 999
+    # ACT
+    response = client.get(f"/player/{player_id}/average-score")
+    # ASSERT
     assert response.status_code == 404
     assert response.json() == {
         "detail": "Player not found"
@@ -187,6 +224,7 @@ def test_get_player_main_score_not_found():
 
 def test_create_player():
     """ Test the endpoint for creating a new player. """
+    # ARRANGE
     player_data = {
         "username": "string",
         "password": "string",
@@ -196,7 +234,9 @@ def test_create_player():
         "date_of_birth": "2024-01-28",
         "rest_heart_frequency": 50
     }
+    # ACT
     response = client.post("/player", json=player_data)
+    # ASSERT
     assert response.status_code == 201
     assert response.json() == {'main_score': 0,
                                'name': 'string',
@@ -207,8 +247,12 @@ def test_create_player():
 
 def test_update_player():
     """ Test the endpoint for updating player information. """
+    # ARRANGE
     player_data = {"name": "string"}
-    response = client.put("/player/2", json=player_data)
+    player_id = 2
+    # ACT
+    response = client.put(f"/player/{player_id}", json=player_data)
+    # ASSERT
     assert response.status_code == 200
     assert response.json() == {'fitness_multiplier': 0.28,
                                'main_score': 425,
@@ -221,60 +265,85 @@ def test_update_player():
 
 def test_update_player_not_found():
     """ Test the endpoint for updating information of a non-existent player. """
+    # ARRANGE
     player_data = {"name": "string"}
-    response = client.put("/player/999", json=player_data)
+    player_id = 999
+    # ACT
+    response = client.put(f"/player/{player_id}", json=player_data)
+    # ASSERT
     assert response.status_code == 404
     assert response.json() == {'detail': "Player not found."}
 
 
 def test_delete_player():
     """ Test the endpoint for deleting a player. """
-    response = client.delete("/player/15")
+    # ARRANGE
+    player_id = 15
+    # ACT
+    response = client.delete(f"/player/{player_id}")
+    # ASSERT
     assert response.status_code == 200
     assert response.json() == 'Player, profile, and training deleted'
 
 
 def test_delete_player_not_found():
     """ Test the endpoint for deleting a non-existent player. """
-    response = client.delete("/player/999")
+    # ARRANGE
+    player_id = 999
+    # ACT
+    response = client.delete(f"/player/{player_id}")
+    # ASSERT
     assert response.status_code == 404
     assert response.json() == {"detail": "Player not found"}
 
 
 def test_update_fitness_multiplier():
     """ Test the function for updating player fitness multiplier. """
+    # ARRANGE
     db: Session = next(get_db())
     player_id = 4
     fitness_multiplier = 0.1249
+    # ACT
     update_fitness_multiplier(player_id, db, fitness_multiplier)
     player = db.query(Player).filter(Player.player_id == player_id).first()
+    # ASSERT
     assert player.fitness_multiplier == fitness_multiplier
 
 
 def test_update_scores():
     """ Test the function for updating player scores. """
+    # ARRANGE
     db: Session = next(get_db())
     player_id = 3
     basescore = 1000
+    # ACT
     update_scores(player_id, db, basescore)
     player = db.query(Player).filter(Player.player_id == player_id).first()
+    # ASSERT
     assert player.main_score == 383
 
 
 def test_update_scores_not_found():
     """ Test the function for updating scores of a non-existent player. """
+    # ARRANGE
     player_id = 999
     basescore = 1000
+    # ACT
     response = client.post(
         f"/update_scores/{player_id}", json={"basescore": basescore})
     print(response.json())
+    # ASSERT
     assert response.status_code == 404
     assert response.json() == {'detail': 'Not Found'}
 
 
 def test_get_equipment():
     """ Test the endpoint for Get the personal equipment for a specific user """
-    response = client.get("/player/equipment/user1")
+    # ARRANGE
+    username = "user1"
+    # ACT
+    response = client.get(f"/player/equipment/{username}")
+    # ASSERT
     assert response.status_code == 200
     assert response.json() == [{'gear_class': 'common',
                                 'gear_id': 0,
@@ -315,14 +384,22 @@ def test_get_equipment():
 
 def test_get_equipment_user_not_found():
     """ Test the endpoint for Get the personal equipment for a specific user """
-    response = client.get("/player/equipment/wronguser")
+    # ARRANGE
+    username = "waldo"
+    # ACT
+    response = client.get(f"/player/equipment/{username}")
+    # ASSERT
     assert response.status_code == 404
     assert response.json() == {'detail': 'Player not found'}
 
 
 def test_base_stats():
     """ Test the endpoint Get the personal base_stats for a specific user. """
-    response = client.get("/player/base_stats/user1")
+    # ARRANGE
+    username = "user1"
+    # ACT
+    response = client.get(f"/player/base_stats/{username}")
+    # ASSERT
     assert response.status_code == 200
     assert response.json() == {'accuracy': 5,
                                'defence': 5,
@@ -337,13 +414,22 @@ def test_base_stats():
 
 def test_base_stats_username_not_found():
     """ Test the endpoint Get the personal base_stats for a specific user. """
-    response = client.get("/player/base_stats/wronguser")
+    # ARRANGE
+    username = "waldo"
+    # ACT
+    response = client.get(f"/player/base_stats/{username}")
+    # ASSERT
     assert response.status_code == 404
     assert response.json() == {'detail': 'Player not found'}
 
 
 def test_player_performance_percentage():
     """ Test the endpoint Calculate and get the average score of a specific player. """
-    response = client.get("/player/1/performance")
+    # ARRANGE
+    player_id = 1
+    # ACT
+    response = client.get(f"/player/{player_id}/performance")
+    # ASSERT
     assert response.status_code == 200
     assert response.json() == 'You are performing better than 20.00% of players.'
+

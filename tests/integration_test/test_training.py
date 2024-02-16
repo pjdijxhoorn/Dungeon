@@ -9,8 +9,11 @@ client = TestClient(app)
 
 def test_get_training_sessions():
     """ Test the endpoint to retrieve all training sessions. """
+    # ARRANGE
     reset_database()
+    # ACT
     response = client.get("/training")
+    # ASSERT
     assert response.status_code == 200
     assert response.json() == [{'average_speed': 10.0,
                                 'base_score': 75,
@@ -136,7 +139,11 @@ def test_get_training_sessions():
 
 def test_get_training_session():
     """ Test the endpoint to retrieve a specific training session. """
-    response = client.get("/training/4")
+    # ARRANGE
+    training_id = 4
+    # ACT
+    response = client.get(f"/training/{training_id}")
+    # ASSERT
     assert response.status_code == 200
     assert response.json() == {
         "training_name": "run after icecream-van",
@@ -152,7 +159,11 @@ def test_get_training_session():
 
 def test_get_training_session_not_found():
     """ Test the endpoint for a non-existent training session. """
-    response = client.get("/training/9999")
+    # ARRANGE
+    training_id = 9999
+    # ACT
+    response = client.get(f"/training/{training_id}")
+    # ASSERT
     assert response.status_code == 404
     assert response.json() == {
         "detail": "training not found"
@@ -161,6 +172,9 @@ def test_get_training_session_not_found():
 
 def test_create_training():
     """ Test the endpoint to create a new training session. """
+    # ARRANGE
+    # Fixing the training_date to be the current date
+    today_date = datetime.today().strftime('%Y-%m-%d')
     training_data = {
         "training_name": "string",
         "distance_in_meters": 1000,
@@ -168,11 +182,10 @@ def test_create_training():
         "training_type": "string",
         "player_id": 2
     }
+    # ACT
     response = client.post("/training", json=training_data)
+    # ASSERT
     assert response.status_code == 201
-
-    # Fixing the training_date to be the current date
-    today_date = datetime.today().strftime('%Y-%m-%d')
     expected_response = {
         'average_speed': 0.0,
         'base_score': 0,
@@ -189,8 +202,11 @@ def test_create_training():
 
 def test_update_training():
     """ Test the endpoint to update an existing training session. """
+    # ARRANGE
+    training_id = 2
     training_data = {"training_name": "fly you fools"}
-    response = client.put("training/2", json=training_data)
+    # ACT
+    response = client.put(f"training/{training_id}", json=training_data)
     assert response.status_code == 200
     assert response.json() == {'already_used_for_dungeon_run': False,
  'average_speed': 6.25,
@@ -206,8 +222,12 @@ def test_update_training():
 
 def test_update_training_not_found():
     """ Test the endpoint to update a non-existent training session. """
+    # ARRANGE
     training_data = {"training_name": "fly you fools"}
-    response = client.put("training/999", json=training_data)
+    training_id = 999
+    # ACT
+    response = client.put(f"training/{training_id}", json=training_data)
+    # ASSERT
     assert response.status_code == 404
     assert response.json() == {
         "detail": "training not found"
