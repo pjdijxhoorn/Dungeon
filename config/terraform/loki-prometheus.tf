@@ -99,6 +99,8 @@ resource "kubernetes_config_map" "grafana-dashboards-custom" {
 
   data = {
     "dungeon-run-dashboard.json" = file("${path.module}/dashboard/dungeon-run-dashboard.json"),
+    "Dungeon-run-avalibility.json" = file("${path.module}/dashboard/Dungeon-run-avalibility.json"),
+    "Dungeon-run-dashboard-2.json" = file("${path.module}/dashboard/Dungeon-run-dashboard-2.json")
   }
   depends_on = [kubernetes_namespace.monitoring-logging]
 }
