@@ -17,4 +17,4 @@ async def startup_event():
 
 #@app.get("/")
 #def read_root():
-#    return {"DevOps": "Hi, Martin en Arjen!"}
+#    return {"Random Encounter": "You have encountered a demo with Martin and Arjen!"}
