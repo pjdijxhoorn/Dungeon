@@ -7,7 +7,6 @@ app.include_router(profile.router, prefix="/profile")
 app.include_router(training.router, prefix="/training")
 app.include_router(dungeon_run.router, prefix="/dungeon_run")
 app.include_router(shop.router, prefix="/shop")
-# app.include_router(authentication.router, prefix="/authentication")
 
 
 @app.on_event("startup")
