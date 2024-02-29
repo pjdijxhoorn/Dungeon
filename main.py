@@ -14,3 +14,7 @@ app.include_router(shop.router, prefix="/shop")
 async def startup_event():
     """ Function to handle startup event. """
     print("this is the startup event!")
+
+@app.get("/")
+def read_root():
+    return {"message": "DIT IS ONZE EERSTE DEMO TEST!"}
