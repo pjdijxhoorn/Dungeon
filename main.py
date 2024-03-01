@@ -14,6 +14,6 @@ async def startup_event():
     """ Function to handle startup event. """
     print("this is the startup event!")
 
-# @app.get("/")
-# def read_root():
-#     return {"Random Encounter": "You have encountered a demo with Martin and Arjen!"}
+@app.get("/")
+def read_root():
+    return {"Random Encounter": "You have encountered a demo with Martin and Arjen!"}
